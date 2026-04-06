@@ -20,7 +20,7 @@ export default function NotificationsPage() {
             {notifications.map((n, i) => (
                <div key={i} className="bg-vora-card border border-white/5 p-6 rounded-2xl flex items-center gap-6 hover:bg-white/5 transition-all group cursor-pointer shadow-xl">
                   <div className={`w-12 h-12 rounded-xl bg-vora-dark flex items-center justify-center ${n.color} shadow-lg transition-transform group-hover:scale-110`}>
-                     <i className={`fa-solid ${n.icon}`}></i>
+                     <i className={`fa-solid ${n.icon}`} aria-hidden="true"></i>
                   </div>
                   <div className="flex-1">
                      <div className="flex items-center justify-between mb-1">

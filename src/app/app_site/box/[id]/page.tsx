@@ -768,13 +768,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </button>
 
                       {/* Recall Button */}
-                      <Link 
-                        href={}
-                        className="w-full bg-white text-slate-900 font-black py-4 rounded-2xl hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center gap-2"
+                       <button 
+                        onClick={handleRecallBox}
+                        disabled={isSubmittingRequest}
+                        className="w-full bg-white text-slate-900 font-black py-4 rounded-2xl hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                          <i className="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
                          เรียกคืนกล่องนี้กลับบ้าน
-                      </Link>
+                      </button>
                    </div>
                 </div>
              )}
