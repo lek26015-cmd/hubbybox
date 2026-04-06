@@ -38,6 +38,11 @@ export default function middleware(req: NextRequest) {
         if (url.pathname.startsWith('/app_site/api')) return NextResponse.next();
         return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
     }
+
+    // Webhook / server routes under /app_site/api must not be rewritten to landing
+    if (url.pathname.startsWith('/app_site/api')) {
+      return NextResponse.next();
+    }
   
     // 4. Default / Root Domain (Landing Page)
     if (url.pathname.startsWith('/landing_site')) return NextResponse.next();

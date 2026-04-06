@@ -34,11 +34,11 @@ export default function MessagesPage() {
          {/* Chat window placeholder */}
          <div className="md:col-span-8 bg-vora-card border border-white/5 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 left-0 p-12 opacity-5 scale-150 rotate-12 transition-transform hover:scale-[1.6]">
-               <i className="fa-notdog fa-solid fa-message text-[200px]"></i>
+               <i className="fa-solid fa-message text-[200px]"></i>
             </div>
             <div className="text-center space-y-6 relative z-10 p-12">
                <div className="w-20 h-20 bg-vora-dark rounded-full flex items-center justify-center text-vora-accent mx-auto mb-10 shadow-2xl animate-bounce">
-                  <i className="fa-notdog fa-solid fa-envelope-open-text text-3xl"></i>
+                  <i className="fa-solid fa-envelope-open-text text-3xl"></i>
                </div>
                <h4 className="text-2xl font-black text-white tracking-tighter">Unified Communication Channel</h4>
                <p className="text-slate-500 text-sm font-bold uppercase tracking-[0.2em] max-w-sm leading-loose">Secure end-to-end encrypted messaging for the HubbyBox logistics team.</p>

@@ -10,13 +10,14 @@ const kodchasan = Kodchasan({
   subsets: ['latin', 'thai'],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+  variable: '--font-kodchasan',
 });
 
 export const metadata: Metadata = {
   title: 'HubbyBox',
   description: 'ระบบจัดการกล่องเก็บของส่วนตัว (Smart Inventory)',
   icons: {
-    icon: '/logo-hubbyboox.png',
+    icon: '/logo-hubbybox.png',
   },
 };
 
@@ -29,7 +30,7 @@ export default async function RootLayout({
   const hasBypass = cookieStore.get('hubby_bypass')?.value === '1';
 
   return (
-    <html lang="th" className="h-full antialiased">
+    <html lang="th" className={`${kodchasan.variable} h-full antialiased`}>
       <head>
         <Script src="https://kit.fontawesome.com/276094607e.js" crossOrigin="anonymous" strategy="beforeInteractive" />
       </head>

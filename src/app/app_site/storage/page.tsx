@@ -4,25 +4,34 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constants';
+import type { BoxListRow } from '@/lib/box-types';
 import { useLiff } from '@/components/providers/liff-provider';
 
 export default function HubbyStoragePage() {
   const { dbUser, isLoading: isLiffLoading } = useLiff();
-  const [storedBoxes, setStoredBoxes] = useState<any[]>([]);
+  const [storedBoxes, setStoredBoxes] = useState<BoxListRow[]>([]);
   const [isLoadingStored, setIsLoadingStored] = useState(true);
+  const [storedError, setStoredError] = useState<string | null>(null);
 
   const fetchStoredBoxes = useCallback(async () => {
     if (!dbUser?.id) return;
     try {
       setIsLoadingStored(true);
+      setStoredError(null);
       const { data, error } = await supabase
         .from('boxes')
-        .select('*')
+        .select('id, name, cover_image_url, created_at, status, shipping_carrier, tracking_number')
         .eq('user_id', dbUser.id)
-        .eq('location', 'คลังกลาง Hubbybox')
+        .eq('location', HUBBYBOX_WAREHOUSE_LOCATION)
         .order('created_at', { ascending: false });
 
-      if (!error) setStoredBoxes(data || []);
+      if (error) {
+        setStoredError(error.message || 'โหลดรายการไม่สำเร็จ');
+        setStoredBoxes([]);
+        return;
+      }
+      setStoredBoxes((data as BoxListRow[]) || []);
     } finally {
       setIsLoadingStored(false);
     }
@@ -42,7 +51,7 @@ export default function HubbyStoragePage() {
        {/* Hero Image Section */}
        <div className="relative w-full h-[45vh] overflow-hidden">
           <Image 
-            src="/storage-hero.png" 
+            src="/Hubbybox-cover.png" 
             alt="Hubby Smart Warehouse" 
             fill
             className="object-cover"
@@ -50,7 +59,7 @@ export default function HubbyStoragePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
           
           <Link href="/" className="absolute top-10 left-6 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg border border-white/50 active:scale-95 transition-all">
-             <i className="fa-notdog fa-solid fa-arrow-left text-slate-700 text-sm" aria-hidden="true"></i>
+             <i className="fa-solid fa-arrow-left text-slate-700 text-sm" aria-hidden="true"></i>
           </Link>
 
           <div className="absolute top-10 right-6 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg animate-pulse">
@@ -62,7 +71,7 @@ export default function HubbyStoragePage() {
           {/* Pricing & Call to Action Card (Moved to Top) */}
           <section className="bg-slate-900 rounded-[2.5rem] p-8 text-white overflow-hidden relative shadow-2xl shadow-slate-200 mb-8 border border-white/10 group">
              <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 scale-150 transition-transform duration-1000 group-hover:rotate-45">
-                <i className="fa-notdog fa-solid fa-box-archive text-[100px]" aria-hidden="true"></i>
+                <i className="fa-solid fa-box-archive text-[100px]" aria-hidden="true"></i>
              </div>
              
              <div className="relative z-10">
@@ -96,7 +105,7 @@ export default function HubbyStoragePage() {
 
              <p className="text-slate-500 font-medium leading-relaxed mb-10 text-center">
                 เปลี่ยนบ้านที่วุ่นวายให้กลายเป็นพื้นที่โปร่งสบาย<br/>ด้วยบริการส่งของไปฝากที่คลังสินค้าของพวกเรา<br/>
-                <span className="text-slate-800 font-bold italic mt-2 block">"ฝากง่าย ค้นหาไว เหมือนวางไว้ในบ้าน"</span>
+                <span className="text-slate-800 font-bold italic mt-2 block">&ldquo;ฝากง่าย ค้นหาไว เหมือนวางไว้ในบ้าน&rdquo;</span>
              </p>
 
              {/* Service Options Phase 1 */}
@@ -111,7 +120,7 @@ export default function HubbyStoragePage() {
                       </div>
                       <div className="flex items-center gap-4 mb-3">
                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-sky-500 shadow-sm border border-sky-100 group-hover:scale-110 transition-transform">
-                            <i className="fa-notdog fa-solid fa-parachute-box text-[22px]" aria-hidden="true"></i>
+                            <i className="fa-solid fa-parachute-box text-[22px]" aria-hidden="true"></i>
                          </div>
                          <h5 className="font-bold text-slate-800 text-lg">ส่งเข้าคลังกลางเอง</h5>
                       </div>
@@ -128,7 +137,7 @@ export default function HubbyStoragePage() {
                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 opacity-60 grayscale hover:grayscale-0 transition-all cursor-not-allowed">
                       <div className="flex items-center gap-4 mb-3">
                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-300 border border-slate-100">
-                            <i className="fa-notdog fa-solid fa-truck-fast text-[20px]" aria-hidden="true"></i>
+                            <i className="fa-solid fa-truck-fast text-[20px]" aria-hidden="true"></i>
                          </div>
                          <div className="flex flex-col">
                             <h5 className="font-bold text-slate-400 text-lg">Hubby Pickup</h5>
@@ -163,7 +172,7 @@ export default function HubbyStoragePage() {
                    <div className="relative">
                       <div className="absolute left-[-22px] top-0 w-3 h-3 bg-sky-400 rounded-full border-4 border-white"></div>
                       <h6 className="font-bold text-slate-800 text-sm mb-1">3. ยืนยันการรับฝาก</h6>
-                      <p className="text-[11px] text-slate-500 font-medium">เมื่อของถึงคลัง เราจะสแกนและยืนยันสถานะ "ฝากไว้ในคลัง" ให้ทันที</p>
+                      <p className="text-[11px] text-slate-500 font-medium">เมื่อของถึงคลัง เราจะสแกนและยืนยันสถานะ &ldquo;ฝากไว้ในคลัง&rdquo; ให้ทันที</p>
                    </div>
                 </div>
              </div>
@@ -192,35 +201,82 @@ export default function HubbyStoragePage() {
                 </p>
              </div>
 
-             {/* Stored Boxes Section (NEW) */}
-             {storedBoxes.length > 0 && (
-               <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <h4 className="text-sm font-black text-indigo-500 uppercase tracking-widest px-2 mb-4 flex items-center gap-2">
-                    <i className="fa-notdog fa-solid fa-warehouse" aria-hidden="true"></i>
-                    กล่องที่คุณฝากไว้ ({storedBoxes.length})
+             {/* Stored / inbound boxes */}
+             {dbUser?.id && (
+               <div className="mb-10">
+                  <h4 className="text-sm font-black text-indigo-500 uppercase tracking-widest px-2 mb-4 flex items-center justify-between gap-2 flex-wrap">
+                    <span className="flex items-center gap-2">
+                      <i className="fa-solid fa-warehouse" aria-hidden="true"></i>
+                      กล่องในคลังของคุณ
+                    </span>
+                    {!isLoadingStored && storedBoxes.length > 0 && (
+                      <span className="text-indigo-400 normal-case text-xs font-black">{storedBoxes.length} กล่อง</span>
+                    )}
                   </h4>
-                  <div className="grid grid-cols-1 gap-3">
-                    {storedBoxes.map(box => (
-                      <Link key={box.id} href={`/box/${box.id}`}>
-                        <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all group">
-                           <div className="w-12 h-12 rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-inner">
+
+                  {isLoadingStored ? (
+                    <div className="flex flex-col items-center justify-center gap-3 py-12 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80">
+                      <i className="fa-solid fa-spinner fa-spin text-sky-400 text-2xl" aria-hidden="true"></i>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">กำลังโหลดรายการกล่อง...</p>
+                    </div>
+                  ) : storedError ? (
+                    <div className="rounded-2xl border border-rose-100 bg-rose-50/80 p-6 text-center space-y-3">
+                      <p className="text-sm font-bold text-rose-700">{storedError}</p>
+                      <button
+                        type="button"
+                        onClick={() => fetchStoredBoxes()}
+                        className="text-xs font-black uppercase tracking-widest text-primary underline"
+                      >
+                        ลองโหลดอีกครั้ง
+                      </button>
+                    </div>
+                  ) : storedBoxes.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+                      <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                        ยังไม่มีกล่องในคลังสำหรับบัญชีนี้
+                      </p>
+                      <Link href="/storage/deposit" className="mt-4 inline-block text-sm font-black text-primary underline underline-offset-4">
+                        แจ้งฝากกล่อง
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      {storedBoxes.map((box) => (
+                        <Link key={box.id} href={`/box/${box.id}`}>
+                          <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all group">
+                            <div className="w-12 h-12 rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-inner">
                               {box.cover_image_url ? (
                                 <img src={box.cover_image_url} alt={box.name} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full bg-white flex items-center justify-center text-slate-300">
-                                  <i className="fa-notdog fa-solid fa-box" aria-hidden="true"></i>
+                                  <i className="fa-solid fa-box" aria-hidden="true"></i>
                                 </div>
                               )}
-                           </div>
-                           <div className="flex-1">
-                              <h5 className="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{box.name}</h5>
-                              <p className="text-[10px] text-slate-400 font-medium">รหัสฝาก: #{box.id.substring(0, 8).toUpperCase()}</p>
-                           </div>
-                           <i className="fa-notdog fa-solid fa-chevron-right text-slate-300 text-xs" aria-hidden="true"></i>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h5 className="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors truncate">
+                                {box.name}
+                              </h5>
+                              <p className="text-[10px] text-slate-400 font-medium">
+                                รหัสอ้างอิง: #{box.id.substring(0, 8).toUpperCase()}
+                              </p>
+                              {box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE && (
+                                <span className="inline-flex mt-1.5 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
+                                  กำลังนำส่งเข้าคลัง
+                                </span>
+                              )}
+                              {box.tracking_number && (
+                                <p className="text-[10px] text-slate-500 font-mono mt-1 truncate">
+                                  พัสดุ: {box.tracking_number}
+                                </p>
+                              )}
+                            </div>
+                            <i className="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0" aria-hidden="true"></i>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                </div>
              )}
 
@@ -230,7 +286,7 @@ export default function HubbyStoragePage() {
                 {benefits.map((item, i) => (
                    <div key={i} className="flex gap-5 items-start">
                       <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 shrink-0">
-                         <i className={`fa-notdog fa-solid ${item.icon} text-sm`} aria-hidden="true"></i>
+                         <i className={`fa-solid ${item.icon} text-sm`} aria-hidden="true"></i>
                       </div>
                       <div>
                          <h3 className="font-bold text-slate-800 text-sm mb-0.5">{item.title}</h3>

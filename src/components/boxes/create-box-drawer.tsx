@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { HUBBYBOX_WAREHOUSE_LOCATION } from '@/lib/hubbybox-constants';
 import { useLiff } from '@/components/providers/liff-provider';
 import Image from 'next/image';
 
@@ -23,14 +24,14 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
     e.preventDefault();
     if (!name.trim()) return;
 
-    if (!dbUser?.id) {
-      alert('ฐานข้อมูลยังไม่พร้อมใช้งาน (กรุณาไปรันคำสั่ง SQL เพื่อปลดล็อก RLS ใน Supabase ก่อนครับ)');
+    if (!dbUser?.id || dbUser.id === 'fallback-id') {
+      alert('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว ขัดข้องที่การซิงค์ User ID (กรุณาไปรันคำสั่ง SQL เพื่อปลดล็อก RLS ใน Supabase ก่อนครับ)');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const finalLocation = locationType === 'warehouse' ? 'คลังกลาง Hubbybox' : (homeLocation.trim() || 'ที่บ้าน');
+      const finalLocation = locationType === 'warehouse' ? HUBBYBOX_WAREHOUSE_LOCATION : (homeLocation.trim() || 'ที่บ้าน');
       
       const { error } = await supabase
         .from('boxes')
@@ -47,9 +48,12 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
       setLocationType('home');
       onBoxCreated();
       onClose();
-    } catch (err) {
-      console.error('Failed to create box:', err);
-      alert('เกิดข้อผิดพลาดในการสร้างกล่อง กรุณาลองใหม่อีกครั้ง');
+    } catch (err: any) {
+      console.error('Failed to create box (Full Object):', err);
+      console.log('Error Code:', err?.code);
+      console.log('Error Details:', err?.details);
+      console.log('Error Hint:', err?.hint);
+      alert(`เกิดข้อผิดพลาดในการสร้างกล่อง: ${err?.message || 'โปรดตรวจสอบสิทธิ์ (RLS) ในฐานข้อมูล'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +69,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90]"
           />
           
           {/* Drawer */}
@@ -74,9 +78,9 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
-            className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto font-sans"
+            className="fixed bottom-0 left-0 right-0 z-[100] max-w-md mx-auto font-sans"
           >
-            <div className="bg-white border-t border-slate-100 rounded-t-[2.5rem] p-6 pb-12 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] overflow-y-auto max-h-[90vh]">
+            <div className="bg-white border-t border-slate-100 rounded-t-[2.5rem] p-6 pb-20 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] overflow-y-auto max-h-[90vh]">
               {/* Drag Handle indicator */}
               <div className="w-16 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
               
@@ -84,7 +88,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                 <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                   <div className="w-14 h-14 overflow-hidden shrink-0">
                     <Image 
-                      src="/logo-hubbyboox.png" 
+                      src="/logo-hubbybox.png" 
                       alt="HubbyBox" 
                       width={56} 
                       height={56} 
@@ -97,7 +101,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                   onClick={onClose}
                   className="w-12 h-12 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                 >
-                  <i className="fa-notdog fa-solid fa-xmark text-[24px]" aria-hidden="true"></i>
+                  <i className="fa-solid fa-xmark text-[24px]" aria-hidden="true"></i>
                 </button>
               </div>
 
@@ -127,7 +131,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                           : 'border-slate-100 bg-slate-50 text-slate-400'
                       }`}
                     >
-                      <i className="fa-notdog fa-solid fa-house text-xl" aria-hidden="true"></i>
+                      <i className="fa-solid fa-house text-xl" aria-hidden="true"></i>
                       <span className="text-xs font-bold uppercase tracking-widest">ที่บ้าน</span>
                     </button>
                     <button
@@ -139,7 +143,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                           : 'border-slate-100 bg-slate-50 text-slate-400'
                       }`}
                     >
-                      <i className="fa-notdog fa-solid fa-warehouse text-xl" aria-hidden="true"></i>
+                      <i className="fa-solid fa-warehouse text-xl" aria-hidden="true"></i>
                       <span className="text-xs font-bold uppercase tracking-widest text-center leading-tight">คลังกลาง<br/>Hubbybox</span>
                     </button>
                   </div>
@@ -166,7 +170,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                   disabled={!name.trim() || isSubmitting}
                   className="w-full bg-primary hover:opacity-90 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-lg py-5 rounded-2xl transition-all shadow-[0_10px_30px_rgba(52,137,255,0.3)] disabled:shadow-none flex items-center justify-center active:scale-95 mt-4"
                 >
-                  {isSubmitting ? <i className="fa-notdog fa-solid fa-spinner fa-spin text-[28px]" aria-hidden="true"></i> : 'สร้างกล่อง'}
+                  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[28px]" aria-hidden="true"></i> : 'สร้างกล่อง'}
                 </button>
               </form>
             </div>

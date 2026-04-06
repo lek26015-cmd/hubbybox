@@ -15,7 +15,7 @@ export default function DonatePage() {
        {/* Header */}
        <header className="flex items-center justify-between p-6 pt-10">
           <Link href="/settings" className="w-11 h-11 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 hover:scale-110 active:scale-95 transition-all text-slate-400">
-             <i className="fa-notdog fa-solid fa-arrow-left" aria-hidden="true"></i>
+             <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
           </Link>
           <h1 className="text-xl font-black tracking-tight text-slate-800">Support Hubbybox</h1>
           <div className="w-11"></div>
@@ -32,7 +32,7 @@ export default function DonatePage() {
              <div className="relative inline-block mb-6 pt-4">
                 <div className="w-20 h-20 bg-white rounded-[2rem] shadow-xl flex items-center justify-center relative z-10 border border-white">
                    <div className="w-14 h-14 bg-rose-50 rounded-[1.4rem] flex items-center justify-center">
-                      <i className="fa-notdog fa-solid fa-heart text-rose-500 text-3xl animate-pulse" aria-hidden="true"></i>
+                      <i className="fa-solid fa-heart text-rose-500 text-3xl animate-pulse" aria-hidden="true"></i>
                    </div>
                 </div>
                 <div className="absolute -inset-4 bg-rose-200/30 blur-2xl rounded-full"></div>

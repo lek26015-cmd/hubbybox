@@ -42,7 +42,7 @@ export default function PremiumPage() {
       {/* Header */}
       <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-2xl border-b border-white/50 px-6 py-4 flex items-center justify-between shadow-sm">
         <Link href="/settings" className="w-11 h-11 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-50 hover:text-primary">
-           <i className="fa-notdog fa-solid fa-arrow-left text-[20px]"></i>
+           <i className="fa-solid fa-arrow-left text-[20px]"></i>
         </Link>
         <div className="flex items-center gap-3">
             <h1 className="font-bold text-xl text-slate-800 tracking-tight">Hubbybox Premium</h1>
@@ -53,7 +53,7 @@ export default function PremiumPage() {
       <main className="flex-1 w-full max-w-md mx-auto px-6 py-8 flex flex-col pt-8">
         <div className="flex justify-center mb-6">
            <div className="w-24 h-24 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl rotate-12 flex items-center justify-center shadow-[0_15px_30px_-10px_rgba(99,102,241,0.5)] border-4 border-white">
-              <i className="fa-notdog fa-solid fa-gem text-white text-[48px] -rotate-12 drop-shadow-md"></i>
+              <i className="fa-solid fa-gem text-white text-[48px] -rotate-12 drop-shadow-md"></i>
            </div>
         </div>
         
@@ -67,7 +67,7 @@ export default function PremiumPage() {
         {/* Pack 1 */}
         <section className="bg-white/90 backdrop-blur-md shadow-sm border-2 border-indigo-100 rounded-[2.5rem] p-6 mb-5 relative overflow-hidden group">
            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all font-bold text-indigo-500 text-6xl">
-               <i className="fa-notdog fa-solid fa-boxes-stacked"></i>
+               <i className="fa-solid fa-boxes-stacked"></i>
            </div>
            <div className="flex justify-between items-start mb-4 relative z-10">
                <div>
@@ -80,10 +80,10 @@ export default function PremiumPage() {
            </div>
            <ul className="flex flex-col gap-2 relative z-10 mb-6">
               <li className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                 <i className="fa-notdog fa-solid fa-circle-check text-indigo-400"></i> AI สแกนของเข้ากล่องไม่จำกัด
+                 <i className="fa-solid fa-circle-check text-indigo-400"></i> AI สแกนของเข้ากล่องไม่จำกัด
               </li>
               <li className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                 <i className="fa-notdog fa-solid fa-circle-check text-indigo-400"></i> AI Search หาของฟรีตลอดชีพ
+                 <i className="fa-solid fa-circle-check text-indigo-400"></i> AI Search หาของฟรีตลอดชีพ
               </li>
            </ul>
            <button 
@@ -91,7 +91,7 @@ export default function PremiumPage() {
              disabled={isLoading !== null}
              className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-300 text-white font-bold text-lg py-4 rounded-[1.5rem] transition-colors active:scale-[0.98] disabled:active:scale-100 shadow-sm flex items-center justify-center gap-2"
            >
-               {isLoading === 5 ? <i className="fa-notdog fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
+               {isLoading === 5 ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
                {isLoading === 5 ? 'กำลังทำรายการ...' : 'ซื้อเซ็ตมินิมอล'}
            </button>
         </section>
@@ -99,7 +99,7 @@ export default function PremiumPage() {
         {/* Pack 2 */}
         <section className="bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_15px_30px_-10px_rgba(99,102,241,0.5)] border border-indigo-400 rounded-[2.5rem] p-6 mb-8 relative overflow-hidden group">
            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all font-bold text-white text-[80px] -rotate-6">
-               <i className="fa-notdog fa-solid fa-house-chimney"></i>
+               <i className="fa-solid fa-house-chimney"></i>
            </div>
            
            {/* Popular Badge */}
@@ -118,13 +118,13 @@ export default function PremiumPage() {
            </div>
            <ul className="flex flex-col gap-2 relative z-10 mb-6">
               <li className="flex items-center gap-3 text-sm font-medium text-indigo-50">
-                 <i className="fa-notdog fa-solid fa-circle-check text-yellow-300"></i> AI สแกนของเข้ากล่องไม่จำกัด
+                 <i className="fa-solid fa-circle-check text-yellow-300"></i> AI สแกนของเข้ากล่องไม่จำกัด
               </li>
               <li className="flex items-center gap-3 text-sm font-medium text-indigo-50">
-                 <i className="fa-notdog fa-solid fa-circle-check text-yellow-300"></i> AI Search หาของฟรีตลอดชีพ
+                 <i className="fa-solid fa-circle-check text-yellow-300"></i> AI Search หาของฟรีตลอดชีพ
               </li>
               <li className="flex items-center gap-3 text-sm font-medium text-indigo-50">
-                 <i className="fa-notdog fa-solid fa-circle-check text-yellow-300"></i> พื้นที่เก็บรูปเพียงพอสำหรับทั้งบ้าน
+                 <i className="fa-solid fa-circle-check text-yellow-300"></i> พื้นที่เก็บรูปเพียงพอสำหรับทั้งบ้าน
               </li>
            </ul>
            <button 
@@ -132,7 +132,7 @@ export default function PremiumPage() {
              disabled={isLoading !== null}
              className="w-full bg-white hover:bg-indigo-50 disabled:bg-slate-200 text-indigo-600 disabled:text-slate-400 font-bold text-lg py-4 rounded-[1.5rem] transition-colors active:scale-[0.98] disabled:active:scale-100 shadow-sm flex items-center justify-center gap-2"
            >
-               {isLoading === 15 ? <i className="fa-notdog fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
+               {isLoading === 15 ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
                {isLoading === 15 ? 'กำลังทำรายการ...' : 'ซื้อเซ็ตจัดบ้านใหม่'}
            </button>
         </section>

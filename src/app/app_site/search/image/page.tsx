@@ -23,7 +23,7 @@ export default function SearchByImage() {
     <div className="min-h-screen bg-slate-900 text-white font-sans flex flex-col p-6">
        <header className="flex items-center gap-4 mb-10 pt-4">
           <Link href="/" className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-all">
-             <i className="fa-notdog fa-solid fa-arrow-left"></i>
+             <i className="fa-solid fa-arrow-left"></i>
           </Link>
           <h1 className="text-2xl font-black">ค้นหาด้วยรูปภาพ</h1>
        </header>
@@ -33,7 +33,7 @@ export default function SearchByImage() {
              <div className="w-full max-w-sm aspect-square bg-slate-800 rounded-[3rem] border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="bg-primary/20 w-24 h-24 rounded-full flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-                   <i className="fa-notdog fa-solid fa-camera text-4xl"></i>
+                   <i className="fa-solid fa-camera text-4xl"></i>
                 </div>
                 <h2 className="text-xl font-bold mb-2">ถ่ายรูปหรือเลือกภาพ</h2>
                 <p className="text-slate-400 text-sm mb-8 px-4 font-medium italic">ส่งภาพของที่คุณต้องการหา แล้วปล่อยให้ Hubby AI จัดการ!</p>
@@ -60,7 +60,7 @@ export default function SearchByImage() {
                    <div className="w-full bg-slate-800 rounded-3xl p-6 border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center gap-4 mb-4">
                          <div className="bg-emerald-500/20 text-emerald-400 w-10 h-10 rounded-full flex items-center justify-center">
-                            <i className="fa-notdog fa-solid fa-check"></i>
+                            <i className="fa-solid fa-check"></i>
                          </div>
                          <h3 className="font-black">พบเจอแล้ว!</h3>
                       </div>

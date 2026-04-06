@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constants';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLiff } from '@/components/providers/liff-provider';
@@ -54,6 +55,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   // Security State
   const [hasAccessError, setHasAccessError] = useState(false);
   const isOwner = box && dbUser && box.user_id === dbUser.id;
+  const isLocked = box && (
+    box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE || 
+    (box.location || '').includes(HUBBYBOX_WAREHOUSE_LOCATION)
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -97,7 +102,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItemName.trim() || isSubmitting || !isOwner) return;
+    if (!newItemName.trim() || isSubmitting || !isOwner || isLocked) return;
 
     setIsSubmitting(true);
     try {
@@ -228,7 +233,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   };
 
   const handleUpdateBoxName = async () => {
-    if (!editedBoxName.trim() || editedBoxName === box.name || !isOwner) {
+    if (!editedBoxName.trim() || editedBoxName === box.name || !isOwner || isLocked) {
       setIsEditingBoxName(false);
       return;
     }
@@ -250,6 +255,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   };
 
   const handleDeleteItem = async (itemId: string) => {
+    if (isLocked) {
+      alert('ไม่สามารถลบของได้เมื่อกล่องอยู่ในคลัง');
+      return;
+    }
     if (!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบของชิ้นนี้?') || !isOwner) return;
 
     try {
@@ -287,6 +296,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   }, [dbUser?.id, boxId]);
 
   const handleMoveItem = async (targetBoxId: string) => {
+    if (isLocked) {
+      alert('ไม่สามารถย้ายของได้เมื่อกล่องอยู่ในคลัง');
+      return;
+    }
     if (!itemToMove || !isOwner) return;
 
     try {
@@ -331,7 +344,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   };
 
   const handleRecallBox = async () => {
-    if (!isOwner || isSubmittingRequest || box.location !== 'คลังกลาง Hubbybox') return;
+    if (!isOwner || isSubmittingRequest || box.location !== HUBBYBOX_WAREHOUSE_LOCATION) return;
     if (!window.confirm('ยืนยันเรียกคืนกล่องนี้กลับบ้าน? (อาจมีค่าขนส่งปลายทาง)')) return;
 
     setIsSubmittingRequest(true);
@@ -406,7 +419,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   if (isLoading) {
      return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-b from-[#e0f2fe] to-white flex-col gap-5 font-sans">
-        <i className="fa-notdog fa-solid fa-spinner fa-spin text-sky-400 text-[48px]"></i>
+        <i className="fa-solid fa-spinner fa-spin text-sky-400 text-[48px]" aria-hidden="true"></i>
         <span className="text-sky-600 font-bold tracking-widest text-sm">กำลังเปิดกล่อง...</span>
         <button 
           onClick={() => setIsLoading(false)} 
@@ -421,7 +434,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   if (hasAccessError) {
     return (
        <div className="flex flex-col h-screen p-6 justify-center items-center text-center bg-rose-50 font-sans">
-         <i className="fa-notdog fa-solid fa-shield-halved text-[64px] text-rose-300 mb-6 drop-shadow-sm"></i>
+         <i className="fa-solid fa-shield-halved text-[64px] text-rose-300 mb-6 drop-shadow-sm" aria-hidden="true"></i>
          <h2 className="text-2xl font-bold text-slate-800 mb-3">คุณไม่มีสิทธิ์เข้าถึงกล่องนี้</h2>
          <p className="text-slate-500 mb-10 max-w-xs leading-relaxed">ข้อมูลนี้เป็นของส่วนตัว เฉพาะเจ้าของกล่องเท่านั้นที่สามารถดูได้ครับ</p>
          <button onClick={() => router.push('/')} className="px-8 py-4 bg-white border border-rose-100 hover:bg-rose-50 active:scale-95 transition-all text-rose-600 rounded-full font-bold shadow-sm">
@@ -434,7 +447,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   if (!box) {
      return (
         <div className="flex flex-col h-screen p-6 justify-center items-center text-center bg-slate-50 font-sans">
-          <i className="fa-notdog fa-solid fa-circle-exclamation text-[64px] text-slate-300 mb-6 drop-shadow-sm"></i>
+          <i className="fa-solid fa-circle-exclamation text-[64px] text-slate-300 mb-6 drop-shadow-sm" aria-hidden="true"></i>
           <h2 className="text-2xl font-bold text-slate-800 mb-3">ไม่พบกล่องที่คุณหา</h2>
           <p className="text-slate-500 mb-10 max-w-xs leading-relaxed">กล่องนี้อาจถูกลบไปแล้ว หรือลิงก์ไม่ถูกต้อง</p>
           <button onClick={() => router.push('/')} className="px-8 py-4 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all text-slate-700 rounded-full font-bold shadow-sm">
@@ -449,12 +462,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       {/* Header */}
       <header className="print:hidden sticky top-0 z-20 bg-white/70 backdrop-blur-2xl border-b border-white/50 px-6 py-4 flex items-center justify-between shadow-sm">
         <Link href="/" className="w-11 h-11 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-50 hover:text-sky-500">
-           <i className="fa-notdog fa-solid fa-arrow-left text-[20px]"></i>
+           <i className="fa-solid fa-arrow-left text-[20px]" aria-hidden="true"></i>
         </Link>
         <div className="flex items-center gap-3 flex-1 px-4 justify-center">
             <div className="w-10 h-10 overflow-hidden shrink-0">
                <Image 
-                 src="/logo-hubbyboox.png" 
+                 src="/logo-hubbybox.png" 
                  alt="HubbyBox" 
                  width={40} 
                  height={40} 
@@ -489,15 +502,15 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   className={`flex items-center gap-2 ${isOwner ? 'cursor-pointer group' : ''}`}
                 >
                   <span className="font-bold text-xl text-slate-800 line-clamp-1">{box?.name}</span>
-                  {isOwner && <i className="fa-notdog fa-solid fa-pen text-[12px] text-slate-300 group-hover:text-sky-400" aria-hidden="true"></i>}
+                  {isOwner && !isLocked && <i className="fa-solid fa-pen text-[12px] text-slate-300 group-hover:text-sky-400" aria-hidden="true"></i>}
                 </div>
               )}
               
               {/* Location Badge & Quick Edit */}
               <button 
                 onClick={async () => {
-                  if (!isOwner) return;
-                  if (box.location === 'คลังกลาง Hubbybox') {
+                  if (!isOwner || isLocked) return;
+                  if (box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION)) {
                     const newLoc = window.prompt('ย้ายกลับมาที่บ้าน? ระบุพิกัด (เช่น ห้องพระ) หรือปล่อยว่างเพื่อใช้ "ที่บ้าน"', 'ที่บ้าน');
                     if (newLoc !== null) {
                       const { error } = await supabase.from('boxes').update({ location: newLoc || 'ที่บ้าน' }).eq('id', boxId);
@@ -512,30 +525,31 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   }
                 }}
                 className={`mt-0.5 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border flex items-center gap-1 transition-all ${
-                  box.location === 'คลังกลาง Hubbybox' 
+                  box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) 
                     ? 'bg-indigo-500 text-white border-indigo-400' 
                     : 'bg-white text-slate-400 border-slate-200 hover:border-sky-300 hover:text-sky-500'
                 }`}
               >
-                <i className={`fa-notdog fa-solid ${box.location === 'คลังกลาง Hubbybox' ? 'fa-warehouse' : 'fa-location-dot'}`} aria-hidden="true"></i>
+                <i className={`fa-solid ${box.location === HUBBYBOX_WAREHOUSE_LOCATION ? 'fa-warehouse' : 'fa-location-dot'}`} aria-hidden="true"></i>
                 {box.location || 'ที่บ้าน'}
+                {!isLocked && isOwner && <i className="fa-solid fa-chevron-right text-[8px] ml-1 opacity-40" aria-hidden="true"></i>}
               </button>
             </div>
         </div>
         {isOwner ? (
           <div className="flex gap-1">
-            {box.location !== 'คลังกลาง Hubbybox' && (
+            {box.location !== HUBBYBOX_WAREHOUSE_LOCATION && (
               <button 
                 onClick={async () => {
-                  if (window.confirm('ยืนยันส่งกล่องนี้เข้าคลังกลาง Hubbybox?')) {
-                    const { error } = await supabase.from('boxes').update({ location: 'คลังกลาง Hubbybox' }).eq('id', boxId);
-                    if (!error) setBox({ ...box, location: 'คลังกลาง Hubbybox' });
+                  if (window.confirm(`ยืนยันส่งกล่องนี้เข้า${HUBBYBOX_WAREHOUSE_LOCATION}?`)) {
+                    const { error } = await supabase.from('boxes').update({ location: HUBBYBOX_WAREHOUSE_LOCATION }).eq('id', boxId);
+                    if (!error) setBox({ ...box, location: HUBBYBOX_WAREHOUSE_LOCATION });
                   }
                 }}
                 className="w-11 h-11 bg-indigo-500 text-white shadow-lg shadow-indigo-200 rounded-full flex items-center justify-center active:scale-90 transition-all relative group"
                 title="ส่งเข้าคลังกลาง"
               >
-                 <i className="fa-notdog fa-solid fa-parachute-box text-[20px]" aria-hidden="true"></i>
+                 <i className="fa-solid fa-parachute-box text-[20px]" aria-hidden="true"></i>
                  <div className="absolute top-12 -right-2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">ส่งเข้าคลัง</div>
               </button>
             )}
@@ -544,7 +558,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               className="w-11 h-11 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-50 hover:text-sky-500 relative group"
               title="ปริ้นท์ QR โค้ด"
             >
-               <i className="fa-notdog fa-solid fa-qrcode text-[20px]" aria-hidden="true"></i>
+               <i className="fa-solid fa-qrcode text-[20px]" aria-hidden="true"></i>
                <div className="absolute top-12 -right-2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">ปริ้นท์ QR</div>
             </button>
           </div>
@@ -564,7 +578,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 </div>
               )}
               <div className={`absolute -top-6 -right-6 p-4 opacity-5 group-hover:opacity-10 group-hover:rotate-12 transition-all duration-700 scale-150 ${box?.cover_image_url ? 'text-white' : 'text-sky-500'}`}>
-                  <i className="fa-notdog fa-solid fa-box-open text-[140px]"></i>
+                  <i className="fa-solid fa-box-open text-[140px]" aria-hidden="true"></i>
               </div>
             </div>
             <div className="relative z-10 flex items-center gap-6">
@@ -579,7 +593,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                   <input type="file" id="cover-image-upload" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={isSubmitting} />
                   <label htmlFor="cover-image-upload" className="w-10 h-10 bg-white/20 backdrop-blur-md hover:bg-white/40 border border-white/30 shadow-sm rounded-full flex items-center justify-center cursor-pointer text-white transition-all active:scale-95">
-                      <i className="fa-notdog fa-solid fa-camera text-[14px]"></i>
+                      <i className="fa-solid fa-camera text-[14px]" aria-hidden="true"></i>
                   </label>
                </div>
             )}
@@ -592,41 +606,93 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                           <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 ${isActionMenuOpen ? 'translate-y-20 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
                             <input type="file" id="camera-capture" accept="image/*" capture="environment" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
                             <label htmlFor="camera-capture" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-notdog fa-solid fa-camera text-[24px]" aria-hidden="true"></i>
+                                <i className="fa-solid fa-camera text-[24px]" aria-hidden="true"></i>
                                 <span className="text-[10px] font-bold tracking-wide">ถ่ายรูป</span>
                             </label>
                           </div>
                           <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-75 ${isActionMenuOpen ? 'translate-y-40 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
                             <input type="file" id="image-upload" accept="image/*" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
                             <label htmlFor="image-upload" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-notdog fa-regular fa-image text-[24px]" aria-hidden="true"></i>
+                                <i className="fa-regular fa-image text-[24px]" aria-hidden="true"></i>
                                 <span className="text-[10px] font-bold tracking-wide">สแกนรูป</span>
                             </label>
                           </div>
                           <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-100 ${isActionMenuOpen ? 'translate-y-60 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
                             <button onClick={() => { setIsManualAddOpen(true); setIsActionMenuOpen(false); setTimeout(() => document.getElementById('manual-name-input')?.focus(), 100); }} className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-indigo-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-notdog fa-solid fa-pen text-[24px]" aria-hidden="true"></i>
+                                <i className="fa-solid fa-pen text-[24px]" aria-hidden="true"></i>
                                 <span className="text-[10px] font-bold tracking-wide">จดชื่อ</span>
                             </button>
                           </div>
+                          {box.location === HUBBYBOX_WAREHOUSE_LOCATION && (
+                            <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-150 ${isActionMenuOpen ? 'translate-x-[-70px] opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                              <button onClick={() => { setIsSelectionMode(true); setIsActionMenuOpen(false); }} className="w-full h-full bg-slate-900 border border-slate-700 shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-amber-400 hover:scale-105 active:scale-95 transition-all">
+                                  <i className="fa-solid fa-parachute-box text-[24px]" aria-hidden="true"></i>
+                                  <span className="text-[10px] font-bold tracking-wide">เรียกของคืน</span>
+                              </button>
+                            </div>
+                          )}
                        </div>
                        <button onClick={() => setIsActionMenuOpen(!isActionMenuOpen)} className="h-[4.5rem] w-16 bg-gradient-to-br from-primary to-[#2a7aeb] border-2 border-white shadow-xl rounded-xl flex items-center justify-center text-white z-40 relative group">
-                          {isSubmitting ? <i className="fa-notdog fa-solid fa-spinner fa-spin text-[32px]" aria-hidden="true"></i> : <i className={`fa-notdog fa-solid fa-plus text-[32px] transition-transform duration-500 ${isActionMenuOpen ? 'rotate-[135deg]' : ''}`}></i>}
+                          {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[32px]" aria-hidden="true"></i> : <i className={`fa-solid fa-plus text-[32px] transition-transform duration-500 ${isActionMenuOpen ? 'rotate-[135deg]' : ''}`} aria-hidden="true"></i>}
                        </button>
                     </div>
                  </div>
             )}
          </div>
 
+        {/* Logistics Progress Stepper */}
+        {isOwner && box.location !== 'ที่บ้าน' && box.location !== null && (
+           <div className="mb-8 px-2">
+              <div className="flex items-center justify-between relative">
+                 {/* Line connection */}
+                 <div className="absolute top-5 left-8 right-8 h-0.5 bg-slate-200 -z-0">
+                    <div 
+                       className="h-full bg-primary transition-all duration-1000" 
+                       style={{ 
+                         width: box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) ? (box.location?.includes('Zone') ? '100%' : '50%') : '0%' 
+                       }}
+                    ></div>
+                 </div>
+                 
+                 {[
+                    { label: 'กำลังนำส่ง', icon: 'fa-truck-fast' },
+                    { label: 'ถึงคลังแล้ว', icon: 'fa-warehouse' },
+                    { label: 'จัดเก็บเรียบร้อย', icon: 'fa-circle-check' }
+                 ].map((step, idx) => {
+                    const isActive = (idx === 0 && box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE) || 
+                                   (idx === 1 && box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) && !box.allow_staff_open) ||
+                                   (idx === 2 && box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) && box.allow_staff_open);
+                    const isCompleted = (idx === 0 && box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION)) ||
+                                      (idx === 1 && box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) && box.allow_staff_open);
+                    
+                    return (
+                       <div key={idx} className="flex flex-col items-center gap-2 relative z-10 w-20">
+                          <div className={`w-10 h-10 rounded-full border-4 flex items-center justify-center transition-all duration-500 ${
+                             isActive ? 'bg-primary border-primary/20 text-white shadow-lg shadow-primary/20 scale-110' : 
+                             isCompleted ? 'bg-primary border-primary text-white scale-100' :
+                             'bg-white border-slate-100 text-slate-300'
+                          }`}>
+                             <i className={`fa-solid ${isCompleted ? 'fa-check' : step.icon} text-sm`} aria-hidden="true"></i>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase tracking-widest text-center leading-tight ${isActive || isCompleted ? 'text-slate-800' : 'text-slate-300'}`}>
+                             {step.label}
+                          </span>
+                       </div>
+                    );
+                 })}
+              </div>
+           </div>
+        )}
+
          {/* Logistics & Recall Status Card */}
          {isOwner && (
-           <div className="mb-8 space-y-4">
-             {/* Main Logistics Card */}
-             <div className="bg-white/80 backdrop-blur-xl border border-white p-6 rounded-3xl shadow-sm">
+          <div className="mb-8 space-y-4">
+            {/* Main Logistics Card */}
+            <div className="bg-white/80 backdrop-blur-xl border border-white p-6 rounded-3xl shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${box.location === 'คลังกลาง Hubbybox' ? 'bg-indigo-50 text-indigo-500' : 'bg-emerald-50 text-emerald-500'}`}>
-                         <i className={`fa-notdog fa-solid ${box.location === 'คลังกลาง Hubbybox' ? 'fa-warehouse' : 'fa-house-user'}`}></i>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${box.location === HUBBYBOX_WAREHOUSE_LOCATION ? 'bg-indigo-50 text-indigo-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                         <i className={`fa-solid ${box.location === HUBBYBOX_WAREHOUSE_LOCATION ? 'fa-warehouse' : 'fa-house-user'}`} aria-hidden="true"></i>
                       </div>
                       <div>
                          <h4 className="font-bold text-slate-800 text-sm">สถานะปัจจุบัน</h4>
@@ -635,10 +701,17 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                    </div>
                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
                       box.status === 'returning' ? 'bg-amber-100 text-amber-600 border-amber-200' :
-                      box.location === 'คลังกลาง Hubbybox' ? 'bg-indigo-100 text-indigo-600 border-indigo-200' : 
+                      box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                      box.location === HUBBYBOX_WAREHOUSE_LOCATION ? 'bg-indigo-100 text-indigo-600 border-indigo-200' : 
                       'bg-emerald-100 text-emerald-600 border-emerald-200'
                    }`}>
-                      {box.status === 'returning' ? 'กำลังส่งคืน' : box.location === 'คลังกลาง Hubbybox' ? 'อยู่ในคลัง' : 'อยู่ที่บ้าน'}
+                      {box.status === 'returning'
+                        ? 'กำลังส่งคืน'
+                        : box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE
+                          ? 'กำลังนำส่งเข้าคลัง'
+                          : box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION)
+                            ? 'อยู่ในคลัง'
+                            : 'อยู่ที่บ้าน'}
                    </span>
                 </div>
 
@@ -658,17 +731,19 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 )}
              </div>
 
-             {/* Recall & Permission Controls (Only if in warehouse) */}
-             {box.location === 'คลังกลาง Hubbybox' && box.status !== 'returning' && (
+             {/* Recall & permission: only when physically in warehouse workflow (not in-transit) */}
+             {box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) &&
+              box.status !== 'returning' &&
+              box.status !== BOX_STATUS.SHIPPING_TO_WAREHOUSE && (
                 <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl space-y-5 relative overflow-hidden">
                    <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12">
-                      <i className="fa-notdog fa-solid fa-parachute-box text-[60px]"></i>
+                      <i className="fa-solid fa-parachute-box text-[60px]" aria-hidden="true"></i>
                    </div>
                    
                    <div className="relative z-10">
                       <div className="flex items-center justify-between mb-2">
                          <h4 className="font-bold text-lg">การจัดการกล่องในคลัง</h4>
-                         <i className="fa-notdog fa-solid fa-shield-check text-sky-400"></i>
+                         <i className="fa-solid fa-shield-check text-sky-400" aria-hidden="true"></i>
                       </div>
                       <p className="text-xs text-white/60 font-medium leading-relaxed">คุณสามารถเรียกคืนทั้งกล่อง หรืออนุญาตให้เจ้าหน้าที่เปิดเพื่อส่งของคืนแยกชิ้นได้</p>
                    </div>
@@ -677,11 +752,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       {/* Permission Toggle */}
                       <button 
                         onClick={handleToggleStaffOpen}
-                        disabled={isSubmittingRequest}
+                        
                         className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all ${box.allow_staff_open ? 'bg-sky-500/10 border-sky-500/30 text-sky-400' : 'bg-white/5 border-white/10 text-white/70'}`}
                       >
                          <div className="flex items-center gap-3">
-                            <i className={`fa-notdog fa-solid ${box.allow_staff_open ? 'fa-unlock' : 'fa-lock'} text-lg`}></i>
+                            <i className={`fa-solid ${box.allow_staff_open ? 'fa-unlock' : 'fa-lock'} text-lg`} aria-hidden="true"></i>
                             <div className="text-left">
                                <span className="block text-sm font-bold">อนุญาตให้เจ้าหน้าที่เปิด</span>
                                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">Staff Open Permission</span>
@@ -693,14 +768,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </button>
 
                       {/* Recall Button */}
-                      <button 
-                        onClick={handleRecallBox}
-                        disabled={isSubmittingRequest}
+                      <Link 
+                        href={}
                         className="w-full bg-white text-slate-900 font-black py-4 rounded-2xl hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center gap-2"
                       >
-                         <i className="fa-notdog fa-solid fa-arrow-rotate-left"></i>
+                         <i className="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
                          เรียกคืนกล่องนี้กลับบ้าน
-                      </button>
+                      </Link>
                    </div>
                 </div>
              )}
@@ -712,12 +786,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-10 relative">
               <form onSubmit={(e) => { handleAddItem(e); setIsManualAddOpen(false); }} className="relative flex flex-col gap-4">
                  <button type="button" onClick={() => setIsManualAddOpen(false)} className="absolute -top-3 -right-2 w-8 h-8 bg-slate-100 border border-white rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200 shadow-sm z-10 transition-colors">
-                    <i className="fa-notdog fa-solid fa-xmark"></i>
+                    <i className="fa-solid fa-xmark" aria-hidden="true"></i>
                  </button>
                  <div className="flex bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white shadow-xl overflow-hidden group focus-within:ring-4 ring-primary/10 transition-all">
                     <input id="manual-name-input" type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="จดชื่อของเพิ่มเติม..." className="w-full bg-transparent py-5 pl-6 pr-4 text-slate-800 text-lg font-bold focus:outline-none" />
                     <button type="submit" disabled={!newItemName.trim() || isSubmitting} className="w-[88px] bg-primary hover:bg-primary/90 disabled:bg-slate-100 text-white flex items-center justify-center transition-all">
-                       <i className="fa-notdog fa-solid fa-plus text-[28px]" aria-hidden="true"></i>
+                       <i className="fa-solid fa-plus text-[28px]" aria-hidden="true"></i>
                     </button>
                  </div>
               </form>
@@ -741,7 +815,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
            {items.length === 0 ? (
                <div className="text-center py-16 px-6 border-2 border-dashed border-primary/20 rounded-3xl mt-2 bg-white/40 backdrop-blur-sm">
                   <div className="w-20 h-20 bg-white border border-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm text-primary">
-                    <i className="fa-notdog fa-solid fa-box-open text-[32px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-box-open text-[32px]" aria-hidden="true"></i>
                   </div>
                   <p className="font-bold text-xl text-slate-700 mb-2">กล่องว่างเปล่า</p>
                   <p className="text-sm font-medium text-slate-500 max-w-[200px] mx-auto leading-relaxed">ใส่ของลงกล่องเลย!</p>
@@ -754,11 +828,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     <li key={item.id} onClick={() => { if (isSelectionMode) { const newSet = new Set(selectedItemIds); if (isSelected) newSet.delete(item.id); else newSet.add(item.id); setSelectedItemIds(newSet); } }} className={`bg-white/90 backdrop-blur-md border border-white/50 shadow-sm px-4 py-4 rounded-2xl flex items-center gap-4 hover:shadow-lg transition-all group overflow-hidden relative ${isSelectionMode ? 'cursor-pointer active:scale-[0.98]' : ''} ${isSelected ? 'ring-2 ring-primary !bg-primary/5' : ''}`}>
                         {isSelectionMode && (
                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-primary border-primary text-white' : 'bg-white border-slate-200'}`}>
-                              {isSelected && <i className="fa-notdog fa-solid fa-check text-[10px]"></i>}
+                              {isSelected && <i className="fa-solid fa-check text-[10px]"></i>}
                            </div>
                         )}
                         <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden shadow-inner cursor-pointer active:scale-95 transition-transform ${item.image_url ? '' : 'bg-primary/5 text-primary'}`} onClick={(e) => { if (isSelectionMode) return; e.stopPropagation(); item.image_url && setSelectedFullScreenImage(item.image_url); }}>
-                          {item.image_url ? <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" /> : <i className="fa-notdog fa-solid fa-box-open text-[20px]" aria-hidden="true"></i>}
+                          {item.image_url ? <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" /> : <i className="fa-solid fa-box-open text-[20px]" aria-hidden="true"></i>}
                         </div>
                         <div className="flex-1 flex flex-col justify-center">
                            <span className="font-bold text-slate-700 text-lg line-clamp-1 leading-tight">{item.name}</span>
@@ -766,10 +840,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                         {!isSelectionMode && isOwner && (
                             <div className="flex gap-2">
                                <button onClick={(e) => { e.stopPropagation(); setItemToMove(item); setIsMoveModalOpen(true); fetchOtherBoxes(); }} className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition-all border border-slate-100 shadow-sm">
-                                 <i className="fa-notdog fa-solid fa-right-left text-[14px]"></i>
+                                 <i className="fa-solid fa-right-left text-[14px]"></i>
                                </button>
                                <button onClick={(e) => { e.stopPropagation(); handleDeleteItem(item.id); }} className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-100 shadow-sm">
-                                 <i className="fa-notdog fa-solid fa-trash-can text-[14px]"></i>
+                                 <i className="fa-solid fa-trash-can text-[14px]"></i>
                                </button>
                             </div>
                         )}
@@ -792,13 +866,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 <div className="flex gap-2">
                    <button onClick={() => { setIsSelectionMode(false); setSelectedItemIds(new Set()); }} className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-bold transition-all">ยกเลิก</button>
                    
-                   {box.location === 'คลังกลาง Hubbybox' && box.allow_staff_open ? (
+                   {box.location === HUBBYBOX_WAREHOUSE_LOCATION && box.allow_staff_open ? (
                      <button 
                        onClick={handleRequestItemReturn}
                        disabled={selectedItemIds.size === 0 || isSubmittingRequest}
                        className="px-6 py-3 bg-amber-500 text-white rounded-xl text-sm font-black shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                      >
-                        <i className="fa-notdog fa-solid fa-parachute-box"></i> ส่งคืนแยกชิ้น
+                        <i className="fa-solid fa-parachute-box"></i> ส่งคืนแยกชิ้น
                      </button>
                    ) : (
                      <button onClick={() => { if (selectedItemIds.size > 0) { setIsMoveModalOpen(true); fetchOtherBoxes(); } }} className="px-6 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all outline-none">ย้ายไปที่...</button>
@@ -818,11 +892,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       <h3 className="text-2xl font-black text-slate-800">ย้ายไปกล่องไหนดี?</h3>
                       <p className="text-slate-500 font-medium">ย้าย <span className="text-primary font-bold">{isSelectionMode ? `${selectedItemIds.size} รายการ` : `"${itemToMove?.name}"`}</span> ไปยัง...</p>
                    </div>
-                   <button onClick={() => setIsMoveModalOpen(false)} className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 border border-slate-100"><i className="fa-notdog fa-solid fa-xmark"></i></button>
+                   <button onClick={() => setIsMoveModalOpen(false)} className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 border border-slate-100"><i className="fa-solid fa-xmark"></i></button>
                 </div>
                 <div className="max-h-[50vh] overflow-y-auto pr-2">
                    {isLoadingOtherBoxes ? (
-                      <div className="py-12 flex flex-col items-center gap-3"><i className="fa-notdog fa-solid fa-spinner fa-spin text-primary text-[32px]"></i><p className="text-sm text-slate-400">กำลังค้นหากล่อง...</p></div>
+                      <div className="py-12 flex flex-col items-center gap-3"><i className="fa-solid fa-spinner fa-spin text-primary text-[32px]"></i><p className="text-sm text-slate-400">กำลังค้นหากล่อง...</p></div>
                    ) : otherBoxes.length === 0 ? (
                       <div className="py-12 text-center bg-slate-50 rounded-[2rem]"><p className="text-slate-500 font-bold">ยังไม่มีกล่องอื่นเลย</p></div>
                    ) : (
@@ -830,7 +904,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                          {otherBoxes.map(b => (
                             <button key={b.id} onClick={() => { if (isSelectionMode) handleMoveBulkItems(b.id); else handleMoveItem(b.id); }} className="w-full text-left p-5 rounded-2xl bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-all flex items-center justify-between group">
                                <div className="flex items-center gap-4">
-                                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary shadow-sm transition-colors border border-slate-100"><i className="fa-notdog fa-solid fa-box text-[18px]"></i></div>
+                                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary shadow-sm transition-colors border border-slate-100"><i className="fa-solid fa-box text-[18px]"></i></div>
                                   <span className="font-bold text-slate-700 group-hover:text-primary transition-colors">{b.name}</span>
                                </div>
                             </button>
@@ -845,7 +919,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       {selectedFullScreenImage && (
         <div className="fixed inset-0 z-[100] bg-slate-900/95 flex items-center justify-center p-6" onClick={() => setSelectedFullScreenImage(null)}>
-          <div className="absolute top-8 right-8"><button className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white text-2xl"><i className="fa-notdog fa-solid fa-xmark"></i></button></div>
+          <div className="absolute top-8 right-8"><button className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-xmark"></i></button></div>
           <img src={selectedFullScreenImage} className="max-w-full max-h-full rounded-3xl shadow-2xl border-2 border-white/20" alt="Full Preview" />
         </div>
       )}
@@ -854,7 +928,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       <div className="hidden print:flex fixed inset-0 z-[9999] bg-white flex-col items-center justify-center h-screen w-screen absolute">
         <div className="border-[4px] border-slate-900 rounded-[2rem] p-8 flex flex-col items-center justify-center w-[400px] max-w-full gap-6 text-center bg-white">
            <div className="flex items-center gap-3">
-              <i className="fa-notdog fa-solid fa-box-open text-4xl text-slate-900"></i>
+              <i className="fa-solid fa-box-open text-4xl text-slate-900"></i>
               <h1 className="text-4xl font-black text-slate-900 tracking-tighter">HubbyBox</h1>
            </div>
            <div className="w-full h-[3px] bg-slate-900 rounded-full my-1"></div>

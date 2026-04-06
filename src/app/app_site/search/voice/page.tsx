@@ -24,7 +24,7 @@ export default function VoiceSearch() {
     <div className="min-h-screen bg-slate-900 text-white font-sans flex flex-col p-6 overflow-hidden">
        <header className="flex items-center gap-4 mb-20 pt-4 relative z-10">
           <Link href="/" className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-all">
-             <i className="fa-notdog fa-solid fa-arrow-left"></i>
+             <i className="fa-solid fa-arrow-left"></i>
           </Link>
           <h1 className="text-2xl font-black italic tracking-tight">ค้นหาด้วยเสียง Hubby</h1>
        </header>
@@ -50,7 +50,7 @@ export default function VoiceSearch() {
                   isRecording ? 'bg-red-500 scale-110' : 'bg-primary hover:scale-105 active:scale-95'
                }`}
              >
-                <i className={`fa-notdog fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'} text-5xl text-white drop-shadow-lg`}></i>
+                <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'} text-5xl text-white drop-shadow-lg`}></i>
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
              </div>
 

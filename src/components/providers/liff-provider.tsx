@@ -82,6 +82,7 @@ export const LiffProvider = ({
       setDbUser(data);
     } catch (e: any) {
       console.error('[DB] Sync failed or timed out:', e.message);
+      if (e?.code) console.log(`[DB] Error Code: ${e.code}`);
       // Fallback for demo/dev if DB fails
       setDbUser({ id: 'fallback-id', box_quota: 3 });
     }
@@ -118,6 +119,7 @@ export const LiffProvider = ({
         setIsLoading(false);
       }, 3500);
 
+      let redirectingToLineLogin = false;
       try {
         const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
         
@@ -137,33 +139,34 @@ export const LiffProvider = ({
           return;
         }
 
-        await liff.init({ liffId });
+        await liff.init({
+          liffId,
+          // ให้ล็อกอินผ่าน LINE ได้แม้เปิดลิงก์นอกแอป LINE (เบราว์เซอร์)
+          withLoginOnExternalBrowser: true,
+        });
         setLiffObject(liff);
 
-        if (liff.isLoggedIn()) {
-          profile = await liff.getProfile();
-          setUserProfile(profile);
-          if (profile?.userId) {
-            await fetchOrSyncDbUser(profile.userId);
-          }
-        } else {
-           if (true) { // Mock login for dev/subdomain testing
-              profile = {
-                userId: 'mock_line_user_123',
-                displayName: 'Dev User',
-              };
-              setUserProfile(profile);
-              await fetchOrSyncDbUser(profile.userId);
-           } else {
-             liff.login();
-           }
+        if (!liff.isLoggedIn()) {
+          redirectingToLineLogin = true;
+          const redirectUri =
+            typeof window !== 'undefined' ? window.location.href.split('#')[0] : undefined;
+          liff.login({ redirectUri });
+          return;
+        }
+
+        profile = await liff.getProfile();
+        setUserProfile(profile);
+        if (profile?.userId) {
+          await fetchOrSyncDbUser(profile.userId);
         }
       } catch (err: any) {
         console.error('LIFF init failed', err);
         setError(err);
       } finally {
-        setIsLoading(false);
         clearTimeout(timeoutId);
+        if (!redirectingToLineLogin) {
+          setIsLoading(false);
+        }
       }
     };
 

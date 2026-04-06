@@ -19,7 +19,7 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-b from-[#e0f2fe] to-white">
-        <i className="fa-notdog fa-solid fa-spinner fa-spin text-sky-400 text-[40px]" aria-hidden="true"></i>
+        <i className="fa-solid fa-spinner fa-spin text-sky-400 text-[40px]" aria-hidden="true"></i>
       </div>
     );
   }
@@ -32,7 +32,7 @@ export default function SettingsPage() {
       {/* Header */}
       <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-2xl border-b border-white/50 px-6 py-4 flex items-center justify-between shadow-sm">
         <Link href="/" className="w-11 h-11 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-50 hover:text-primary">
-           <i className="fa-notdog fa-solid fa-arrow-left text-[20px]" aria-hidden="true"></i>
+           <i className="fa-solid fa-arrow-left text-[20px]" aria-hidden="true"></i>
         </Link>
         <div className="flex items-center gap-3">
             <h1 className="font-bold text-xl text-slate-800 tracking-tight">ตั้งค่า</h1>
@@ -45,7 +45,7 @@ export default function SettingsPage() {
         {/* Profile Card */}
         <section className="bg-white/80 backdrop-blur-md border border-white shadow-[0_15px_40px_-15px_rgba(56,189,248,0.3)] rounded-[2rem] p-6 mb-8 flex flex-col items-center text-center relative overflow-hidden">
            <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 scale-150 text-sky-400">
-               <i className="fa-notdog fa-solid fa-user text-[120px]" aria-hidden="true"></i>
+               <i className="fa-solid fa-user text-[120px]" aria-hidden="true"></i>
            </div>
            <div className="relative z-10 w-24 h-24 mb-4">
               {userProfile?.pictureUrl ? (
@@ -58,7 +58,7 @@ export default function SettingsPage() {
                 />
               ) : (
                 <div className="w-full h-full bg-sky-50 rounded-full flex items-center justify-center border-4 border-white shadow-md">
-                  <i className="fa-notdog fa-solid fa-user text-sky-400 text-[40px]" aria-hidden="true"></i>
+                  <i className="fa-solid fa-user text-sky-400 text-[40px]" aria-hidden="true"></i>
                 </div>
               )}
            </div>
@@ -72,7 +72,7 @@ export default function SettingsPage() {
            <div className="p-5 flex items-center justify-between border-b border-slate-100">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                    <i className="fa-notdog fa-solid fa-box text-[18px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-box text-[18px]" aria-hidden="true"></i>
                  </div>
                  <span className="font-bold text-lg">โควต้าสร้างกล่อง</span>
               </div>
@@ -81,11 +81,11 @@ export default function SettingsPage() {
            <Link href="/settings/premium" className="w-full p-5 flex items-center justify-between bg-slate-50 hover:bg-indigo-50/50 active:bg-indigo-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 group-hover:bg-indigo-100 transition-colors">
-                    <i className="fa-notdog fa-solid fa-gem text-[18px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-gem text-[18px]" aria-hidden="true"></i>
                  </div>
                  <span className="font-bold text-lg group-hover:text-indigo-600 transition-colors">อัปเกรดเป็น Premium</span>
               </div>
-              <i className="fa-notdog fa-solid fa-chevron-right text-slate-400 group-hover:text-indigo-400 transition-colors" aria-hidden="true"></i>
+              <i className="fa-solid fa-chevron-right text-slate-400 group-hover:text-indigo-400 transition-colors" aria-hidden="true"></i>
            </Link>
         </section>
 
@@ -95,16 +95,16 @@ export default function SettingsPage() {
            <Link href="/settings/support" className="w-full p-5 flex items-center justify-between border-b border-slate-100 hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500 group-hover:bg-sky-100 transition-colors">
-                    <i className="fa-notdog fa-solid fa-circle-question text-[18px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-circle-question text-[18px]" aria-hidden="true"></i>
                  </div>
                  <span className="font-bold text-lg group-hover:text-sky-600 transition-colors">ช่วยเหลือและแนะนำ</span>
               </div>
-              <i className="fa-notdog fa-solid fa-chevron-right text-slate-400 group-hover:text-sky-400 transition-colors" aria-hidden="true"></i>
+              <i className="fa-solid fa-chevron-right text-slate-400 group-hover:text-sky-400 transition-colors" aria-hidden="true"></i>
            </Link>
            <button onClick={handleLogout} className="w-full p-5 flex items-center justify-between hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-rose-600">
                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
-                    <i className="fa-notdog fa-solid fa-right-from-bracket text-[18px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-right-from-bracket text-[18px]" aria-hidden="true"></i>
                  </div>
                  <span className="font-bold text-lg">ออกจากระบบ</span>
               </div>
@@ -117,11 +117,11 @@ export default function SettingsPage() {
            <Link href="/settings/donate" className="w-full p-5 flex items-center justify-between hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 group-hover:bg-rose-100 transition-colors">
-                    <i className="fa-notdog fa-solid fa-heart text-[18px]" aria-hidden="true"></i>
+                    <i className="fa-solid fa-heart text-[18px]" aria-hidden="true"></i>
                  </div>
                  <span className="font-bold text-lg group-hover:text-rose-600 transition-colors">เลี้ยงขนมน้อง Hubby</span>
               </div>
-              <i className="fa-notdog fa-solid fa-chevron-right text-slate-400 group-hover:text-rose-400 transition-colors" aria-hidden="true"></i>
+              <i className="fa-solid fa-chevron-right text-slate-400 group-hover:text-rose-400 transition-colors" aria-hidden="true"></i>
            </Link>
         </section>
 

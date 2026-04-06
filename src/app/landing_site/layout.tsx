@@ -1,19 +1,20 @@
 import type { Metadata } from 'next';
-import { Kodchasan } from 'next/font/google';
+import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import Script from 'next/script';
 import '../globals.css';
 
-const kodchasan = Kodchasan({ 
+const ibmPlexThai = IBM_Plex_Sans_Thai({ 
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['thai', 'latin'],
   display: 'swap',
+  variable: '--font-ibm-plex-thai',
 });
 
 export const metadata: Metadata = {
   title: 'HubbyBox - จัดระเบียบของในบ้านด้วย AI',
   description: 'ให้ Hubby AI ช่วยจำว่าของแต่ละชิ้นอยู่ที่ไหน!',
   icons: {
-    icon: '/logo-hubbyboox.png',
+    icon: '/logo-hubbybox.png',
   }
 };
 
@@ -23,11 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className="h-full">
+    <html lang="th" className={`${ibmPlexThai.variable} h-full scroll-smooth`}>
       <head>
-        <Script src="https://kit.fontawesome.com/276094607e.js" crossOrigin="anonymous" strategy="beforeInteractive" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       </head>
-      <body className={`${kodchasan.className} min-h-full flex flex-col bg-slate-50 text-slate-900 selection:bg-primary/20`}>
+      <body className={`${ibmPlexThai.className} min-h-full flex flex-col bg-white text-slate-900 selection:bg-primary/20`}>
         {children}
       </body>
     </html>

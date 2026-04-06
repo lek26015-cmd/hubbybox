@@ -26,6 +26,7 @@ export function AppBottomNav() {
           <Link 
             key={item.href} 
             href={item.href}
+            aria-current={isActive ? 'page' : undefined}
             className={`relative flex flex-col items-center gap-1.5 transition-all active:scale-90 ${
               isActive ? 'text-primary' : 'text-slate-400'
             }`}
@@ -33,7 +34,7 @@ export function AppBottomNav() {
             <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${
               isActive ? 'bg-primary/10 shadow-inner scale-110' : 'hover:bg-slate-50'
             }`}>
-              <i className={`fa-notdog fa-solid ${item.icon} text-[20px]`} aria-hidden="true"></i>
+              <i className={`fa-solid ${item.icon} text-[20px]`} aria-hidden="true"></i>
             </div>
             <span className={`text-[10px] font-black uppercase tracking-widest transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-40'}`}>
               {item.label}
