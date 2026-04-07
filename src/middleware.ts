@@ -23,12 +23,25 @@ export default function middleware(req: NextRequest) {
   const res = (() => {
     // 1. App Subdomain (app.*)
     if (hostname.startsWith('app.')) {
+      const isLoggedIn = req.cookies.has('hubby_liff_logged_in');
+      const isBypass = req.cookies.get('hubby_bypass')?.value === '1';
+      
+      // If not logged in and no bypass, redirect to landing
+      if (!isLoggedIn && !isBypass && !url.pathname.startsWith('/api')) {
+         return NextResponse.redirect(new URL('/', req.url));
+      }
+
       if (url.pathname.startsWith('/app_site')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
     }
   
     // 2. Admin Subdomain (admin.*)
     if (hostname.startsWith('admin.')) {
+      const hasSession = req.cookies.has('sb-access-token') || req.cookies.has('supabase-auth-token');
+      const isLoginPath = url.pathname.includes('/login');
+
+      // If not logged in and not on login page, let the layout handle redirect OR handle it here
+      // Re-writing first so the internal paths work
       if (url.pathname.startsWith('/admin_site')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/admin_site${path}`, req.url));
     }

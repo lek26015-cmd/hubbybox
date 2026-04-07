@@ -1,0 +1,93 @@
+'use client';
+
+import { useState } from 'react';
+import { useAdminAuth } from '@/components/auth/admin-auth-provider';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+
+export default function AdminLoginPage() {
+  const { signInWithGoogle } = useAdminAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-vora-accent/10 blur-[120px] rounded-full animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-vora-accent/5 blur-[120px] rounded-full" />
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md bg-slate-900/50 backdrop-blur-3xl border border-slate-800 p-10 rounded-[2.5rem] shadow-2xl relative z-10"
+      >
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-16 h-16 bg-vora-accent rounded-2xl flex items-center justify-center shadow-2xl shadow-vora-accent/30 mb-6">
+            <Image 
+              src="/logo-hubbybox.png" 
+              alt="HubbyBox" 
+              width={40} 
+              height={40} 
+              className="object-contain brightness-0 invert" 
+            />
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tighter mb-2">HubbyBox. Admin</h1>
+          <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.2em]">Management System Portal</p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="text-center">
+            <p className="text-slate-400 text-sm font-medium leading-relaxed">
+              ยินดีต้อนรับเข้าสู่ระบบจัดการ HubbyBox คลังสินค้าอัจฉริยะ<br/>
+              กรุณาเข้าสู่ระบบด้วยบัญชีแอดมินเพื่อดำเนินการต่อครับ
+            </p>
+          </div>
+
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center gap-3 text-rose-400 text-xs font-bold">
+              <i className="fa-solid fa-triangle-exclamation" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <button
+            onClick={handleLogin}
+            disabled={isLoading}
+            className="w-full bg-white text-slate-950 font-black py-4 rounded-xl flex items-center justify-center gap-4 transition-all active:scale-95 group shadow-xl shadow-slate-900"
+          >
+            {isLoading ? (
+              <i className="fa-solid fa-spinner fa-spin" />
+            ) : (
+              <>
+                <Image src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width={20} height={20} />
+                <span>Sign in with Google</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        <div className="mt-12 flex flex-col items-center gap-4">
+           <div className="w-8 h-1 bg-slate-800 rounded-full" />
+           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Authorized Access Only</p>
+        </div>
+      </motion.div>
+
+      {/* Version Tag */}
+      <div className="absolute bottom-6 right-6">
+         <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest bg-slate-900/50 px-3 py-1 rounded-full border border-slate-800">HubbyBox v2.0.4</span>
+      </div>
+    </div>
+  );
+}

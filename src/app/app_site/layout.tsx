@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import '../globals.css';
 import { LiffProvider } from '@/components/providers/liff-provider';
 import { AppBottomNav } from '@/components/layout/app-bottom-nav';
+import { AppAuthGuard } from '@/components/layout/app-auth-guard';
 
 const kodchasan = Kodchasan({ 
   subsets: ['latin', 'thai'],
@@ -36,8 +37,10 @@ export default async function RootLayout({
       </head>
       <body className={`${kodchasan.className} min-h-full flex flex-col bg-slate-50 text-slate-900 selection:bg-primary/20 pb-28`}>
         <LiffProvider initialIsLoading={!hasBypass}>
-          {children}
-          <AppBottomNav />
+          <AppAuthGuard>
+            {children}
+            <AppBottomNav />
+          </AppAuthGuard>
         </LiffProvider>
       </body>
     </html>

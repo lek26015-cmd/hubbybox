@@ -4,9 +4,10 @@ import { Kodchasan } from 'next/font/google';
 import Script from 'next/script';
 import '../globals.css';
 import { useState, useRef, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { AdminAuthProvider, useAdminAuth } from '@/components/auth/admin-auth-provider';
 
 const kodchasan = Kodchasan({ 
   weight: ['300', '400', '500', '600', '700'],
@@ -20,6 +21,20 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <AdminAuthProvider>
+       <AdminInnerLayout>{children}</AdminInnerLayout>
+    </AdminAuthProvider>
+  );
+}
+
+function AdminInnerLayout({ children }: { children: React.ReactNode }) {
+  const { user, isLoading: isAuthLoading } = useAdminAuth();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const isLoginPage = pathname === '/admin_site/login' || pathname === '/login';
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -31,7 +46,6 @@ export default function AdminLayout({
   ]);
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
 
   // Click outside to close menus
   useEffect(() => {
@@ -53,6 +67,40 @@ export default function AdminLayout({
   };
 
   const newCount = notifications.filter(n => n.isNew).length;
+
+  // Auth Guard
+  if (isAuthLoading) {
+     return (
+        <html lang="th" className={`${kodchasan.variable} h-full`}>
+           <body className="h-full bg-admin-bg flex items-center justify-center">
+              <i className="fa-solid fa-spinner fa-spin text-vora-accent text-[40px]" />
+           </body>
+        </html>
+     );
+  }
+
+  // Redirect to login if not authenticated and not on login page
+  if (!user && !isLoginPage) {
+     if (typeof window !== 'undefined') {
+        router.replace('/admin_site/login');
+     }
+     return null;
+  }
+
+  // If login page, don't show the dashboard layout
+  if (isLoginPage) {
+     return (
+        <html lang="th" className={`${kodchasan.variable} h-full`}>
+           <head>
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+           </head>
+           <body className={`${kodchasan.className} h-full bg-admin-bg`}>
+              {children}
+           </body>
+        </html>
+     );
+  }
 
   return (
     <html lang="th" className={`${kodchasan.variable} h-full`}>

@@ -99,16 +99,11 @@ export const LiffProvider = ({
                        hasCookieBypass ||
                        (typeof window !== 'undefined' && localStorage.getItem('hubby_skip_liff') === 'true');
 
-      if (isBypass) {
-        console.log('[LIFF] Hard bypass triggered - Skipping initialization');
-        const mockProfile = { userId: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', displayName: 'Mock User (Bypassed)' };
+      if (isBypass && process.env.NODE_ENV === 'development') {
+        console.log('[LIFF] Bypass detected (Dev only)');
+        const mockProfile = { userId: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', displayName: 'Dev User' };
         setUserProfile(mockProfile);
-        // Pre-set a default dbUser synchronously so UI can start loading data immediately
         setDbUser({ id: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', box_quota: 15 });
-        
-        // Quietly try to sync with DB without blocking
-        fetchOrSyncDbUser(mockProfile.userId).catch(() => {});
-        
         setIsLoading(false);
         return;
       }
@@ -158,6 +153,10 @@ export const LiffProvider = ({
         setUserProfile(profile);
         if (profile?.userId) {
           await fetchOrSyncDbUser(profile.userId);
+          // Set cookie for middleware
+          if (typeof document !== 'undefined') {
+            document.cookie = `hubby_liff_logged_in=1; path=/; max-age=2592000; samesite=lax`;
+          }
         }
       } catch (err: any) {
         console.error('LIFF init failed', err);
