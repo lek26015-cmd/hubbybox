@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { getStripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-01-27.acacia' as any,
-});
+import type Stripe from 'stripe';
 
 // Admin Supabase client (Service Role) to bypass RLS in webhooks
 const supabaseAdmin = createClient(
@@ -13,6 +10,7 @@ const supabaseAdmin = createClient(
 );
 
 export async function POST(req: Request) {
+  const stripe = getStripe();
   const body = await req.text();
   const signature = req.headers.get('stripe-signature') || '';
 

@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-// Initialize Stripe lazily or with a fallback to avoid crash during build
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-01-27.acacia' as any,
-});
+import { getStripe } from '@/lib/stripe';
 
 export async function POST(req: Request) {
   try {
+    const stripe = getStripe();
     const { productId, productName, price, userId, orderId } = await req.json();
 
     const session = await stripe.checkout.sessions.create({
