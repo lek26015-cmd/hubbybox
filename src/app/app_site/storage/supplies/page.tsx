@@ -70,7 +70,8 @@ export default function HubbySuppliesPage() {
 
     setIsSubmitting(product.id);
     try {
-      const { data, error } = await supabase
+      // 1. Create a pending order in the database
+      const { data: order, error: orderError } = await supabase
         .from('supplies_orders')
         .insert({
            user_id: dbUser.id,
@@ -82,12 +83,29 @@ export default function HubbySuppliesPage() {
         .select()
         .single();
 
-      if (error) throw error;
-      
-      setOrderSuccess(data);
-    } catch (err) {
-      console.error('Order error:', err);
-      alert('ขออภัย เกิดข้อผิดพลาดในการสั่งซื้อ กรุณาลองใหม่อีกครั้ง');
+      if (orderError) throw orderError;
+
+      // 2. Create Stripe Checkout Session
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          productName: product.name,
+          price: product.price,
+          userId: dbUser.id,
+          orderId: order.id,
+        }),
+      });
+
+      const { url, error: stripeError } = await res.json();
+      if (stripeError) throw new Error(stripeError);
+
+      // 3. Redirect to Stripe
+      window.location.href = url;
+    } catch (err: any) {
+      console.error('Order/Stripe error:', err);
+      alert('ขออภัย เกิดข้อผิดพลาด: ' + err.message);
     } finally {
       setIsSubmitting(null);
     }

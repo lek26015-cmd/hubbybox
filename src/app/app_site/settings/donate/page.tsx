@@ -67,6 +67,7 @@ export default function DonatePage() {
                         src="/donate-qr.png" 
                         alt="PromptPay QR Code for HubbyBox" 
                         fill
+                        sizes="(max-width: 768px) 100vw, 340px"
                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         priority
                       />

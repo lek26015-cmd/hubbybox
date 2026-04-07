@@ -55,10 +55,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   // Security State
   const [hasAccessError, setHasAccessError] = useState(false);
   const isOwner = box && dbUser && box.user_id === dbUser.id;
-  const isLocked = box && (
-    box.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE || 
-    (box.location || '').includes(HUBBYBOX_WAREHOUSE_LOCATION)
-  );
+  const isInWarehouse = box?.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION);
+  const isInTransit = box?.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE;
+  const isLocked = box && (isInTransit || isInWarehouse);
+
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [tempCarrier, setTempCarrier] = useState('');
+  const [tempTrackingNumber, setTempTrackingNumber] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -343,29 +346,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     }
   };
 
-  const handleRecallBox = async () => {
-    if (!isOwner || isSubmittingRequest || box.location !== HUBBYBOX_WAREHOUSE_LOCATION) return;
-    if (!window.confirm('ยืนยันเรียกคืนกล่องนี้กลับบ้าน? (อาจมีค่าขนส่งปลายทาง)')) return;
-
-    setIsSubmittingRequest(true);
-    try {
-      const { error } = await supabase
-        .from('boxes')
-        .update({ 
-          status: 'returning',
-          location: 'กำลังส่งคืน' // Temporary location
-        })
-        .eq('id', boxId);
-
-      if (error) throw error;
-      setBox({ ...box, status: 'returning', location: 'กำลังส่งคืน' });
-      alert('แจ้งเรียกคืนสำเร็จ! ทีมงานจะดำเนินการส่งข้อมูลการจัดส่งให้ท่านเร็วๆ นี้');
-    } catch (err: any) {
-      console.error('Recall error:', err);
-      alert('เรียกคืนไม่สำเร็จ: ' + err.message);
-    } finally {
-      setIsSubmittingRequest(false);
-    }
+  const handleRecallBox = () => {
+    if (!isOwner) return;
+    router.push(`/storage/recall?box_id=${boxId}`);
   };
 
   const handleToggleStaffOpen = async () => {
@@ -389,28 +372,33 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     }
   };
 
-  const handleRequestItemReturn = async () => {
-    if (!isOwner || selectedItemIds.size === 0 || isSubmittingRequest) return;
-    if (!window.confirm(`ยืนยันขอของคืนแยกชิ้นจำนวน ${selectedItemIds.size} รายการ?\n*การแยกส่งมีค่าบริการเพิ่มเติม เริ่มต้น 29.- ต่อครั้ง`)) return;
+  const handleRequestItemReturn = () => {
+    if (!isOwner || selectedItemIds.size === 0) return;
+    const ids = Array.from(selectedItemIds).join(',');
+    router.push(`/storage/recall?box_id=${boxId}&item_ids=${ids}`);
+  };
+
+  const handleUpdateTracking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isOwner || isSubmittingRequest) return;
 
     setIsSubmittingRequest(true);
     try {
       const { error } = await supabase
-        .from('items')
-        .update({ status: 'requested_return' })
-        .in('id', Array.from(selectedItemIds));
+        .from('boxes')
+        .update({ 
+          shipping_carrier: tempCarrier.trim(),
+          tracking_number: tempTrackingNumber.trim()
+        })
+        .eq('id', boxId);
 
       if (error) throw error;
-      
-      setItems(items.map(item => 
-        selectedItemIds.has(item.id) ? { ...item, status: 'requested_return' } : item
-      ));
-      setIsSelectionMode(false);
-      setSelectedItemIds(new Set());
-      alert('ส่งคำขอสำเร็จ! ทีมงานจะตรวจสอบและแจ้งค่าบริการส่งคืนให้ทราบทางแชท');
+      setBox({ ...box, shipping_carrier: tempCarrier.trim(), tracking_number: tempTrackingNumber.trim() });
+      setIsTrackingModalOpen(false);
+      alert('อัปเดตข้อมูลพัสดุเรียบร้อย!');
     } catch (err: any) {
-      console.error('Item return error:', err);
-      alert('ขอคืนไม่สำเร็จ: ' + err.message);
+      console.error('Update tracking error:', err);
+      alert('อัปเดตไม่สำเร็จ: ' + err.message);
     } finally {
       setIsSubmittingRequest(false);
     }
@@ -603,37 +591,59 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                  <div className="relative z-30 flex items-center justify-end h-[4.5rem]">
                     <div className="relative w-16 h-[4.5rem]">
                        <div className="absolute inset-0 pointer-events-none">
-                          <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 ${isActionMenuOpen ? 'translate-y-20 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
-                            <input type="file" id="camera-capture" accept="image/*" capture="environment" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
-                            <label htmlFor="camera-capture" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-solid fa-camera text-[24px]" aria-hidden="true"></i>
-                                <span className="text-[10px] font-bold tracking-wide">ถ่ายรูป</span>
-                            </label>
-                          </div>
-                          <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-75 ${isActionMenuOpen ? 'translate-y-40 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
-                            <input type="file" id="image-upload" accept="image/*" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
-                            <label htmlFor="image-upload" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-regular fa-image text-[24px]" aria-hidden="true"></i>
-                                <span className="text-[10px] font-bold tracking-wide">สแกนรูป</span>
-                            </label>
-                          </div>
-                          <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-100 ${isActionMenuOpen ? 'translate-y-60 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
-                            <button onClick={() => { setIsManualAddOpen(true); setIsActionMenuOpen(false); setTimeout(() => document.getElementById('manual-name-input')?.focus(), 100); }} className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-indigo-500 hover:scale-105 active:scale-95 transition-all">
-                                <i className="fa-solid fa-pen text-[24px]" aria-hidden="true"></i>
-                                <span className="text-[10px] font-bold tracking-wide">จดชื่อ</span>
-                            </button>
-                          </div>
-                          {box.location === HUBBYBOX_WAREHOUSE_LOCATION && (
-                            <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-150 ${isActionMenuOpen ? 'translate-x-[-70px] opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                          {!isLocked && (
+                            <>
+                              <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 ${isActionMenuOpen ? 'translate-y-20 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                                <input type="file" id="camera-capture" accept="image/*" capture="environment" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
+                                <label htmlFor="camera-capture" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
+                                    <i className="fa-solid fa-camera text-[24px]" aria-hidden="true"></i>
+                                    <span className="text-[10px] font-bold tracking-wide">ถ่ายรูป</span>
+                                </label>
+                              </div>
+                              <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-75 ${isActionMenuOpen ? 'translate-y-40 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                                <input type="file" id="image-upload" accept="image/*" className="hidden" onChange={(e) => { handleImageUpload(e); setIsActionMenuOpen(false); }} disabled={isSubmitting} />
+                                <label htmlFor="image-upload" className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center cursor-pointer text-sky-500 hover:scale-105 active:scale-95 transition-all">
+                                    <i className="fa-regular fa-image text-[24px]" aria-hidden="true"></i>
+                                    <span className="text-[10px] font-bold tracking-wide">สแกนรูป</span>
+                                </label>
+                              </div>
+                              <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 delay-100 ${isActionMenuOpen ? 'translate-y-60 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                                <button onClick={() => { setIsManualAddOpen(true); setIsActionMenuOpen(false); setTimeout(() => document.getElementById('manual-name-input')?.focus(), 100); }} className="w-full h-full bg-white/95 backdrop-blur-md border border-white shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-indigo-500 hover:scale-105 active:scale-95 transition-all">
+                                    <i className="fa-solid fa-pen text-[24px]" aria-hidden="true"></i>
+                                    <span className="text-[10px] font-bold tracking-wide">จดชื่อ</span>
+                                </button>
+                              </div>
+                            </>
+                          )}
+                          
+                          {isInWarehouse && (
+                            <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 ${isActionMenuOpen ? 'translate-y-20 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
                               <button onClick={() => { setIsSelectionMode(true); setIsActionMenuOpen(false); }} className="w-full h-full bg-slate-900 border border-slate-700 shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-amber-400 hover:scale-105 active:scale-95 transition-all">
                                   <i className="fa-solid fa-parachute-box text-[24px]" aria-hidden="true"></i>
                                   <span className="text-[10px] font-bold tracking-wide">เรียกของคืน</span>
                               </button>
                             </div>
                           )}
+
+                          {isInTransit && (
+                            <div className={`absolute top-0 right-0 w-16 h-[4.5rem] transition-all duration-500 ${isActionMenuOpen ? 'translate-y-20 opacity-100 pointer-events-auto' : 'opacity-0 scale-50'}`}>
+                              <button 
+                                onClick={() => { 
+                                  setTempCarrier(box.shipping_carrier || '');
+                                  setTempTrackingNumber(box.tracking_number || '');
+                                  setIsTrackingModalOpen(true); 
+                                  setIsActionMenuOpen(false); 
+                                }} 
+                                className="w-full h-full bg-indigo-500 border border-indigo-400 shadow-xl rounded-xl flex flex-col gap-1 items-center justify-center text-white hover:scale-105 active:scale-95 transition-all"
+                              >
+                                  <i className="fa-solid fa-truck-fast text-[24px]" aria-hidden="true"></i>
+                                  <span className="text-[10px] font-bold tracking-wide">เลขพัสดุ</span>
+                              </button>
+                            </div>
+                          )}
                        </div>
-                       <button onClick={() => setIsActionMenuOpen(!isActionMenuOpen)} className="h-[4.5rem] w-16 bg-gradient-to-br from-primary to-[#2a7aeb] border-2 border-white shadow-xl rounded-xl flex items-center justify-center text-white z-40 relative group">
-                          {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[32px]" aria-hidden="true"></i> : <i className={`fa-solid fa-plus text-[32px] transition-transform duration-500 ${isActionMenuOpen ? 'rotate-[135deg]' : ''}`} aria-hidden="true"></i>}
+                       <button onClick={() => setIsActionMenuOpen(!isActionMenuOpen)} className={`h-[4.5rem] w-16 border-2 border-white shadow-xl rounded-xl flex items-center justify-center text-white z-40 relative group transition-all ${isLocked ? 'bg-slate-800' : 'bg-gradient-to-br from-primary to-[#2a7aeb]'}`}>
+                          {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[32px]" aria-hidden="true"></i> : <i className={`fa-solid ${isLocked ? 'fa-ellipsis-vertical' : 'fa-plus'} text-[32px] transition-transform duration-500 ${isActionMenuOpen ? 'rotate-[135deg]' : ''}`} aria-hidden="true"></i>}
                        </button>
                     </div>
                  </div>
@@ -715,19 +725,43 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                    </span>
                 </div>
 
-                {box.shipping_carrier && (
+                {box.shipping_carrier || isInTransit ? (
                   <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">ผู้ขนส่ง</span>
-                        <p className="text-sm font-bold text-slate-700">{box.shipping_carrier}</p>
+                        <p className="text-sm font-bold text-slate-700">{box.shipping_carrier || 'ยังไม่ได้ระบุ'}</p>
                      </div>
-                     {box.tracking_number && (
-                        <div className="flex flex-col items-end">
-                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">เลขพัสดุ</span>
-                           <p className="text-sm font-black text-primary tracking-tight">{box.tracking_number}</p>
-                        </div>
-                     )}
+                     <div className="flex flex-col items-end">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">เลขพัสดุ</span>
+                        {box.tracking_number ? (
+                          <p className="text-sm font-black text-primary tracking-tight">{box.tracking_number}</p>
+                        ) : (
+                          <button 
+                            onClick={() => {
+                              setTempCarrier(box.shipping_carrier || '');
+                              setTempTrackingNumber('');
+                              setIsTrackingModalOpen(true);
+                            }}
+                            className="text-[10px] font-bold text-sky-500 underline"
+                          >
+                            เพิ่มเลขพัสดุ
+                          </button>
+                        )}
+                     </div>
                   </div>
+                ) : null}
+                
+                {isInTransit && box.shipping_carrier && (
+                   <button 
+                    onClick={() => {
+                      setTempCarrier(box.shipping_carrier || '');
+                      setTempTrackingNumber(box.tracking_number || '');
+                      setIsTrackingModalOpen(true);
+                    }}
+                    className="w-full mt-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-bold text-slate-400 hover:text-sky-500 hover:bg-sky-50 transition-all"
+                   >
+                     แก้ไขข้อมูลการจัดส่ง
+                   </button>
                 )}
              </div>
 
@@ -789,9 +823,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                  <button type="button" onClick={() => setIsManualAddOpen(false)} className="absolute -top-3 -right-2 w-8 h-8 bg-slate-100 border border-white rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200 shadow-sm z-10 transition-colors">
                     <i className="fa-solid fa-xmark" aria-hidden="true"></i>
                  </button>
-                 <div className="flex bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white shadow-xl overflow-hidden group focus-within:ring-4 ring-primary/10 transition-all">
-                    <input id="manual-name-input" type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="จดชื่อของเพิ่มเติม..." className="w-full bg-transparent py-5 pl-6 pr-4 text-slate-800 text-lg font-bold focus:outline-none" />
-                    <button type="submit" disabled={!newItemName.trim() || isSubmitting} className="w-[88px] bg-primary hover:bg-primary/90 disabled:bg-slate-100 text-white flex items-center justify-center transition-all">
+                 <div className="flex bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white shadow-xl overflow-hidden group focus-within:ring-4 ring-primary/10 transition-all opacity-95">
+                    <input id="manual-name-input" type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={isLocked ? "ไม่รองรับการจดชื่อขณะอยู่ในคลัง" : "จดชื่อของเพิ่มเติม..."} disabled={isLocked} className="w-full bg-transparent py-5 pl-6 pr-4 text-slate-800 text-lg font-bold focus:outline-none disabled:opacity-50" />
+                    <button type="submit" disabled={!newItemName.trim() || isSubmitting || isLocked} className="w-[88px] bg-primary hover:bg-primary/90 disabled:bg-slate-100 text-white flex items-center justify-center transition-all">
                        <i className="fa-solid fa-plus text-[28px]" aria-hidden="true"></i>
                     </button>
                  </div>
@@ -838,13 +872,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                         <div className="flex-1 flex flex-col justify-center">
                            <span className="font-bold text-slate-700 text-lg line-clamp-1 leading-tight">{item.name}</span>
                         </div>
-                        {!isSelectionMode && isOwner && (
+                        {!isSelectionMode && isOwner && !isLocked && (
                             <div className="flex gap-2">
                                <button onClick={(e) => { e.stopPropagation(); setItemToMove(item); setIsMoveModalOpen(true); fetchOtherBoxes(); }} className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition-all border border-slate-100 shadow-sm">
-                                 <i className="fa-solid fa-right-left text-[14px]"></i>
+                                 <i className="fa-solid fa-right-left text-[14px]" aria-hidden="true"></i>
                                </button>
                                <button onClick={(e) => { e.stopPropagation(); handleDeleteItem(item.id); }} className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-100 shadow-sm">
-                                 <i className="fa-solid fa-trash-can text-[14px]"></i>
+                                 <i className="fa-solid fa-trash-can text-[14px]" aria-hidden="true"></i>
                                </button>
                             </div>
                         )}
@@ -946,6 +980,76 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
            </div>
         </div>
       </div>
+      {/* Tracking Info Modal */}
+      <AnimatePresence>
+        {isTrackingModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 backdrop-blur-md" onClick={() => setIsTrackingModalOpen(false)}>
+            <motion.div 
+              initial={{ y: "100%" }} 
+              animate={{ y: 0 }} 
+              exit={{ y: "100%" }} 
+              transition={{ type: "spring", damping: 25, stiffness: 200 }} 
+              className="w-full max-w-md bg-white rounded-t-[2.5rem] p-8 shadow-2xl relative" 
+              onClick={e => e.stopPropagation()}
+            >
+                <div className="flex items-center justify-between mb-8">
+                   <div>
+                      <h3 className="text-2xl font-black text-slate-800">ระบุเลขพัสดุ</h3>
+                      <p className="text-slate-500 font-medium text-sm">ช่วยให้ทีมงานตรวจสอบและรับของได้รวดเร็วขึ้นครับ</p>
+                   </div>
+                   <button onClick={() => setIsTrackingModalOpen(false)} className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 border border-slate-100"><i className="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form onSubmit={handleUpdateTracking} className="space-y-6">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ผู้ให้บริการขนส่ง</label>
+                      <select 
+                        value={tempCarrier} 
+                        onChange={(e) => setTempCarrier(e.target.value)}
+                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 font-bold text-slate-700 focus:border-primary/30 focus:outline-none transition-all appearance-none"
+                      >
+                         <option value="">-- เลือกผู้ให้บริการ --</option>
+                         <option value="Flash">Flash Express</option>
+                         <option value="J&T">J&T Express</option>
+                         <option value="Kerry">Kerry Express</option>
+                         <option value="ThaiPost">ไปรษณีย์ไทย (EMS)</option>
+                         <option value="Other">อื่นๆ (มาส่งเอง / Lalamove)</option>
+                      </select>
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">เลขพัสดุ (Tracking Number)</label>
+                      <input 
+                        autoFocus
+                        type="text" 
+                        value={tempTrackingNumber}
+                        onChange={(e) => setTempTrackingNumber(e.target.value)}
+                        placeholder="เช่น TH12345678"
+                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 font-bold text-slate-700 placeholder-slate-300 focus:border-primary/30 focus:outline-none transition-all"
+                      />
+                   </div>
+
+                   <div className="pt-4 flex gap-3">
+                      <button 
+                        type="button" 
+                        onClick={() => setIsTrackingModalOpen(false)}
+                        className="flex-1 py-4 bg-slate-100 text-slate-500 font-bold rounded-2xl active:scale-95 transition-all text-lg"
+                      >
+                        ยกเลิก
+                      </button>
+                      <button 
+                        type="submit" 
+                        disabled={!tempCarrier || !tempTrackingNumber || isSubmittingRequest}
+                        className="flex-[2] bg-primary text-white font-black py-4 rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale"
+                      >
+                         {isSubmittingRequest ? <i className="fa-solid fa-spinner fa-spin"></i> : 'บันทึกข้อมูล'}
+                      </button>
+                   </div>
+                </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -78,6 +78,15 @@ export default function SettingsPage() {
               </div>
               <span className="font-bold text-primary text-lg">{quotaTotal} กล่อง</span>
            </div>
+            <Link href="/settings/address" className="w-full p-5 flex items-center justify-between border-b border-slate-100 hover:bg-slate-50 active:bg-slate-100 transition-colors group">
+              <div className="flex items-center gap-4 text-slate-700">
+                 <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500 group-hover:bg-sky-100 transition-colors">
+                    <i className="fa-solid fa-location-dot text-[18px]" aria-hidden="true"></i>
+                 </div>
+                 <span className="font-bold text-lg group-hover:text-sky-600 transition-colors">ที่อยู่จัดส่ง</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-slate-400 group-hover:text-sky-400 transition-colors" aria-hidden="true"></i>
+            </Link>
            <Link href="/settings/premium" className="w-full p-5 flex items-center justify-between bg-slate-50 hover:bg-indigo-50/50 active:bg-indigo-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 group-hover:bg-indigo-100 transition-colors">

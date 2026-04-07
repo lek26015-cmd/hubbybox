@@ -101,10 +101,10 @@ export const LiffProvider = ({
 
       if (isBypass) {
         console.log('[LIFF] Hard bypass triggered - Skipping initialization');
-        const mockProfile = { userId: 'mock_line_user_123', displayName: 'Mock User (Bypassed)' };
+        const mockProfile = { userId: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', displayName: 'Mock User (Bypassed)' };
         setUserProfile(mockProfile);
         // Pre-set a default dbUser synchronously so UI can start loading data immediately
-        setDbUser({ id: 'mock_line_user_123', box_quota: 10 });
+        setDbUser({ id: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', box_quota: 15 });
         
         // Quietly try to sync with DB without blocking
         fetchOrSyncDbUser(mockProfile.userId).catch(() => {});

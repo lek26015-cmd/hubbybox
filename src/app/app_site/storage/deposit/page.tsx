@@ -46,7 +46,7 @@ export default function DepositFlowPage() {
 
       if (!error) {
         const rows = (data || []) as BoxListRow[];
-        const filtered = rows.filter((box) => box.location !== HUBBYBOX_WAREHOUSE_LOCATION);
+        const filtered = rows.filter((box) => !(box.location || '').toLowerCase().includes('คลังกลาง'));
         setBoxes(filtered);
       }
     } finally {

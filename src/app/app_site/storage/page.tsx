@@ -85,10 +85,16 @@ export default function HubbyStoragePage() {
                 </Link>
              </div>
              
-             <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center gap-1 relative z-10">
-                <span className="text-[10px] text-slate-500 font-black tracking-widest uppercase">ค่าบริการเพียง</span>
-                <p className="text-3xl font-black text-white">99.- <span className="text-xs text-slate-500 font-bold">/ กล่อง / เดือน</span></p>
-                <div className="mt-2 flex items-center gap-1.5">
+             <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center gap-2 relative z-10">
+                <span className="text-[10px] text-slate-500 font-black tracking-widest uppercase">ค่าบริการเริ่มต้นเพียง</span>
+                <div className="flex flex-col items-center">
+                   <p className="text-3xl font-black text-white">99.- <span className="text-xs text-slate-500 font-bold">/ กล่อง / เดือน</span></p>
+                   <div className="flex items-center gap-2 mt-1">
+                      <p className="text-xl font-bold text-amber-400">990.- <span className="text-[10px] text-amber-400/80 font-bold">/ กล่อง / ปี</span></p>
+                      <span className="bg-amber-400/10 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded-full border border-amber-400/20 uppercase tracking-tighter self-center mb-0.5">Best Value</span>
+                   </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1.5">
                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-ping"></div>
                    <span className="text-[10px] text-green-400 font-black uppercase tracking-widest">Ready to store</span>
                 </div>
