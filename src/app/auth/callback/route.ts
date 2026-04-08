@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/admin_site';
 
   if (code) {
+    console.log('[Auth Callback] Code detected, exchanging for session...');
     const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,10 +29,15 @@ export async function GET(request: Request) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      console.log('[Auth Callback] Exchange successful, redirecting to:', next);
       return NextResponse.redirect(`${origin}${next}`);
     }
+    console.error('[Auth Callback] Exchange failed:', error.message);
+  } else {
+    console.warn('[Auth Callback] No code found in searchParams');
   }
 
   // return the user to an error page with instructions
+  console.log('[Auth Callback] Redirecting to error page');
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
