@@ -71,11 +71,9 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   // Auth Guard
   if (isAuthLoading) {
      return (
-        <html lang="th" className={`${kodchasan.variable} h-full`}>
-           <body className="h-full bg-admin-bg flex items-center justify-center">
-              <i className="fa-solid fa-spinner fa-spin text-vora-accent text-[40px]" />
-           </body>
-        </html>
+        <div className="min-h-full bg-admin-bg flex items-center justify-center">
+           <i className="fa-solid fa-spinner fa-spin text-vora-accent text-[40px]" />
+        </div>
      );
   }
 
@@ -90,26 +88,14 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   // If login page, don't show the dashboard layout
   if (isLoginPage) {
      return (
-        <html lang="th" className={`${kodchasan.variable} h-full`}>
-           <head>
-              <meta name="viewport" content="width=device-width, initial-scale=1" />
-              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-           </head>
-           <body className={`${kodchasan.className} h-full bg-admin-bg`}>
-              {children}
-           </body>
-        </html>
+        <div className={`${kodchasan.className} min-h-full bg-admin-bg`}>
+           {children}
+        </div>
      );
   }
 
   return (
-    <html lang="th" className={`${kodchasan.variable} h-full`}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-      </head>
-      <body className={`${kodchasan.className} min-h-full flex flex-col bg-admin-bg text-admin-text-secondary relative selection:bg-vora-accent/30`}>
-         <Script src="https://kit.fontawesome.com/276094607e.js" crossOrigin="anonymous" strategy="afterInteractive" />
+    <div className={`${kodchasan.className} min-h-full flex flex-col bg-admin-bg text-admin-text-secondary relative selection:bg-vora-accent/30`}>
          {/* Sidebar Overlay (Mobile) */}
          {isSidebarOpen && (
             <div 
@@ -317,8 +303,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                {children}
             </div>
          </div>
-      </body>
-    </html>
+    </div>
   );
 }
 
