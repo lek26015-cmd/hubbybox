@@ -23,8 +23,8 @@ export default function middleware(req: NextRequest) {
   const res = (() => {
     // 1. App Subdomain (app.*)
     if (hostname.startsWith('app.')) {
-      // If the path starts with /api, we should leave it alone (it's in src/app/api)
-      if (url.pathname.startsWith('/api')) return NextResponse.next();
+      // If the path starts with /api or /auth, we should leave it alone
+      if (url.pathname.startsWith('/api') || url.pathname.startsWith('/auth')) return NextResponse.next();
       
       if (url.pathname.startsWith('/app_site')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
@@ -32,8 +32,8 @@ export default function middleware(req: NextRequest) {
   
     // 2. Admin Subdomain (admin.*)
     if (hostname.startsWith('admin.')) {
-      // If the path starts with /api, let it fall through to the API handler
-      if (url.pathname.startsWith('/api')) return NextResponse.next();
+      // If the path starts with /api or /auth, let it fall through to the handler
+      if (url.pathname.startsWith('/api') || url.pathname.startsWith('/auth')) return NextResponse.next();
 
       // Re-writing to internal admin path
       if (url.pathname.startsWith('/admin_site')) return NextResponse.next();
