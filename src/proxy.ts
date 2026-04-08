@@ -23,14 +23,6 @@ export default function middleware(req: NextRequest) {
   const res = (() => {
     // 1. App Subdomain (app.*)
     if (hostname.startsWith('app.')) {
-      const isLoggedIn = req.cookies.has('hubby_liff_logged_in');
-      const isBypass = req.cookies.get('hubby_bypass')?.value === '1';
-      
-      // If not logged in and no bypass, rewrite to landing site (prevent loop)
-      if (!isLoggedIn && !isBypass && !url.pathname.startsWith('/api')) {
-         return NextResponse.rewrite(new URL(`/landing_site${path}`, req.url));
-      }
-
       // If the path starts with /api, we should leave it alone (it's in src/app/api)
       if (url.pathname.startsWith('/api')) return NextResponse.next();
       
