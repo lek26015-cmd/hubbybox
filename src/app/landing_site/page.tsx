@@ -5,10 +5,20 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /** App subdomain base URL; set NEXT_PUBLIC_APP_URL in production (e.g. https://app.example.com) */
-const APP_ORIGIN = (process.env.NEXT_PUBLIC_APP_URL ?? 'http://app.lvh.me:3000').replace(
-  /\/$/,
-  ''
-);
+// Fallback logic for production vs development
+const getAppOrigin = () => {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host.includes('hubbybox.app')) {
+      return `https://app.hubbybox.app`;
+    }
+  }
+  return 'http://app.lvh.me:3000';
+};
+
+const APP_ORIGIN = getAppOrigin().replace(/\/$/, '');
 
 export default function LandingPage() {
   const containerVariants = {
