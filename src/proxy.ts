@@ -26,30 +26,31 @@ export default function middleware(req: NextRequest) {
       const isLoggedIn = req.cookies.has('hubby_liff_logged_in');
       const isBypass = req.cookies.get('hubby_bypass')?.value === '1';
       
-      // If not logged in and no bypass, redirect to landing
+      // If not logged in and no bypass, rewrite to landing site (prevent loop)
       if (!isLoggedIn && !isBypass && !url.pathname.startsWith('/api')) {
-         return NextResponse.redirect(new URL('/', req.url));
+         return NextResponse.rewrite(new URL(`/landing_site${path}`, req.url));
       }
 
+      // If the path starts with /api, we should leave it alone (it's in src/app/api)
+      if (url.pathname.startsWith('/api')) return NextResponse.next();
+      
       if (url.pathname.startsWith('/app_site')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
     }
   
     // 2. Admin Subdomain (admin.*)
     if (hostname.startsWith('admin.')) {
-      const hasSession = req.cookies.has('sb-access-token') || req.cookies.has('supabase-auth-token');
-      const isLoginPath = url.pathname.includes('/login');
+      // If the path starts with /api, let it fall through to the API handler
+      if (url.pathname.startsWith('/api')) return NextResponse.next();
 
-      // If not logged in and not on login page, let the layout handle redirect OR handle it here
-      // Re-writing first so the internal paths work
+      // Re-writing to internal admin path
       if (url.pathname.startsWith('/admin_site')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/admin_site${path}`, req.url));
     }
   
-    // 3. API Routes - internally they are in app_site/api
+    // 3. API Routes - internally they can be in app_site/api or root api
     if (url.pathname.startsWith('/api')) {
-        if (url.pathname.startsWith('/app_site/api')) return NextResponse.next();
-        return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
+        return NextResponse.next();
     }
 
     // Webhook / server routes under /app_site/api must not be rewritten to landing
