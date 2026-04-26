@@ -64,12 +64,19 @@ export default function SettingsPage() {
                  )}
               </div>
               <div className="flex flex-col text-left">
-                 <h2 className="text-lg font-black text-slate-800 leading-tight line-clamp-1">{userProfile?.displayName || 'ผู้ใช้ Hubbybox'}</h2>
+                 <h2 className="text-lg font-black text-slate-800 leading-tight line-clamp-1">{typeof window !== 'undefined' && localStorage.getItem('hubby_custom_name') ? localStorage.getItem('hubby_custom_name') : (userProfile?.displayName || 'ผู้ใช้ Hubbybox')}</h2>
                  <p className="text-[11px] font-medium text-slate-500 mt-0.5">ID: {userProfile?.userId?.substring(0, 10)}...</p>
               </div>
            </div>
            <button 
-             onClick={() => alert('ฟีเจอร์แก้ไขโปรไฟล์กำลังพัฒนา (Coming Soon)')} 
+             onClick={() => {
+               const currentName = localStorage.getItem('hubby_custom_name') || userProfile?.displayName || 'ผู้ใช้ Hubbybox';
+               const newName = window.prompt('เปลี่ยนชื่อที่แสดงในแอป:', currentName);
+               if (newName && newName.trim() !== '') {
+                 localStorage.setItem('hubby_custom_name', newName.trim());
+                 window.location.reload(); // Refresh to update the UI
+               }
+             }} 
              className="relative z-10 w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-sky-500 transition-colors shrink-0 border border-slate-100"
              title="แก้ไขโปรไฟล์"
            >
