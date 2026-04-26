@@ -106,6 +106,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItemName.trim() || isSubmitting || !isOwner || isLocked) return;
+    
+    if (items.length >= 50) {
+      alert('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -134,6 +139,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !isOwner) return;
+
+    if (items.length >= 50) {
+      alert('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ');
+      e.target.value = '';
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -173,7 +184,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       const newItems = result.split(',').map((s: string) => s.trim()).filter(Boolean);
       
-      for (const itemName of newItems) {
+      const availableSpace = 50 - items.length;
+      if (newItems.length > availableSpace) {
+        alert(`พื้นที่ในกล่องเหลือเพียง ${availableSpace} ชิ้น (แสกนเจอ ${newItems.length} ชิ้น) ระบบจะบันทึกเท่าที่พื้นที่เหลือครับ`);
+      }
+      const itemsToAdd = newItems.slice(0, availableSpace);
+      
+      for (const itemName of itemsToAdd) {
         const { data: newItem, error: insertError } = await supabase
           .from('items')
           .insert({ 
