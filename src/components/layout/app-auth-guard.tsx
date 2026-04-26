@@ -46,8 +46,9 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
               ไม่สามารถซิงค์ข้อมูลผู้ใช้กับระบบหลังบ้านได้<br/>กรุณาลองใหม่อีกครั้ง หรือเข้าใช้งานใหม่ภายหลัง
             </p>
             {error && (
-              <div className="bg-rose-50 border border-rose-100 rounded-xl p-3 mb-8 w-full max-w-xs">
-                <p className="text-[10px] font-bold text-rose-500 font-mono break-words">Error: {error.message || JSON.stringify(error)}</p>
+              <div className="bg-rose-50 border border-rose-100 rounded-xl p-3 mb-8 w-full max-w-xs text-left">
+                <p className="text-[10px] font-bold text-rose-500 font-mono break-words mb-1">Error: {error.message || JSON.stringify(error)}</p>
+                <p className="text-[10px] font-bold text-slate-500 font-mono break-words">LIFF ID: "{process.env.NEXT_PUBLIC_LIFF_ID}"</p>
               </div>
             )}
             <div className="flex flex-col gap-3 w-full max-w-xs">
