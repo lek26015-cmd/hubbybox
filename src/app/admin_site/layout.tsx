@@ -107,9 +107,9 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                >
                   <div className="flex items-center justify-between mb-12">
                   <div className="flex items-center gap-4 group">
-                     <div className="w-10 h-10 bg-vora-accent rounded-xl flex items-center justify-center shadow-xl shadow-vora-accent/30 group-hover:scale-105 transition-transform">
-                        <Image src="/logo-hubbybox.png" alt="HubbyBox" width={28} height={28} className="object-contain brightness-0 invert" />
-                     </div>
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-xl shadow-black/5 group-hover:scale-105 transition-transform overflow-hidden p-1.5">
+                         <Image src="/logo.png" alt="HubbyBox" width={28} height={28} className="object-contain" />
+                      </div>
                      <span className="text-xl font-black tracking-tighter text-admin-text-primary group-hover:text-vora-accent transition-colors text-vora-accent">HubbyBox.</span>
                   </div>
                   <button type="button" aria-label="ปิดเมนู" onClick={() => setIsSidebarOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -136,8 +136,8 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
             {/* Desktop Sidebar */}
             <aside className="hidden xl:flex w-72 bg-admin-card border-r border-admin-border flex flex-col p-8 z-50 overflow-y-auto">
                <Link href="/admin_site" className="flex items-center gap-4 mb-12 group cursor-pointer">
-                  <div className="w-12 h-12 bg-vora-accent rounded-xl flex items-center justify-center shadow-2xl shadow-vora-accent/10 transition-transform group-hover:scale-110">
-                     <Image src="/logo-hubbybox.png" alt="HubbyBox" width={32} height={32} className="object-contain brightness-0 invert" />
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl shadow-black/5 transition-transform group-hover:scale-110 overflow-hidden p-2">
+                     <Image src="/logo.png" alt="HubbyBox" width={32} height={32} className="object-contain" />
                   </div>
                   <div className="flex flex-col">
                      <span className="text-xl font-black tracking-tighter text-admin-text-primary leading-none">HubbyBox.</span>
