@@ -76,7 +76,7 @@ export default function VoiceSearch() {
           <Link href="/" className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-all">
              <i className="fa-solid fa-arrow-left"></i>
           </Link>
-          <h1 className="text-2xl font-black italic tracking-tight">ค้นหาด้วยเสียง Hubby</h1>
+          <h1 className="text-2xl font-bold italic tracking-tight">ค้นหาด้วยเสียง Hubby</h1>
        </header>
 
        <main className="flex-1 flex flex-col items-center justify-center gap-12 relative">
@@ -106,12 +106,12 @@ export default function VoiceSearch() {
 
              <div className="space-y-4 px-4 min-h-[120px] flex flex-col items-center justify-center text-center w-full">
                 {error ? (
-                  <p className="text-rose-400 font-bold bg-rose-500/10 p-4 rounded-2xl border border-rose-500/20 w-full animate-in fade-in duration-300">
+                  <p className="text-rose-400 font-bold bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 w-full animate-in fade-in duration-300">
                     {error}
                   </p>
                 ) : !isRecording && !transcript ? (
                    <>
-                      <h2 className="text-3xl font-black mb-2 animate-in fade-in zoom-in duration-500">พูดสิ่งที่ต้องการหา</h2>
+                      <h2 className="text-3xl font-bold mb-2 animate-in fade-in zoom-in duration-500">พูดสิ่งที่ต้องการหา</h2>
                       <p className="text-slate-500 font-medium italic break-words max-w-xs">กดปุ่มไมโครโฟนแล้วเริ่มพูดได้เลยครับ</p>
                    </>
                 ) : (
@@ -125,7 +125,7 @@ export default function VoiceSearch() {
                       )}
                       
                       <div className="w-full">
-                        <p className="text-sm text-slate-500 font-black uppercase tracking-widest mb-2">{isRecording ? 'กำลังฟัง...' : 'ได้ยินว่า:'}</p>
+                        <p className="text-sm text-slate-500 font-bold uppercase tracking-widest mb-2">{isRecording ? 'กำลังฟัง...' : 'ได้ยินว่า:'}</p>
                         <p className={`text-2xl font-bold italic transition-all ${isRecording ? 'text-primary animate-pulse' : 'text-white'}`}>
                           {transcript || '...'}
                         </p>
@@ -141,7 +141,7 @@ export default function VoiceSearch() {
        </main>
 
        <footer className="py-12 flex flex-col items-center gap-4 text-center opacity-40">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">ระบบประมวลผลเสียงอัจฉริยะ</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500">ระบบประมวลผลเสียงอัจฉริยะ</p>
        </footer>
     </div>
   );

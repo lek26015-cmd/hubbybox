@@ -89,12 +89,12 @@ export default function SearchByImage() {
           <Link href="/" className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition-all">
              <i className="fa-solid fa-arrow-left"></i>
           </Link>
-          <h1 className="text-2xl font-black">ค้นหาด้วยรูปภาพ</h1>
+          <h1 className="text-2xl font-bold">ค้นหาด้วยรูปภาพ</h1>
        </header>
 
        <main className="flex-1 flex flex-col items-center justify-center gap-8">
           {!previewUrl ? (
-             <div className="w-full max-w-sm aspect-square bg-slate-800 rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden group">
+             <div className="w-full max-w-sm aspect-square bg-slate-800 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="bg-primary/20 w-24 h-24 rounded-full flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                    <i className="fa-solid fa-camera text-4xl"></i>
@@ -102,38 +102,38 @@ export default function SearchByImage() {
                 <h2 className="text-xl font-bold mb-2">ถ่ายรูปหรือเลือกภาพ</h2>
                 <p className="text-slate-400 text-sm mb-8 px-4 font-medium italic">ส่งภาพของที่คุณต้องการหา แล้วปล่อยให้ Hubby AI จัดการ!</p>
                 
-                <label className="bg-white text-slate-900 font-black px-8 py-4 rounded-2xl cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10">
+                <label className="bg-white text-slate-900 font-bold px-8 py-4 rounded-xl cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10">
                    เลือกไฟล์ภาพ
                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                 </label>
              </div>
           ) : (
              <div className="w-full max-w-sm flex flex-col items-center gap-6">
-                <div className="relative w-full aspect-square rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden border-4 border-white/10 shadow-2xl">
                    <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                    {isAnalyzing && (
                       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
                          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-                         <p className="text-lg font-black tracking-widest text-primary animate-pulse">กำลังวิเคราะห์...</p>
+                         <p className="text-lg font-bold tracking-widest text-primary animate-pulse">กำลังวิเคราะห์...</p>
                          <p className="text-xs text-white/70 italic mt-2">Hubby AI กำลังค้นหาสิ่งของจากฐานข้อมูล</p>
                       </div>
                    )}
                 </div>
 
                 {error && (
-                  <div className="bg-rose-500/20 border border-rose-500/30 text-rose-300 p-4 rounded-2xl text-center text-sm">
+                  <div className="bg-rose-500/20 border border-rose-500/30 text-rose-300 p-4 rounded-xl text-center text-sm">
                     {error}
                   </div>
                 )}
                 
                 {!isAnalyzing && !error && (
                    <div className="w-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="bg-slate-800 rounded-3xl p-6 border border-white/10">
-                        <h3 className="font-black text-lg mb-4 flex items-center gap-2">
+                      <div className="bg-slate-800 rounded-2xl p-6 border border-white/10">
+                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                           <i className="fa-solid fa-magnifying-glass text-primary"></i>
                           ผลการวิเคราะห์
                         </h3>
-                        <p className="text-slate-400 text-xs uppercase tracking-widest font-black mb-2">AI ตรวจเจอ:</p>
+                        <p className="text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">AI ตรวจเจอ:</p>
                         <div className="flex flex-wrap gap-2 mb-6">
                           {identifiedItems.length > 0 ? identifiedItems.map((item, i) => (
                             <span key={i} className="bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-white border border-white/5">
@@ -143,13 +143,13 @@ export default function SearchByImage() {
                         </div>
 
                         <div className="space-y-3">
-                          <p className="text-slate-400 text-xs uppercase tracking-widest font-black">ผลการค้นหาในกล่องของคุณ:</p>
+                          <p className="text-slate-400 text-xs uppercase tracking-widest font-bold">ผลการค้นหาในกล่องของคุณ:</p>
                           {searchResults.length > 0 ? (
                             searchResults.map((match) => (
                               <button 
                                 key={match.id}
                                 onClick={() => router.push(`/box/${match.box_id}`)}
-                                className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all text-left"
+                                className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all text-left"
                               >
                                 <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-400 shrink-0">
                                   {match.image_url ? <img src={match.image_url} className="w-full h-full object-cover rounded-lg" /> : <i className="fa-solid fa-tag"></i>}
@@ -187,7 +187,7 @@ export default function SearchByImage() {
        </main>
        
        <footer className="py-8 text-center">
-          <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">ขับเคลื่อนด้วย Hubby AI Vision</p>
+          <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.3em]">ขับเคลื่อนด้วย Hubby AI Vision</p>
        </footer>
     </div>
   );

@@ -65,7 +65,7 @@ export default function SearchResultsPage({ searchParams }: { searchParams: Prom
           <i className="fa-solid fa-arrow-left text-sm" aria-hidden="true"></i>
         </Link>
         <div className="flex flex-col items-center">
-          <h1 className="font-black text-lg text-slate-800 leading-none">ผลการค้นหา</h1>
+          <h1 className="font-bold text-lg text-slate-800 leading-none">ผลการค้นหา</h1>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">"{query}"</p>
         </div>
         <div className="w-10"></div>
@@ -79,12 +79,12 @@ export default function SearchResultsPage({ searchParams }: { searchParams: Prom
           </div>
         ) : totalResults === 0 ? (
           <div className="py-20 text-center flex flex-col items-center">
-             <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center text-slate-200 mb-6 shadow-xl border border-slate-100">
+             <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center text-slate-200 mb-6 shadow-xl border border-slate-100">
                 <i className="fa-solid fa-magnifying-glass text-4xl"></i>
              </div>
-             <h2 className="text-2xl font-black text-slate-800 mb-2">ไม่พบสิ่งที่คุณหา</h2>
+             <h2 className="text-2xl font-bold text-slate-800 mb-2">ไม่พบสิ่งที่คุณหา</h2>
              <p className="text-slate-500 font-medium px-8 leading-relaxed italic">"ลองหาชื่ออื่น หรือสร้างกล่องใหม่ดูสิครับ"</p>
-             <Link href="/" className="mt-10 bg-primary text-white font-black px-10 py-4 rounded-2xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+             <Link href="/" className="mt-10 bg-primary text-white font-bold px-10 py-4 rounded-xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                 กลับหน้าหลัก
              </Link>
           </div>
@@ -93,14 +93,14 @@ export default function SearchResultsPage({ searchParams }: { searchParams: Prom
             {/* Box Results */}
             {results.boxes.length > 0 && (
               <section>
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                   <i className="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
                   กล่องที่พบ ({results.boxes.length})
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
                   {results.boxes.map(box => (
                     <Link key={box.id} href={`/box/${box.id}`}>
-                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all flex items-center gap-4 group">
+                      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all flex items-center gap-4 group">
                          <div className="w-14 h-14 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
                             {box.cover_image_url ? (
                               <img src={box.cover_image_url} alt={box.name} className="w-full h-full object-cover rounded-xl" />
@@ -126,14 +126,14 @@ export default function SearchResultsPage({ searchParams }: { searchParams: Prom
             {/* Item Results */}
             {results.items.length > 0 && (
               <section>
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                   <i className="fa-solid fa-layer-group" aria-hidden="true"></i>
                   สิ่งของที่พบ ({results.items.length})
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
                   {results.items.map(item => (
                     <Link key={item.id} href={`/box/${item.box_id}`}>
-                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all flex items-center gap-4 group">
+                      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all flex items-center gap-4 group">
                          <div className="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 shrink-0 transition-transform group-hover:scale-110">
                             {item.image_url ? (
                               <img src={item.image_url} alt={item.name} className="w-full h-full object-cover rounded-xl" />
