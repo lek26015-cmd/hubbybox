@@ -1,22 +1,72 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function VoiceSearch() {
+  const router = useRouter();
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [isDone, setIsDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Check for browser support
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      setError('เบราว์เซอร์ของคุณไม่รองรับการสั่งงานด้วยเสียงครับ');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'th-TH'; // ตั้งค่าเป็นภาษาไทย
+
+    recognition.onstart = () => {
+      setIsRecording(true);
+      setError(null);
+    };
+
+    recognition.onresult = (event: any) => {
+      const current = event.resultIndex;
+      const transcriptText = event.results[current][0].transcript;
+      setTranscript(transcriptText);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error', event.error);
+      setIsRecording(false);
+      if (event.error === 'not-allowed') {
+        setError('กรุณาอนุญาตให้แอปเข้าถึงไมโครโฟนเพื่อใช้งานครับ');
+      } else {
+        setError('เกิดข้อผิดพลาดในการฟังเสียง ลองใหม่อีกครั้งนะ');
+      }
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+      // If we have a transcript, redirect after a short delay
+      if (transcript.trim()) {
+        setTimeout(() => {
+          router.push(`/search/results?q=${encodeURIComponent(transcript.trim())}`);
+        }, 1000);
+      }
+    };
+
+    recognitionRef.current = recognition;
+  }, [transcript, router]);
 
   const toggleRecording = () => {
-    if (!isRecording) {
-      setIsRecording(true);
-      setTranscript('');
-      setIsDone(false);
+    if (!recognitionRef.current) return;
+
+    if (isRecording) {
+      recognitionRef.current.stop();
     } else {
-      setIsRecording(false);
-      setTranscript('กำลังค้นหา "กรรไกรตัดผม" ในกล่องต่างๆ...');
-      setTimeout(() => setIsDone(true), 2000);
+      setTranscript('');
+      recognitionRef.current.start();
     }
   };
 
@@ -43,43 +93,47 @@ export default function VoiceSearch() {
             </div>
           )}
 
-          <div className="relative z-10 flex flex-col items-center gap-12 max-w-sm text-center">
+          <div className="relative z-10 flex flex-col items-center gap-12 max-w-sm text-center w-full">
              <div 
                onClick={toggleRecording}
                className={`w-36 h-36 rounded-full flex items-center justify-center shadow-2xl transition-all cursor-pointer relative overflow-hidden group ${
-                  isRecording ? 'bg-red-500 scale-110' : 'bg-primary hover:scale-105 active:scale-95'
+                  isRecording ? 'bg-red-500 scale-110' : 'bg-primary hover:scale-105 active:scale-95 shadow-primary/30'
                }`}
              >
                 <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'} text-5xl text-white drop-shadow-lg`}></i>
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
              </div>
 
-             <div className="space-y-4 px-4 min-h-[100px] flex flex-col items-center justify-center text-center">
-                {!isRecording && !isDone && (
+             <div className="space-y-4 px-4 min-h-[120px] flex flex-col items-center justify-center text-center w-full">
+                {error ? (
+                  <p className="text-rose-400 font-bold bg-rose-500/10 p-4 rounded-2xl border border-rose-500/20 w-full animate-in fade-in duration-300">
+                    {error}
+                  </p>
+                ) : !isRecording && !transcript ? (
                    <>
                       <h2 className="text-3xl font-black mb-2 animate-in fade-in zoom-in duration-500">พูดสิ่งที่ต้องการหา</h2>
-                      <p className="text-slate-500 font-medium italic break-words max-w-xs">ลองพูดว่า "กรรไกรตัดผม" หรือ "ยาสามัญประจำบ้าน"</p>
+                      <p className="text-slate-500 font-medium italic break-words max-w-xs">กดปุ่มไมโครโฟนแล้วเริ่มพูดได้เลยครับ</p>
                    </>
-                )}
-                
-                {isRecording && (
-                   <div className="flex flex-col items-center gap-4 animate-in fade-in duration-300">
-                      <div className="flex gap-1 items-end h-8">
-                         {[1,2,3,4,5,6,3,2,1].map((h, i) => (
-                            <div key={i} className="w-1.5 bg-primary rounded-full animate-bounce" style={{ height: `${h * 4}px`, animationDelay: `${i * 0.1}s` }}></div>
-                         ))}
+                ) : (
+                   <div className="flex flex-col items-center gap-6 animate-in fade-in duration-300 w-full">
+                      {isRecording && (
+                        <div className="flex gap-1 items-end h-8">
+                           {[1,2,3,4,5,6,3,2,1].map((h, i) => (
+                              <div key={i} className="w-1.5 bg-primary rounded-full animate-bounce" style={{ height: `${h * 4}px`, animationDelay: `${i * 0.1}s` }}></div>
+                           ))}
+                        </div>
+                      )}
+                      
+                      <div className="w-full">
+                        <p className="text-sm text-slate-500 font-black uppercase tracking-widest mb-2">{isRecording ? 'กำลังฟัง...' : 'ได้ยินว่า:'}</p>
+                        <p className={`text-2xl font-bold italic transition-all ${isRecording ? 'text-primary animate-pulse' : 'text-white'}`}>
+                          {transcript || '...'}
+                        </p>
                       </div>
-                      <p className="text-xl font-bold italic text-primary animate-pulse">กำลังฟัง...</p>
-                   </div>
-                )}
 
-                {isDone && (
-                   <div className="bg-slate-800 rounded-3xl p-6 border border-white/10 animate-in slide-in-from-bottom-8 duration-500">
-                      <h3 className="text-emerald-400 font-black mb-2 underline decoration-wavy">ค้นพบแล้ว!</h3>
-                      <p className="text-white font-bold text-lg mb-6 leading-snug">"กรรไกรตัดผม" อยู่ในกล่อง <strong>"อุปกรณ์เครื่องใช้"</strong> ลำดับที่ 2</p>
-                      <Link href="/" className="inline-block bg-primary text-white font-black px-10 py-3 rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-primary/20">
-                         โอเค พาไปดู
-                      </Link>
+                      {!isRecording && transcript && (
+                        <p className="text-xs text-sky-400 font-bold animate-pulse">กำลังพาคุณไปดูผลลัพธ์...</p>
+                      )}
                    </div>
                 )}
              </div>
@@ -92,3 +146,4 @@ export default function VoiceSearch() {
     </div>
   );
 }
+

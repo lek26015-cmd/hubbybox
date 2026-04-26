@@ -2,20 +2,88 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
+import { useLiff } from '@/components/providers/liff-provider';
+import { useRouter } from 'next/navigation';
 
 export default function SearchByImage() {
+  const router = useRouter();
+  const { dbUser } = useLiff();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [identifiedItems, setIdentifiedItems] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setIsAnalyzing(true);
-      // Simulate AI Analysis
-      setTimeout(() => setIsAnalyzing(false), 3000);
+    if (!file || !dbUser?.id) return;
+
+    setError(null);
+    const localUrl = URL.createObjectURL(file);
+    setPreviewUrl(localUrl);
+    setIsAnalyzing(true);
+    setSearchResults([]);
+
+    try {
+      // 1. Upload to temporary storage for analysis
+      const fileExt = file.name.split('.').pop();
+      const fileName = `search-${Date.now()}.${fileExt}`;
+      const filePath = `temp-search/${dbUser.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('box-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('box-images')
+        .getPublicUrl(filePath);
+
+      // 2. Call Vision API to identify items
+      const visionResp = await fetch('/api/vision', {
+        method: 'POST',
+        body: JSON.stringify({ imageUrl: publicUrl }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const visionData = await visionResp.json();
+      if (!visionResp.ok) throw new Error(visionData.error || 'AI Vision failed');
+
+      const aiResult = visionData.result || '';
+      const itemsFound = aiResult.split(',').map((s: string) => s.trim()).filter(Boolean);
+      setIdentifiedItems(itemsFound);
+
+      if (itemsFound.length > 0) {
+        // 3. Search database for these items
+        // We'll search for the first 3 items identified to avoid too many queries
+        const searchTerms = itemsFound.slice(0, 3);
+        
+        let allMatches: any[] = [];
+        for (const term of searchTerms) {
+          const { data } = await supabase
+            .from('items')
+            .select('*, boxes!inner(name, id, user_id)')
+            .eq('boxes.user_id', dbUser.id)
+            .ilike('name', `%${term}%`);
+          
+          if (data) allMatches = [...allMatches, ...data];
+        }
+
+        // Remove duplicates if same item matched multiple terms
+        const uniqueMatches = Array.from(new Map(allMatches.map(m => [m.id, m])).values());
+        setSearchResults(uniqueMatches);
+      }
+
+      // Cleanup temp file (optional, but good practice)
+      // await supabase.storage.from('box-images').remove([filePath]);
+
+    } catch (err: any) {
+      console.error('Image Search Error:', err);
+      setError(err.message || 'เกิดข้อผิดพลาดในการสแกนภาพ');
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -51,28 +119,84 @@ export default function SearchByImage() {
                       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
                          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
                          <p className="text-lg font-black tracking-widest text-primary animate-pulse">กำลังวิเคราะห์...</p>
-                         <p className="text-xs text-white/70 italic mt-2">Hubby AI กำลังระบุตัวตนสิ่งของของคุณ</p>
+                         <p className="text-xs text-white/70 italic mt-2">Hubby AI กำลังค้นหาสิ่งของจากฐานข้อมูล</p>
                       </div>
                    )}
                 </div>
+
+                {error && (
+                  <div className="bg-rose-500/20 border border-rose-500/30 text-rose-300 p-4 rounded-2xl text-center text-sm">
+                    {error}
+                  </div>
+                )}
                 
-                {!isAnalyzing && (
-                   <div className="w-full bg-slate-800 rounded-3xl p-6 border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="flex items-center gap-4 mb-4">
-                         <div className="bg-emerald-500/20 text-emerald-400 w-10 h-10 rounded-full flex items-center justify-center">
-                            <i className="fa-solid fa-check"></i>
-                         </div>
-                         <h3 className="font-black">พบเจอแล้ว!</h3>
+                {!isAnalyzing && !error && (
+                   <div className="w-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      <div className="bg-slate-800 rounded-3xl p-6 border border-white/10">
+                        <h3 className="font-black text-lg mb-4 flex items-center gap-2">
+                          <i className="fa-solid fa-magnifying-glass text-primary"></i>
+                          ผลการวิเคราะห์
+                        </h3>
+                        <p className="text-slate-400 text-xs uppercase tracking-widest font-black mb-2">AI ตรวจเจอ:</p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {identifiedItems.length > 0 ? identifiedItems.map((item, i) => (
+                            <span key={i} className="bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-white border border-white/5">
+                              {item}
+                            </span>
+                          )) : <span className="text-slate-500 italic">ไม่พบสิ่งของในภาพ</span>}
+                        </div>
+
+                        <div className="space-y-3">
+                          <p className="text-slate-400 text-xs uppercase tracking-widest font-black">ผลการค้นหาในกล่องของคุณ:</p>
+                          {searchResults.length > 0 ? (
+                            searchResults.map((match) => (
+                              <button 
+                                key={match.id}
+                                onClick={() => router.push(`/box/${match.box_id}`)}
+                                className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all text-left"
+                              >
+                                <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-400 shrink-0">
+                                  {match.image_url ? <img src={match.image_url} className="w-full h-full object-cover rounded-lg" /> : <i className="fa-solid fa-tag"></i>}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-bold text-sm text-white truncate">{match.name}</p>
+                                  <p className="text-[10px] text-slate-400 font-medium truncate">ในกล่อง: {match.boxes?.name}</p>
+                                </div>
+                                <i className="fa-solid fa-chevron-right text-slate-600"></i>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="py-4 text-center">
+                              <p className="text-sm text-slate-500 italic">ขออภัยครับ ยังไม่มีของสิ่งนี้ในกล่องของคุณ</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-slate-300 text-sm mb-6 leading-relaxed">พบว่าของชิ้นนี้อยู่ใน <strong>"กล่องอุปกรณ์เครื่องเขียน"</strong> ลำดับที่ 4 ชั้นวางบนสุด</p>
-                      <Link href="/" className="block w-full bg-primary text-white text-center font-black py-4 rounded-2xl hover:opacity-90 transition-all">
-                         นำทางไปที่กล่อง
-                      </Link>
                    </div>
                 )}
                 
                 <button 
-                  onClick={() => setPreviewUrl(null)}
+                  onClick={() => {
+                    setPreviewUrl(null);
+                    setSearchResults([]);
+                    setIdentifiedItems([]);
+                    setError(null);
+                  }}
+                  className="text-slate-500 font-bold hover:text-white transition-colors"
+                >
+                   {previewUrl && !isAnalyzing ? 'ลองค้นหาภาพอื่น' : 'ยกเลิก'}
+                </button>
+             </div>
+          )}
+       </main>
+       
+       <footer className="py-8 text-center">
+          <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">ขับเคลื่อนด้วย Hubby AI Vision</p>
+       </footer>
+    </div>
+  );
+}
+wUrl(null)}
                   className="text-slate-500 font-bold hover:text-white transition-colors"
                 >
                    ลองภาพอื่น
