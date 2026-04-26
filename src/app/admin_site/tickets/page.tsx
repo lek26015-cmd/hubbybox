@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 type SupportTicket = {
   id: string;
   subject: string;
+  description: string | null;
   status: string;
   priority: string;
   created_at: string;
