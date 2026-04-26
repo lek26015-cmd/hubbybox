@@ -115,7 +115,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <div className="relative flex items-center justify-center w-16 h-16 transition-all">
                <Image 
-                 src="/logo-hubbybox.png" 
+                 src="/logo.png" 
                  alt="HubbyBox" 
                  width={64} 
                  height={64} 
@@ -151,7 +151,10 @@ export default function Home() {
 
         {/* 1. ค้นหาของ (Massive Multi-modal Search) */}
         <section className="mb-10 relative z-10 mt-2">
-          <h2 className="text-3xl font-black text-slate-800 tracking-tight mb-5 text-center px-4">Hubby AI ช่วยหา</h2>
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-5 text-center px-4 leading-tight">
+            ต้องการค้นหาของในกล่องของคุณ<br/>
+            <span className="text-primary">ให้ Hubby AI ช่วยหาได้เลย</span>
+          </h2>
           <div className="relative shadow-[0_20px_50px_-12px_rgba(52,137,255,0.25)] rounded-2xl md:rounded-3xl bg-white/70 backdrop-blur-2xl p-2.5 border border-white">
             <form 
               onSubmit={(e) => {
@@ -166,7 +169,7 @@ export default function Home() {
               <input 
                 name="q"
                 type="text" 
-                placeholder="ต้องการหาอะไรบอกได้เลย"
+                placeholder="พิมพ์เพื่อค้นหาของ..."
                 className="w-full bg-white border-2 border-transparent focus:border-primary/30 focus:bg-white rounded-xl py-6 pl-[4.5rem] pr-6 text-xl font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
               />
             </form>
