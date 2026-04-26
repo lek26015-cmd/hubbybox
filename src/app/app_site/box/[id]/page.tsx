@@ -528,11 +528,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           <div className="flex gap-1">
             {box.location !== HUBBYBOX_WAREHOUSE_LOCATION && (
               <button 
-                onClick={async () => {
-                  if (window.confirm(`ยืนยันส่งกล่องนี้เข้า${HUBBYBOX_WAREHOUSE_LOCATION}?`)) {
-                    const { error } = await supabase.from('boxes').update({ location: HUBBYBOX_WAREHOUSE_LOCATION }).eq('id', boxId);
-                    if (!error) setBox({ ...box, location: HUBBYBOX_WAREHOUSE_LOCATION });
-                  }
+                onClick={() => {
+                  router.push('/storage/deposit');
                 }}
                 className="w-11 h-11 bg-indigo-500 text-white shadow-lg shadow-indigo-200 rounded-full flex items-center justify-center active:scale-90 transition-all relative group"
                 title="ส่งเข้าคลังกลาง"
