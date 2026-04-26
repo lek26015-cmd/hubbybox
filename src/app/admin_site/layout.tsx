@@ -110,7 +110,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                      <div className="w-10 h-10 bg-vora-accent rounded-xl flex items-center justify-center shadow-xl shadow-vora-accent/30 group-hover:scale-105 transition-transform">
                         <Image src="/logo-hubbybox.png" alt="HubbyBox" width={28} height={28} className="object-contain brightness-0 invert" />
                      </div>
-                     <span className="text-xl font-black tracking-tighter text-admin-text-primary group-hover:text-vora-accent transition-colors">HubbyBox.</span>
+                     <span className="text-xl font-black tracking-tighter text-admin-text-primary group-hover:text-vora-accent transition-colors text-vora-accent">HubbyBox.</span>
                   </div>
                   <button type="button" aria-label="ปิดเมนู" onClick={() => setIsSidebarOpen(false)} className="text-slate-400 hover:text-slate-600">
                      <i className="fa-solid fa-xmark text-xl"></i>
@@ -256,12 +256,12 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                            className="flex items-center gap-3 lg:gap-4 group cursor-pointer"
                         >
                            <div className="hidden lg:flex flex-col items-end">
-                              <span className="text-sm font-black text-admin-text-primary group-hover:text-vora-accent transition-colors leading-none">Peter Parkur</span>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Super Admin</span>
+                              <span className="text-sm font-black text-admin-text-primary group-hover:text-vora-accent transition-colors leading-none">SuperAdmin</span>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Platform Owner</span>
                            </div>
                            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-admin-card border-2 border-vora-accent/10 p-1 group-hover:scale-105 transition-transform overflow-hidden">
                               <div className="w-full h-full rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-black relative border border-slate-200">
-                                 <span className="text-sm lg:text-lg">PP</span>
+                                 <span className="text-sm lg:text-lg">SA</span>
                               </div>
                            </div>
                         </div>
