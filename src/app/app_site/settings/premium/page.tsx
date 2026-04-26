@@ -3,32 +3,44 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useLiff } from '@/components/providers/liff-provider';
-import { supabase } from '@/lib/supabase';
+
+const PACKS = [
+  { amount: 5, price: 49, name: 'เซ็ตมินิมอล', desc: 'ซื้อเพิ่ม 5 กล่องดิจิทัล' },
+  { amount: 15, price: 99, name: 'เซ็ตจัดบ้านใหม่', desc: 'ซื้อเพิ่มทีเดียว 15 กล่องดิจิทัล' },
+];
 
 export default function PremiumPage() {
-  const { dbUser, refreshDbUser } = useLiff();
+  const { dbUser } = useLiff();
   const [isLoading, setIsLoading] = useState<number | null>(null);
 
-  const handleBuy = async (amount: number) => {
+  const handleBuy = async (pack: typeof PACKS[number]) => {
     if (!dbUser) return alert('กรุณาล็อกอินก่อนทำรายการ');
-    
-    // In reality, this would initiate a Stripe / PromptPay checkout flow
-    // For now, we mock the success and give quota directly.
-    const confirmed = window.confirm(`[โหมดทดสอบ] ยืนยันการชำระเงินจำลอง?\nระบบจะเพิ่มโควต้ากล่องให้ ${amount} กล่องทันที`);
-    if (!confirmed) return;
 
-    setIsLoading(amount);
+    setIsLoading(pack.amount);
     try {
-      const newQuota = (dbUser.box_quota || 3) + amount;
-      const { error } = await supabase
-        .from('users')
-        .update({ box_quota: newQuota })
-        .eq('id', dbUser.id);
-        
-      if (error) throw error;
-      
-      await refreshDbUser();
-      alert(`สำเร็จ! ขอบคุณที่สนับสนุน 💖\nโควต้ากล่องของคุณเพิ่มเป็น ${newQuota} กล่องแล้ว 🎉`);
+      const orderId = `QUOTA-${Date.now()}-${pack.amount}`;
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [{
+            name: `${pack.name} (+${pack.amount} กล่องดิจิทัล)`,
+            amount: pack.price,
+            quantity: 1
+          }],
+          userId: dbUser.id,
+          orderId,
+          metadata: {
+            type: 'BOX_QUOTA',
+            quotaAmount: String(pack.amount),
+          }
+        }),
+      });
+
+      const { url, error } = await res.json();
+      if (error) throw new Error(error);
+      if (url) window.location.href = url;
     } catch (err: any) {
       console.error(err);
       alert('เกิดข้อผิดพลาด: ' + err.message);
@@ -71,11 +83,11 @@ export default function PremiumPage() {
            </div>
            <div className="flex justify-between items-start mb-4 relative z-10">
                <div>
-                   <h3 className="font-bold text-xl text-slate-800">เซ็ตมินิมอล</h3>
-                   <p className="text-sm font-medium text-slate-500">ซื้อเพิ่ม 5 กล่องดิจิทัล</p>
+                   <h3 className="font-bold text-xl text-slate-800">{PACKS[0].name}</h3>
+                   <p className="text-sm font-medium text-slate-500">{PACKS[0].desc}</p>
                </div>
                <div className="bg-indigo-50 text-indigo-600 font-black text-xl px-4 py-2 rounded-2xl border border-indigo-100">
-                   49.-
+                   {PACKS[0].price}.-
                </div>
            </div>
            <ul className="flex flex-col gap-2 relative z-10 mb-6">
@@ -87,12 +99,12 @@ export default function PremiumPage() {
               </li>
            </ul>
            <button 
-             onClick={() => handleBuy(5)}
+             onClick={() => handleBuy(PACKS[0])}
              disabled={isLoading !== null}
              className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-300 text-white font-bold text-lg py-4 rounded-[1.5rem] transition-colors active:scale-[0.98] disabled:active:scale-100 shadow-sm flex items-center justify-center gap-2"
            >
-               {isLoading === 5 ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
-               {isLoading === 5 ? 'กำลังทำรายการ...' : 'ซื้อเซ็ตมินิมอล'}
+               {isLoading === PACKS[0].amount ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
+               {isLoading === PACKS[0].amount ? 'กำลังไปหน้าชำระเงิน...' : `ซื้อ${PACKS[0].name}`}
            </button>
         </section>
 
@@ -109,11 +121,11 @@ export default function PremiumPage() {
 
            <div className="flex justify-between items-start mb-4 relative z-10 mt-2">
                <div>
-                   <h3 className="font-bold text-2xl text-white drop-shadow-sm">เซ็ตจัดบ้านใหม่</h3>
-                   <p className="text-sm font-medium text-indigo-100">ซื้อเพิ่มทีเดียว 15 กล่องดิจิทัล</p>
+                   <h3 className="font-bold text-2xl text-white drop-shadow-sm">{PACKS[1].name}</h3>
+                   <p className="text-sm font-medium text-indigo-100">{PACKS[1].desc}</p>
                </div>
                <div className="bg-white/20 backdrop-blur-sm text-white font-black text-2xl px-4 py-2 rounded-2xl border border-white/30 shadow-inner">
-                   99.-
+                   {PACKS[1].price}.-
                </div>
            </div>
            <ul className="flex flex-col gap-2 relative z-10 mb-6">
@@ -128,12 +140,12 @@ export default function PremiumPage() {
               </li>
            </ul>
            <button 
-             onClick={() => handleBuy(15)}
+             onClick={() => handleBuy(PACKS[1])}
              disabled={isLoading !== null}
              className="w-full bg-white hover:bg-indigo-50 disabled:bg-slate-200 text-indigo-600 disabled:text-slate-400 font-bold text-lg py-4 rounded-[1.5rem] transition-colors active:scale-[0.98] disabled:active:scale-100 shadow-sm flex items-center justify-center gap-2"
            >
-               {isLoading === 15 ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
-               {isLoading === 15 ? 'กำลังทำรายการ...' : 'ซื้อเซ็ตจัดบ้านใหม่'}
+               {isLoading === PACKS[1].amount ? <i className="fa-solid fa-spinner fa-spin text-[20px]"></i> : null}
+               {isLoading === PACKS[1].amount ? 'กำลังไปหน้าชำระเงิน...' : `ซื้อ${PACKS[1].name}`}
            </button>
         </section>
         

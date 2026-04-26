@@ -77,39 +77,49 @@ export default function DepositFlowPage() {
     setTrackingNumber('');
   };
 
+  const STORAGE_FEE_PER_BOX = 99;
+
   const handleFinalConfirm = async () => {
     if (selectedIds.size === 0 || isSubmitting || !dbUser?.id) return;
     if (!dbUser?.id || dbUser.id === 'fallback-id') {
       setIsSubmitting(false);
-      alert('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว ขัดข้องที่การซิงค์ User ID (กรุณาไปรันคำสั่ง SQL เพื่อปลดล็อก RLS ใน Supabase ก่อนครับ)');
+      alert('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว ขัดข้องที่การซิงค์ User ID');
       return;
     }
     setSubmitHint(null);
-
     setIsSubmitting(true);
-    try {
-      const { error } = await supabase
-        .from('boxes')
-        .update({ 
-          location: HUBBYBOX_WAREHOUSE_LOCATION,
-          status: BOX_STATUS.SHIPPING_TO_WAREHOUSE,
-          shipping_carrier: carrier.trim(),
-          tracking_number: trackingNumber.trim() || null
-        })
-        .in('id', Array.from(selectedIds))
-        .eq('user_id', dbUser.id);
 
-      if (error) {
-        console.error('Supabase Update Error detail:', JSON.stringify(error, null, 2));
-        throw error;
-      }
-      setStep(3);
+    try {
+      const boxCount = selectedIds.size;
+      const orderId = `DEPOSIT-${Date.now()}-${refId}`;
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [{
+            name: `ค่าฝากกล่อง Hubby Storage (${boxCount} กล่อง)`,
+            amount: STORAGE_FEE_PER_BOX,
+            quantity: boxCount,
+          }],
+          userId: dbUser.id,
+          orderId,
+          metadata: {
+            type: 'STORAGE_DEPOSIT',
+            boxIds: Array.from(selectedIds).join(','),
+            refId,
+            carrier: carrier.trim(),
+            trackingNumber: trackingNumber.trim() || '',
+          }
+        }),
+      });
+
+      const { url, error: stripeError } = await res.json();
+      if (stripeError) throw new Error(stripeError);
+      if (url) window.location.href = url;
     } catch (err: any) {
-      console.error('Final confirm error (Full Object):', err);
-      console.log('Error Code:', err?.code);
-      console.log('Error Details:', err?.details);
-      console.log('Error Hint:', err?.hint);
-      const message = err?.message || 'โปรดตรวจสอบการเชื่อมต่อหรือสิทธิ์ (RLS) ในฐานข้อมูล';
+      console.error('Final confirm error:', err);
+      const message = err?.message || 'โปรดตรวจสอบการเชื่อมต่อ';
       alert(`เกิดข้อผิดพลาด: ${message}`);
     } finally {
       setIsSubmitting(false);
@@ -175,7 +185,7 @@ export default function DepositFlowPage() {
                     <i className="fa-solid fa-box-open text-[32px]" aria-hidden="true"></i>
                   </div>
                   <h3 className="font-bold text-xl text-slate-800 mb-2">ไม่พบกล่องนอกคลังสินค้า</h3>
-                  <p className="text-sm text-slate-500 font-medium mb-10 max-w-[240px]">คุณยังไม่มีกล่องใบไหนที่อยู่นอกคลังสินค้าเลยครับ<br/>สร้างกล่องเพื่อบันทึกของ หรือสั่งซื้อจากเราได้ทันที</p>
+                   <p className="text-sm text-slate-500 font-medium mb-10 max-w-[240px]">คุณยังไม่มีกล่องใบไหนที่อยู่นอกคลังสินค้าเลยครับ<br/>สร้างกล่องดิจิทัลเพื่อบันทึกของก่อนส่งเข้าคลัง</p>
                   
                   <div className="flex flex-col gap-4 w-full">
                     <button 
@@ -184,12 +194,6 @@ export default function DepositFlowPage() {
                     >
                        <i className="fa-solid fa-plus text-xl" aria-hidden="true"></i> สร้างกล่องใหม่
                     </button>
-                    
-                    <Link href="/storage/supplies" className="w-full">
-                      <button className="w-full bg-indigo-50 border border-indigo-100 text-indigo-600 font-black py-4 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2">
-                         <i className="fa-solid fa-bag-shopping" aria-hidden="true"></i> สั่งซื้อชุดกล่อง Hubbybox 🛍️
-                      </button>
-                    </Link>
                     
                     <Link href="/" className="mt-4 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600 transition-colors">
                       ยกเลิกและย้อนกลับ
@@ -357,6 +361,18 @@ export default function DepositFlowPage() {
                 </p>
               </div>
 
+              {/* Pricing Summary */}
+              <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl">
+                 <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-bold text-slate-400">ค่าฝากกล่อง (เดือนแรก)</span>
+                    <span className="font-black text-sm">{STORAGE_FEE_PER_BOX}.- × {selectedIds.size} กล่อง</span>
+                 </div>
+                 <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                    <span className="font-bold text-lg">ยอดชำระ</span>
+                    <span className="text-2xl font-black">{STORAGE_FEE_PER_BOX * selectedIds.size}.- <span className="text-xs text-slate-400 ml-1">THB</span></span>
+                 </div>
+              </div>
+
               {submitHint && (
                 <p className="text-center text-sm font-bold text-rose-500" role="alert">
                   {submitHint}
@@ -367,9 +383,9 @@ export default function DepositFlowPage() {
                 type="button"
                 onClick={handleFinalConfirm}
                 disabled={isSubmitting}
-                className="w-full bg-slate-900 text-white font-black py-5 rounded-xl shadow-xl shadow-slate-200 active:scale-95 transition-all text-lg flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white font-black py-5 rounded-xl shadow-xl shadow-primary/20 active:scale-95 transition-all text-lg flex items-center justify-center gap-2"
               >
-                {isSubmitting ? <i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> : 'ฉันส่งของแล้ว / เตรียมส่งแล้ว'}
+                {isSubmitting ? <i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> : <><i className="fa-solid fa-lock text-sm" aria-hidden="true"></i> ชำระเงิน {STORAGE_FEE_PER_BOX * selectedIds.size}.- และยืนยันฝากกล่อง</>}
               </button>
             </motion.div>
           )}

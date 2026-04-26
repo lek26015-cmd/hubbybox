@@ -45,8 +45,20 @@ export async function POST(req: Request) {
       metadata.productId = body.productId || '';
     }
 
+    // Determine payment methods based on transaction type
+    let paymentMethodTypes: ('card' | 'promptpay')[] = ['promptpay'];
+    const transactionType = body.metadata?.type || '';
+    
+    if (transactionType === 'STORAGE_DEPOSIT') {
+      paymentMethodTypes = ['card']; // บังคับตัดบัตรสำหรับค่าฝากรายเดือน
+    } else if (transactionType === 'BOX_QUOTA' || transactionType === 'ITEM_RECALL') {
+      paymentMethodTypes = ['promptpay']; // บังคับสแกนจ่ายสำหรับการซื้อขาด/ครั้งเดียว
+    } else {
+      paymentMethodTypes = ['promptpay', 'card']; // เผื่อกรณีอื่นๆ
+    }
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'promptpay'],
+      payment_method_types: paymentMethodTypes,
       line_items,
       mode: 'payment',
       success_url: `${req.headers.get('origin')}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${body.orderId}`,

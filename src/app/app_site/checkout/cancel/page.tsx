@@ -27,16 +27,16 @@ export default function CheckoutCancelPage() {
 
         <div className="space-y-3">
           <Link 
-            href="/storage/supplies"
+            href="/"
             className="block w-full bg-primary text-white font-black py-4 rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all text-sm uppercase tracking-widest"
           >
-            ไปที่หน้าสั่งซื้อ
+            กลับหน้าหลัก
           </Link>
           <button 
-            onClick={() => router.push('/')}
+            onClick={() => router.back()}
             className="block w-full text-slate-400 font-bold text-xs uppercase tracking-widest pt-2"
           >
-            กลับหน้าหลัก
+            ลองทำรายการใหม่
           </button>
         </div>
       </motion.div>

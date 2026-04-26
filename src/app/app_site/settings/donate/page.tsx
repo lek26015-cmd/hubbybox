@@ -43,7 +43,7 @@ export default function DonatePage() {
              </p>
           </motion.section>
 
-          {/* QR Code Card */}
+          {/* Payment Card */}
           <motion.section 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -51,32 +51,65 @@ export default function DonatePage() {
             className="w-full max-w-[340px]"
           >
              <div className="bg-white rounded-[3rem] p-10 shadow-[0_30px_70px_-20px_rgba(30,41,59,0.15)] border border-white relative overflow-hidden group">
-                {/* PromptPay Branding Header */}
-                <div className="flex flex-col items-center mb-8">
+                <div className="flex flex-col items-center mb-6">
                    <div className="flex items-center gap-2 mb-1">
                       <div className="bg-[#003d6b] px-3 py-1 rounded-md">
-                         <span className="text-white font-black text-[10px] tracking-widest uppercase">PromptPay</span>
+                         <span className="text-white font-black text-[10px] tracking-widest uppercase">PromptPay / Credit Card</span>
                       </div>
                    </div>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Scan to Support</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pay what you want</p>
                 </div>
                 
-                <div className="relative w-full aspect-square bg-slate-50 rounded-[2.5rem] overflow-hidden shadow-inner border border-slate-100 p-2 group-hover:shadow-md transition-all duration-500">
-                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
-                      <Image 
-                        src="/donate-qr.png" 
-                        alt="PromptPay QR Code for HubbyBox" 
-                        fill
-                        sizes="(max-width: 768px) 100vw, 340px"
-                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                        priority
+                <form 
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const amount = Number(formData.get('amount'));
+                    if (!amount || amount < 20) {
+                      alert('ยอดขั้นต่ำ 20 บาทครับ 🙏');
+                      return;
+                    }
+                    
+                    try {
+                      const res = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          productName: 'เลี้ยงขนมน้อง Hubby (Support)',
+                          price: amount,
+                          metadata: { type: 'SUPPORT' }
+                        }),
+                      });
+                      const { url } = await res.json();
+                      if (url) window.location.href = url;
+                    } catch (err) {
+                      alert('เกิดข้อผิดพลาด กรุณาลองใหม่ครับ');
+                    }
+                  }}
+                  className="flex flex-col items-center"
+                >
+                   <div className="relative w-full mb-6">
+                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-300">฿</span>
+                      <input 
+                        type="number" 
+                        name="amount"
+                        defaultValue="50"
+                        min="20"
+                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl py-6 pl-14 pr-6 text-3xl font-black text-slate-800 focus:outline-none focus:border-rose-400 focus:bg-white focus:ring-4 focus:ring-rose-400/20 transition-all text-center"
+                        placeholder="0"
                       />
                    </div>
-                </div>
-                
+                   
+                   <button 
+                     type="submit"
+                     className="w-full bg-rose-500 hover:bg-rose-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-rose-500/30 active:scale-95 transition-all text-sm uppercase tracking-widest"
+                   >
+                     สนับสนุนทีมงาน 💖
+                   </button>
+                </form>
+
                 <div className="mt-8 flex flex-col items-center">
                    <div className="h-1 w-12 bg-slate-100 rounded-full mb-6"></div>
-                   <p className="text-xs font-black text-slate-700 mb-1">HubbyBox Official Account</p>
                    <p className="text-[10px] font-bold text-slate-400 italic">ขอบพระคุณจากใจทีมงาน 💖</p>
                 </div>
 

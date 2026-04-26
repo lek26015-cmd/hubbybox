@@ -46,7 +46,8 @@ function RecallFlowPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const RECALL_FEE = isItemLevel ? 29 : 0;
+  const RECALL_FEE_PER_ITEM = 29;
+  const RECALL_FEE = isItemLevel ? RECALL_FEE_PER_ITEM * itemIds.length : 0;
 
   const fetchData = useCallback(async () => {
     if (!boxId || !userProfile?.displayName) return;
@@ -138,9 +139,9 @@ function RecallFlowPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             items: [{
-              name: `ค่าบริการเรียกคืนของรายชิ้น (${itemIds.length} รายการ)`,
-              amount: RECALL_FEE,
-              quantity: 1
+              name: `ค่าบริการเรียกคืนของรายชิ้น`,
+              amount: RECALL_FEE_PER_ITEM,
+              quantity: itemIds.length
             }],
             userId: dbUser.id,
             orderId: `RECALL-${Date.now()}-${boxId ? boxId.slice(0,4) : 'BK'}`,
@@ -265,16 +266,24 @@ function RecallFlowPage() {
                     )}
                  </div>
 
-                 <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <div>
-                        <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">ค่าบริการนำส่ง</span>
-                        <span className="text-2xl font-black text-slate-800">{RECALL_FEE}.- <span className="text-sm font-bold text-slate-400 text-line ml-1">THB</span></span>
-                    </div>
-                    {RECALL_FEE === 0 ? (
-                       <span className="bg-emerald-100 text-emerald-600 px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-tighter">FREE RECALL</span>
-                    ) : (
-                       <span className="bg-amber-100 text-amber-600 px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-tighter">SERVICE FEE</span>
+                 <div className="pt-6 border-t border-slate-100 space-y-3">
+                    {isItemLevel && itemIds.length > 0 && (
+                       <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-500 font-bold">ค่าบริการรายชิ้น</span>
+                          <span className="text-slate-600 font-black">{RECALL_FEE_PER_ITEM}.- × {itemIds.length} ชิ้น</span>
+                       </div>
                     )}
+                    <div className="flex items-center justify-between">
+                       <div>
+                          <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">ค่าบริการรวม</span>
+                          <span className="text-2xl font-black text-slate-800">{RECALL_FEE}.- <span className="text-sm font-bold text-slate-400 ml-1">THB</span></span>
+                       </div>
+                       {RECALL_FEE === 0 ? (
+                          <span className="bg-emerald-100 text-emerald-600 px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-tighter">FREE RECALL</span>
+                       ) : (
+                          <span className="bg-amber-100 text-amber-600 px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-tighter">{RECALL_FEE_PER_ITEM}.-/ชิ้น</span>
+                       )}
+                    </div>
                  </div>
               </div>
 
