@@ -304,6 +304,23 @@ export default function HubbyStoragePage() {
 
           <p className="mt-12 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 HubbyBox Smart Logistics</p>
        </main>
+
+       {/* Coming Soon Overlay Mask */}
+       <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/40 backdrop-blur-md">
+          <div className="bg-slate-900/90 text-white rounded-[3rem] p-12 text-center shadow-2xl border border-white/20 animate-in zoom-in duration-500 max-w-sm w-full">
+             <div className="w-20 h-20 bg-vora-accent rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl shadow-vora-accent/20 rotate-12">
+                <i className="fa-solid fa-clock-rotate-left text-3xl" aria-hidden="true"></i>
+             </div>
+             <h2 className="text-3xl font-black mb-4 tracking-tight">Coming Soon</h2>
+             <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
+                บริการรับฝากของกำลังจัดเตรียมพื้นที่และระบบความปลอดภัยระดับสูงสุด<br/>อดใจรออีกนิดนะครับ!
+             </p>
+             <Link href="/" className="inline-block w-full bg-white text-slate-900 font-black py-4 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 shadow-lg">
+                กลับหน้าหลัก
+             </Link>
+          </div>
+       </div>
     </div>
   );
 }
+
