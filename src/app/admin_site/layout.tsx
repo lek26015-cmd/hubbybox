@@ -8,6 +8,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AdminAuthProvider, useAdminAuth } from '@/components/auth/admin-auth-provider';
+import { supabase } from '@/lib/supabase';
+import { BOX_STATUS } from '@/lib/hubbybox-constants';
 
 const kodchasan = Kodchasan({ 
   weight: ['300', '400', '500', '600', '700'],
@@ -38,12 +40,60 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-     { id: 1, icon: "fa-box-open", color: "text-vora-accent", bgColor: "bg-vora-accent/10", title: "พัสดุมาถึงใหม่", desc: "กล่อง #HB-4022 ถึงคลังหลักแล้ว", time: "2 นาทีที่แล้ว", isNew: true },
-     { id: 2, icon: "fa-circle-check", color: "text-emerald-500", bgColor: "bg-emerald-500/10", title: "ยืนยันการฝากสำเร็จ", desc: "ลูกค้ายืนยันรายการฝาก 12 รายการ", time: "1 ชั่วโมงที่แล้ว", isNew: true },
-     { id: 3, icon: "fa-triangle-exclamation", color: "text-amber-500", bgColor: "bg-amber-500/10", title: "ระบบใกล้เต็ม", desc: "Zone A รับพัสดุได้อีกเพียง 5 กล่อง", time: "3 ชั่วโมงที่แล้ว", isNew: true },
-     { id: 4, icon: "fa-user-plus", color: "text-primary", bgColor: "bg-primary/10", title: "สมาชิกใหม่", desc: "คุณมินตรา สมัครสมาชิกผ่าน LINE", time: "เมื่อวานนี้", isNew: false },
-  ]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const { data: boxes } = await supabase
+          .from('boxes')
+          .select('id, name, created_at')
+          .eq('status', BOX_STATUS.SHIPPING_TO_WAREHOUSE)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        const { data: tickets } = await supabase
+          .from('support_tickets')
+          .select('id, subject, created_at')
+          .order('created_at', { ascending: false })
+          .limit(2);
+
+        const combined: any[] = [];
+
+        boxes?.forEach(b => {
+          combined.push({
+            id: `box-${b.id}`,
+            icon: "fa-box-open",
+            color: "text-vora-accent",
+            bgColor: "bg-vora-accent/10",
+            title: "พัสดุมาถึงใหม่",
+            desc: `กล่อง "${b.name}" (#${b.id.substring(0,8)})`,
+            time: "เมื่อสักครู่",
+            isNew: true
+          });
+        });
+
+        tickets?.forEach(t => {
+          combined.push({
+            id: `ticket-${t.id}`,
+            icon: "fa-headset",
+            color: "text-sky-500",
+            bgColor: "bg-sky-500/10",
+            title: "คำขอความช่วยเหลือ",
+            desc: t.subject,
+            time: "เมื่อสักครู่",
+            isNew: true
+          });
+        });
+
+        setNotifications(combined);
+      } catch (e) {
+        console.error('Err fetching notifications:', e);
+      }
+    }
+
+    if (isAuthenticated) fetchNotifications();
+  }, [isAuthenticated]);
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
