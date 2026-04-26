@@ -29,7 +29,7 @@ export default function AdminLayout({
 }
 
 function AdminInnerLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoading: isAuthLoading, signOut } = useAdminAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, signOut } = useAdminAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -77,7 +77,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   }
 
   // Redirect to login if not authenticated and not on login page
-  if (!user && !isLoginPage) {
+  if (!isAuthenticated && !isLoginPage) {
      if (typeof window !== 'undefined') {
         router.replace('/admin_site/login');
      }
@@ -271,7 +271,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                            <div className="absolute right-0 mt-4 w-64 bg-admin-card/95 backdrop-blur-xl border border-admin-border rounded-2xl shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-200 origin-top-right overflow-hidden p-2">
                               <div className="p-4 border-b border-admin-border mb-2">
                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Signed in as</p>
-                                 <p className="text-sm font-black text-admin-text-primary break-all">{user?.email || 'admin'}</p>
+                                 <p className="text-sm font-black text-admin-text-primary break-all">Admin User</p>
                               </div>
                               <Link href="/admin_site/settings" className="flex items-center gap-3 p-3 rounded-xl hover:bg-admin-bg transition-colors group">
                                  <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-vora-accent transition-colors">
