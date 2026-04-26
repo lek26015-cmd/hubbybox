@@ -74,7 +74,7 @@ export const LiffProvider = ({
       })();
 
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database timeout')), 2500)
+        setTimeout(() => reject(new Error('Database timeout (cold start)')), 10000)
       );
 
       const data = await Promise.race([dbPromise, timeoutPromise]) as any;
@@ -83,8 +83,8 @@ export const LiffProvider = ({
     } catch (e: any) {
       console.error('[DB] Sync failed or timed out:', e.message);
       if (e?.code) console.log(`[DB] Error Code: ${e.code}`);
-      // Fallback for demo/dev if DB fails
-      setDbUser({ id: 'fallback-id', box_quota: 3 });
+      setError(e);
+      // DO NOT use invalid 'fallback-id' as it breaks PostgreSQL UUID columns
     }
   };
 
