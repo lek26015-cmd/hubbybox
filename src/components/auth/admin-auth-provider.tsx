@@ -12,7 +12,7 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-const ADMIN_PASSCODE = 'hubbyadmin'; // รหัสผ่านสำหรับเข้าหลังบ้าน
+const ADMIN_PASSCODE = process.env.NEXT_PUBLIC_ADMIN_PASSCODE || 'hubbyadmin'; // ดึงจาก env หรือใช้ค่าเริ่มต้นถ้ายังไม่ได้ตั้ง
 
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
