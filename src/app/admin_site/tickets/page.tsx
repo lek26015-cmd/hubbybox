@@ -15,6 +15,8 @@ type SupportTicket = {
 };
 
 export default function TicketsPage() {
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [replyingTicket, setReplyingTicket] = useState<SupportTicket | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
