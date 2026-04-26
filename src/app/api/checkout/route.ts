@@ -58,15 +58,15 @@ export async function POST(req: Request) {
     }
 
     const session = await stripe.checkout.sessions.create({
+      ui_mode: 'embedded',
       payment_method_types: paymentMethodTypes,
       line_items,
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${body.orderId}`,
-      cancel_url: `${req.headers.get('origin')}/checkout/cancel`,
+      return_url: `${req.headers.get('origin')}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${body.orderId}`,
       metadata,
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err: any) {
     console.error('Stripe Checkout Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

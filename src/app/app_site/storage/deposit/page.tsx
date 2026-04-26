@@ -91,32 +91,29 @@ export default function DepositFlowPage() {
 
     try {
       const boxCount = selectedIds.size;
-      const orderId = `DEPOSIT-${Date.now()}-${refId}`;
-
+      const selectedBoxes = Array.from(selectedIds);
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{
-            name: `ค่าฝากกล่อง Hubby Storage (${boxCount} กล่อง)`,
-            amount: STORAGE_FEE_PER_BOX,
-            quantity: boxCount,
-          }],
-          userId: dbUser.id,
-          orderId,
+          productName: `บริการฝากของเข้าคลัง (${selectedBoxes.length} กล่อง)`,
+          price: selectedBoxes.length * STORAGE_FEE_PER_BOX,
           metadata: {
             type: 'STORAGE_DEPOSIT',
-            boxIds: Array.from(selectedIds).join(','),
-            refId,
-            carrier: carrier.trim(),
-            trackingNumber: trackingNumber.trim() || '',
+            userId: dbUser?.id,
+            boxIds: selectedBoxes.join(','),
+            timestamp: new Date().toISOString()
           }
         }),
       });
 
-      const { url, error: stripeError } = await res.json();
-      if (stripeError) throw new Error(stripeError);
-      if (url) window.location.href = url;
+      const { clientSecret, error: checkoutError } = await res.json();
+      
+      if (checkoutError) throw new Error(checkoutError);
+      
+      if (clientSecret) {
+        window.location.href = `/checkout?session=${clientSecret}`;
+      }
     } catch (err: any) {
       console.error('Final confirm error:', err);
       const message = err?.message || 'โปรดตรวจสอบการเชื่อมต่อ';

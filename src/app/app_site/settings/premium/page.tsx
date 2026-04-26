@@ -18,29 +18,28 @@ export default function PremiumPage() {
 
     setIsLoading(pack.amount);
     try {
-      const orderId = `QUOTA-${Date.now()}-${pack.amount}`;
-
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{
-            name: `${pack.name} (+${pack.amount} กล่องดิจิทัล)`,
-            amount: pack.price,
-            quantity: 1
-          }],
-          userId: dbUser.id,
-          orderId,
+          productName: `เซ็ต${pack.name} (+${pack.amount} กล่องดิจิทัล)`,
+          price: pack.price,
           metadata: {
             type: 'BOX_QUOTA',
-            quotaAmount: String(pack.amount),
+            addedBoxes: pack.amount,
+            userId: dbUser.id,
+            timestamp: new Date().toISOString()
           }
         }),
       });
 
-      const { url, error } = await res.json();
+      const { clientSecret, error } = await res.json();
+      
       if (error) throw new Error(error);
-      if (url) window.location.href = url;
+      
+      if (clientSecret) {
+        window.location.href = `/checkout?session=${clientSecret}`;
+      }
     } catch (err: any) {
       console.error(err);
       alert('เกิดข้อผิดพลาด: ' + err.message);

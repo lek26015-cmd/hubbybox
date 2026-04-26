@@ -80,8 +80,11 @@ export default function DonatePage() {
                           metadata: { type: 'SUPPORT' }
                         }),
                       });
-                      const { url } = await res.json();
-                      if (url) window.location.href = url;
+                      const { clientSecret } = await res.json();
+                      if (clientSecret) {
+                        // Use window.location.href to navigate to the embedded checkout page
+                        window.location.href = `/checkout?session=${clientSecret}`;
+                      }
                     } catch (err) {
                       alert('เกิดข้อผิดพลาด กรุณาลองใหม่ครับ');
                     }
