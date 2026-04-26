@@ -4,7 +4,7 @@ import { useAdminAuth } from '@/components/auth/admin-auth-provider';
 import Image from 'next/image';
 
 export default function AdminSettingsPage() {
-  const { user, signOut } = useAdminAuth();
+  const { isAuthenticated, signOut } = useAdminAuth();
 
   return (
     <main className="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-12">
@@ -19,21 +19,11 @@ export default function AdminSettingsPage() {
           <h3 className="font-black text-sm text-slate-400 uppercase tracking-widest mb-6">Admin Account</h3>
           <div className="flex items-center gap-6 mb-8">
             <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-admin-border flex items-center justify-center overflow-hidden shadow-sm">
-              {user?.user_metadata?.avatar_url ? (
-                <Image 
-                  src={user.user_metadata.avatar_url} 
-                  alt="Avatar" 
-                  width={64} 
-                  height={64} 
-                  className="w-full h-full object-cover" 
-                />
-              ) : (
-                <i className="fa-solid fa-user-shield text-2xl text-vora-accent" aria-hidden="true"></i>
-              )}
+              <i className="fa-solid fa-user-shield text-2xl text-vora-accent" aria-hidden="true"></i>
             </div>
             <div>
-              <p className="font-black text-lg text-admin-text-primary">{user?.user_metadata?.full_name || 'Admin'}</p>
-              <p className="text-xs font-bold text-slate-400">{user?.email || 'ไม่ทราบอีเมล'}</p>
+              <p className="font-black text-lg text-admin-text-primary">Admin User</p>
+              <p className="text-xs font-bold text-slate-400">Authenticated via Passcode</p>
             </div>
           </div>
 
@@ -41,21 +31,9 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-admin-border">
               <div className="flex items-center gap-3">
                 <i className="fa-solid fa-shield-halved text-vora-accent" aria-hidden="true"></i>
-                <span className="text-sm font-bold text-admin-text-primary">Authentication Provider</span>
+                <span className="text-sm font-bold text-admin-text-primary">Authentication Method</span>
               </div>
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-lg border border-admin-border">Google OAuth</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-admin-border">
-              <div className="flex items-center gap-3">
-                <i className="fa-solid fa-clock text-slate-400" aria-hidden="true"></i>
-                <span className="text-sm font-bold text-admin-text-primary">Last Sign In</span>
-              </div>
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                {user?.last_sign_in_at 
-                  ? new Date(user.last_sign_in_at).toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-                  : '-'
-                }
-              </span>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-lg border border-admin-border">Passcode</span>
             </div>
           </div>
         </section>
