@@ -173,27 +173,6 @@ export default function Home() {
                 className="w-full bg-white border border-slate-100 focus:border-primary/20 focus:bg-white rounded-xl py-5 pl-[4.5rem] pr-6 text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
               />
             </form>
-            
-            <div className="flex gap-2 mt-2">
-                <Link 
-                  href="/search/image"
-                  className="flex-1 flex flex-col items-center justify-center gap-1.5 bg-white hover:bg-primary/5 text-slate-600 hover:text-primary py-4 rounded-xl transition-all font-bold text-sm shadow-sm hover:shadow-md border border-slate-100 hover:border-primary/10 active:scale-95 group"
-                >
-                   <div className="bg-primary/10 w-11 h-11 flex items-center justify-center rounded-xl text-primary group-hover:scale-110 transition-transform">
-                      <i className="fa-solid fa-camera text-[22px]" aria-hidden="true"></i>
-                   </div>
-                   หาด้วยภาพ
-                </Link>
-                <Link 
-                  href="/search/voice"
-                  className="flex-1 flex flex-col items-center justify-center gap-1.5 bg-white hover:bg-primary/5 text-slate-600 hover:text-primary py-4 rounded-xl transition-all font-bold text-sm shadow-sm hover:shadow-md border border-slate-100 hover:border-primary/10 active:scale-95 group"
-                >
-                   <div className="bg-indigo-50 w-11 h-11 flex items-center justify-center rounded-xl text-indigo-500 group-hover:scale-110 transition-transform">
-                      <i className="fa-solid fa-microphone text-[22px]" aria-hidden="true"></i>
-                   </div>
-                   สั่งด้วยเสียง
-                </Link>
-            </div>
           </div>
         </section>
 
