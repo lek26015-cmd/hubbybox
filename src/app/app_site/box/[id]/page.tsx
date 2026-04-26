@@ -504,7 +504,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         <div className="flex items-center gap-3 flex-1 px-4 justify-center">
             <div className="w-10 h-10 overflow-hidden shrink-0">
                <Image 
-                 src="/logo.png" 
+                 src="/tsconfig-01.png" 
                  alt="HubbyBox" 
                  width={40} 
                  height={40} 

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: 'HubbyBox',
   description: 'ระบบจัดการกล่องเก็บของส่วนตัว (Smart Inventory)',
   icons: {
-    icon: '/logo.png',
+    icon: '/tsconfig-01.png',
   },
 };
 

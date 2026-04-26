@@ -115,7 +115,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <div className="relative flex items-center justify-center w-16 h-16 transition-all">
                <Image 
-                 src="/logo.png" 
+                 src="/tsconfig-01.png" 
                  alt="HubbyBox" 
                  width={64} 
                  height={64} 

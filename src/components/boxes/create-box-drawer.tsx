@@ -88,7 +88,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                 <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                   <div className="w-14 h-14 overflow-hidden shrink-0">
                     <Image 
-                      src="/logo-hubbybox.png" 
+                      src="/tsconfig-01.png" 
                       alt="HubbyBox" 
                       width={56} 
                       height={56} 
