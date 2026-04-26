@@ -42,9 +42,14 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
               <i className="fa-solid fa-plug-circle-xmark text-[32px]" aria-hidden="true"></i>
             </div>
             <h2 className="text-xl font-black text-slate-800 mb-2">เชื่อมต่อระบบไม่สำเร็จ</h2>
-            <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed mb-8">
+            <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed mb-4">
               ไม่สามารถซิงค์ข้อมูลผู้ใช้กับระบบหลังบ้านได้<br/>กรุณาลองใหม่อีกครั้ง หรือเข้าใช้งานใหม่ภายหลัง
             </p>
+            {error && (
+              <div className="bg-rose-50 border border-rose-100 rounded-xl p-3 mb-8 w-full max-w-xs">
+                <p className="text-[10px] font-bold text-rose-500 font-mono break-words">Error: {error.message || JSON.stringify(error)}</p>
+              </div>
+            )}
             <div className="flex flex-col gap-3 w-full max-w-xs">
               <button
                 onClick={() => window.location.reload()}
