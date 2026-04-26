@@ -11,7 +11,7 @@ type SupportTicket = {
   created_at: string;
   users: {
     line_user_id: string;
-  } | null;
+  }[] | null;
 };
 
 export default function TicketsPage() {
@@ -58,7 +58,7 @@ export default function TicketsPage() {
     
     setIsSending(true);
     try {
-      const lineUserId = replyingTicket.users?.line_user_id;
+      const lineUserId = Array.isArray(replyingTicket.users) ? replyingTicket.users[0]?.line_user_id : null;
       
       // 1. Save Reply to DB (If you have a ticket_replies table, otherwise we just close the ticket)
       // For now, let's just update the ticket status and log the reply
@@ -160,11 +160,11 @@ export default function TicketsPage() {
                            <td className="px-8 py-4">
                               <div className="flex items-center gap-3">
                                  <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 font-black text-[10px]">
-                                    {(ticket.users?.line_user_id || 'U').charAt(0)}
+                                    {((Array.isArray(ticket.users) ? ticket.users[0]?.line_user_id : null) || 'U').charAt(0)}
                                  </div>
                                  <div className="flex flex-col">
                                     <span className="text-xs font-bold text-slate-600 truncate max-w-[150px]">
-                                       {ticket.users?.line_user_id || 'No LINE ID'}
+                                       {(Array.isArray(ticket.users) ? ticket.users[0]?.line_user_id : null) || 'No LINE ID'}
                                     </span>
                                     <span className="text-[8px] font-black text-slate-300 uppercase tracking-tighter">Real DB User</span>
                                  </div>
