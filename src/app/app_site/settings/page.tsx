@@ -43,27 +43,38 @@ export default function SettingsPage() {
       <main className="flex-1 w-full max-w-md mx-auto px-6 py-8 flex flex-col pt-8">
         
         {/* Profile Card */}
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-[0_15px_40px_-15px_rgba(56,189,248,0.3)] rounded-[2rem] p-6 mb-8 flex flex-col items-center text-center relative overflow-hidden">
+        <section className="bg-white/80 backdrop-blur-md border border-white shadow-[0_15px_40px_-15px_rgba(56,189,248,0.3)] rounded-[1.5rem] p-4 mb-8 flex items-center justify-between relative overflow-hidden">
            <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 scale-150 text-sky-400">
-               <i className="fa-solid fa-user text-[120px]" aria-hidden="true"></i>
+               <i className="fa-solid fa-user text-[100px]" aria-hidden="true"></i>
            </div>
-           <div className="relative z-10 w-24 h-24 mb-4">
-              {userProfile?.pictureUrl ? (
-                <Image
-                  src={userProfile.pictureUrl}
-                  alt="Profile"
-                  width={96}
-                  height={96}
-                  className="rounded-full shadow-md border-4 border-white object-cover w-full h-full"
-                />
-              ) : (
-                <div className="w-full h-full bg-sky-50 rounded-full flex items-center justify-center border-4 border-white shadow-md">
-                  <i className="fa-solid fa-user text-sky-400 text-[40px]" aria-hidden="true"></i>
-                </div>
-              )}
+           <div className="flex items-center gap-4 relative z-10">
+              <div className="w-16 h-16 shrink-0">
+                 {userProfile?.pictureUrl ? (
+                   <Image
+                     src={userProfile.pictureUrl}
+                     alt="Profile"
+                     width={64}
+                     height={64}
+                     className="rounded-full shadow-sm border-2 border-white object-cover w-full h-full"
+                   />
+                 ) : (
+                   <div className="w-full h-full bg-sky-50 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                     <i className="fa-solid fa-user text-sky-400 text-[24px]" aria-hidden="true"></i>
+                   </div>
+                 )}
+              </div>
+              <div className="flex flex-col text-left">
+                 <h2 className="text-lg font-black text-slate-800 leading-tight line-clamp-1">{userProfile?.displayName || 'ผู้ใช้ Hubbybox'}</h2>
+                 <p className="text-[11px] font-medium text-slate-500 mt-0.5">ID: {userProfile?.userId?.substring(0, 10)}...</p>
+              </div>
            </div>
-           <h2 className="relative z-10 text-2xl font-black text-slate-800 mb-1">{userProfile?.displayName || 'ผู้ใช้ Hubbybox'}</h2>
-           <p className="relative z-10 text-sm font-medium text-slate-500">LINE ID: {userProfile?.userId?.substring(0, 10)}...</p>
+           <button 
+             onClick={() => alert('ฟีเจอร์แก้ไขโปรไฟล์กำลังพัฒนา (Coming Soon)')} 
+             className="relative z-10 w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-sky-500 transition-colors shrink-0 border border-slate-100"
+             title="แก้ไขโปรไฟล์"
+           >
+              <i className="fa-solid fa-pen text-sm" aria-hidden="true"></i>
+           </button>
         </section>
 
         {/* Account Settings */}
