@@ -80,7 +80,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
             transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
             className="fixed bottom-0 left-0 right-0 z-[100] max-w-md mx-auto font-sans"
           >
-            <div className="bg-white border-t border-slate-100 rounded-t-[2.5rem] p-6 pb-20 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] overflow-y-auto max-h-[90vh]">
+            <div className="bg-white border-t border-slate-100 rounded-t-3xl p-6 pb-20 shadow-[0_-15px_30px_rgba(0,0,0,0.06)] overflow-y-auto max-h-[90vh]">
               {/* Drag Handle indicator */}
               <div className="w-16 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
               
@@ -113,7 +113,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="เช่น เสื้อกันหนาว, อุปกรณ์ช่าง..."
-                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-300 focus:bg-white transition-colors text-lg font-medium shadow-inner"
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl py-3.5 px-5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-300 focus:bg-white transition-colors text-base font-bold shadow-inner"
                     autoFocus
                   />
                 </div>
@@ -125,26 +125,26 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                     <button
                       type="button"
                       onClick={() => setLocationType('home')}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all ${
+                      className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                         locationType === 'home' 
                           ? 'border-primary bg-primary/5 text-primary' 
                           : 'border-slate-100 bg-slate-50 text-slate-400'
                       }`}
                     >
-                      <i className="fa-solid fa-house text-xl" aria-hidden="true"></i>
-                      <span className="text-xs font-bold uppercase tracking-widest">ที่บ้าน</span>
+                      <i className="fa-solid fa-house text-lg" aria-hidden="true"></i>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">ที่บ้าน</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setLocationType('warehouse')}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all ${
+                      className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                         locationType === 'warehouse' 
                           ? 'border-indigo-500 bg-indigo-50 text-indigo-500' 
                           : 'border-slate-100 bg-slate-50 text-slate-400'
                       }`}
                     >
-                      <i className="fa-solid fa-warehouse text-xl" aria-hidden="true"></i>
-                      <span className="text-xs font-bold uppercase tracking-widest text-center leading-tight">คลังกลาง<br/>Hubbybox</span>
+                      <i className="fa-solid fa-warehouse text-lg" aria-hidden="true"></i>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-center leading-tight">คลังกลาง<br/>Hubbybox</span>
                     </button>
                   </div>
 
@@ -168,9 +168,9 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                 <button
                   type="submit"
                   disabled={!name.trim() || isSubmitting}
-                  className="w-full bg-primary hover:opacity-90 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-lg py-5 rounded-2xl transition-all shadow-[0_10px_30px_rgba(52,137,255,0.3)] disabled:shadow-none flex items-center justify-center active:scale-95 mt-4"
+                  className="w-full bg-primary hover:opacity-90 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-base py-4 rounded-xl transition-all shadow-md disabled:shadow-none flex items-center justify-center active:scale-95 mt-4"
                 >
-                  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[28px]" aria-hidden="true"></i> : 'สร้างกล่อง'}
+                  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin text-[24px]" aria-hidden="true"></i> : 'สร้างกล่อง'}
                 </button>
               </form>
             </div>

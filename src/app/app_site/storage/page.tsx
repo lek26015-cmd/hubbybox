@@ -69,14 +69,14 @@ export default function HubbyStoragePage() {
 
        <main className="px-8 -mt-24 relative z-10">
           {/* Pricing & Call to Action Card (Moved to Top) */}
-          <section className="bg-slate-900 rounded-[2.5rem] p-8 text-white overflow-hidden relative shadow-2xl shadow-slate-200 mb-8 border border-white/10 group">
+          <section className="bg-slate-900 rounded-2xl p-6 text-white overflow-hidden relative shadow-lg mb-8 border border-white/10 group">
              <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 scale-150 transition-transform duration-1000 group-hover:rotate-45">
                 <i className="fa-solid fa-box-archive text-[100px]" aria-hidden="true"></i>
              </div>
              
              <div className="relative z-10">
-                <h3 className="text-2xl font-black mb-2 tracking-tight">เริ่มฝากกล่องแรกของคุณ</h3>
-                <p className="text-sm text-slate-400 mb-8 font-medium leading-relaxed max-w-[240px]">แจ้งความประสงค์นำฝาก และรับรหัสอ้างอิง<br/>เพื่อเริ่มส่งกล่องเข้าคลังได้ทันที</p>
+                <h3 className="text-xl font-bold mb-2 tracking-tight">เริ่มฝากกล่องแรกของคุณ</h3>
+                <p className="text-xs text-slate-400 mb-6 font-medium leading-relaxed max-w-[240px]">แจ้งความประสงค์นำฝาก และรับรหัสอ้างอิง<br/>เพื่อเริ่มส่งกล่องเข้าคลังได้ทันที</p>
                 
                 <button onClick={() => alert('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)')} className="w-full bg-slate-800 text-slate-500 font-black py-5 rounded-2xl border border-white/5 text-base uppercase tracking-widest cursor-not-allowed">
                    เริ่มแจ้งฝากกล่อง (เร็วๆ นี้) 📦
@@ -99,11 +99,11 @@ export default function HubbyStoragePage() {
              </div>
           </section>
           {/* Main Card */}
-          <div className="bg-white rounded-3xl p-8 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] border border-slate-50 mb-10">
-             <div className="flex flex-col items-center text-center mb-8">
-                <div className="w-16 h-1 bg-slate-200 rounded-full mb-6"></div>
-                <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tighter">Hubby Storage</h1>
-                <p className="text-lg font-bold text-sky-500 mb-4">บริการฝากกล่องอัจฉริยะ</p>
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 mb-10">
+             <div className="flex flex-col items-center text-center mb-6">
+                <div className="w-12 h-1 bg-slate-200 rounded-full mb-6"></div>
+                <h1 className="text-3xl font-bold text-slate-900 mb-1 tracking-tighter">Hubby Storage</h1>
+                <p className="text-base font-bold text-sky-500 mb-4">บริการฝากกล่องอัจฉริยะ</p>
                 <div className="h-1 w-12 bg-sky-100 rounded-full"></div>
              </div>
 
@@ -307,15 +307,15 @@ export default function HubbyStoragePage() {
 
        {/* Coming Soon Overlay Mask */}
        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/40 backdrop-blur-md">
-          <div className="bg-slate-900/90 text-white rounded-[3rem] p-12 text-center shadow-2xl border border-white/20 animate-in zoom-in duration-500 max-w-sm w-full">
-             <div className="w-20 h-20 bg-vora-accent rounded-3xl flex items-center justify-center text-white mx-auto mb-8 shadow-xl shadow-vora-accent/20 rotate-12">
-                <i className="fa-solid fa-clock-rotate-left text-3xl" aria-hidden="true"></i>
+          <div className="bg-slate-900/90 text-white rounded-3xl p-10 text-center shadow-2xl border border-white/20 animate-in zoom-in duration-500 max-w-sm w-full">
+             <div className="w-16 h-16 bg-vora-accent rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-vora-accent/20 rotate-12">
+                <i className="fa-solid fa-clock-rotate-left text-2xl" aria-hidden="true"></i>
              </div>
-             <h2 className="text-3xl font-black mb-4 tracking-tight">Coming Soon</h2>
-             <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
+             <h2 className="text-2xl font-bold mb-3 tracking-tight">Coming Soon</h2>
+             <p className="text-slate-400 text-xs font-medium leading-relaxed mb-8">
                 บริการรับฝากของกำลังจัดเตรียมพื้นที่และระบบความปลอดภัยระดับสูงสุด<br/>อดใจรออีกนิดนะครับ!
              </p>
-             <Link href="/" className="inline-block w-full bg-white text-slate-900 font-black py-4 rounded-2xl hover:bg-slate-100 transition-all active:scale-95 shadow-lg">
+             <Link href="/" className="inline-block w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all active:scale-95 shadow-lg">
                 กลับหน้าหลัก
              </Link>
           </div>

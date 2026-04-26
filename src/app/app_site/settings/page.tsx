@@ -43,7 +43,7 @@ export default function SettingsPage() {
       <main className="flex-1 w-full max-w-md mx-auto px-6 py-8 flex flex-col pt-8">
         
         {/* Profile Card */}
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-[0_15px_40px_-15px_rgba(56,189,248,0.3)] rounded-[1.5rem] p-4 mb-8 flex items-center justify-between relative overflow-hidden">
+        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl p-4 mb-8 flex items-center justify-between relative overflow-hidden">
            <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 scale-150 text-sky-400">
                <i className="fa-solid fa-user text-[100px]" aria-hidden="true"></i>
            </div>
@@ -64,7 +64,7 @@ export default function SettingsPage() {
                  )}
               </div>
               <div className="flex flex-col text-left">
-                 <h2 className="text-lg font-black text-slate-800 leading-tight line-clamp-1">{typeof window !== 'undefined' && localStorage.getItem('hubby_custom_name') ? localStorage.getItem('hubby_custom_name') : (userProfile?.displayName || 'ผู้ใช้ Hubbybox')}</h2>
+                 <h2 className="text-base font-bold text-slate-800 leading-tight line-clamp-1">{typeof window !== 'undefined' && localStorage.getItem('hubby_custom_name') ? localStorage.getItem('hubby_custom_name') : (userProfile?.displayName || 'ผู้ใช้ Hubbybox')}</h2>
                  <p className="text-[11px] font-medium text-slate-500 mt-0.5">ID: {userProfile?.userId?.substring(0, 10)}...</p>
               </div>
            </div>
@@ -86,7 +86,7 @@ export default function SettingsPage() {
 
         {/* Account Settings */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">บัญชีของฉัน</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-[1.5rem] mb-6 overflow-hidden">
+        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-6 overflow-hidden">
            <div className="p-5 flex items-center justify-between border-b border-slate-100">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
@@ -118,7 +118,7 @@ export default function SettingsPage() {
 
         {/* General Settings */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">ช่วยเหลือ</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-[1.5rem] mb-6 overflow-hidden">
+        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-6 overflow-hidden">
            <Link href="/settings/support" className="w-full p-5 flex items-center justify-between border-b border-slate-100 hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500 group-hover:bg-sky-100 transition-colors">
@@ -140,7 +140,7 @@ export default function SettingsPage() {
 
         {/* Support Us */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">สนับสนุนเรา</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-[1.5rem] mb-8 overflow-hidden">
+        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-8 overflow-hidden">
            <Link href="/settings/donate" className="w-full p-5 flex items-center justify-between hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 group-hover:bg-rose-100 transition-colors">

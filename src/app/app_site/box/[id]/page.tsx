@@ -603,8 +603,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       <main className="print:hidden flex-1 w-full max-w-md mx-auto px-6 py-8 flex flex-col pt-10">
         {/* Status / Overview */}
-        <div className={`z-10 backdrop-blur-xl border border-white/80 shadow-[0_20px_50px_-15px_rgba(56,189,248,0.25)] rounded-3xl p-8 mb-8 flex items-center justify-between relative group ${box?.cover_image_url ? 'bg-slate-900 border-slate-700' : 'bg-gradient-to-br from-white to-sky-50/50'}`}>
-            <div className="absolute inset-0 z-0 overflow-hidden rounded-3xl pointer-events-none">
+        <div className={`z-10 backdrop-blur-xl border border-white/80 shadow-sm rounded-2xl p-6 mb-8 flex items-center justify-between relative group ${box?.cover_image_url ? 'bg-slate-900 border-slate-700' : 'bg-gradient-to-br from-white to-sky-50/50'}`}>
+            <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl pointer-events-none">
               {box?.cover_image_url && (
                 <div className="absolute inset-0">
                   <img src={box?.cover_image_url} alt="Box Cover" className="w-full h-full object-cover opacity-60 mix-blend-overlay" />
@@ -617,8 +617,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             </div>
             <div className="relative z-10 flex items-center gap-6">
                <div className="flex flex-col justify-center">
-                  <p className={`${box?.cover_image_url ? 'text-white/80' : 'text-slate-500'} font-bold text-sm tracking-wide mb-1`}>จำนวนของในกล่อง</p>
-                  <h2 className={`text-7xl font-black drop-shadow-sm leading-tight ${box?.cover_image_url ? 'text-white drop-shadow-md' : 'bg-gradient-to-br from-primary to-blue-600 bg-clip-text text-transparent'}`}>{items.length}</h2>
+                  <p className={`${box?.cover_image_url ? 'text-white/80' : 'text-slate-500'} font-bold text-xs tracking-wide mb-1`}>จำนวนของในกล่อง</p>
+                  <h2 className={`text-6xl font-bold drop-shadow-sm leading-tight ${box?.cover_image_url ? 'text-white drop-shadow-md' : 'bg-gradient-to-br from-primary to-blue-600 bg-clip-text text-transparent'}`}>{items.length}</h2>
                </div>
             </div>
             
@@ -730,7 +730,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                           }`}>
                              <i className={`fa-solid ${isCompleted ? 'fa-check' : step.icon} text-sm`} aria-hidden="true"></i>
                           </div>
-                          <span className={`text-[9px] font-black uppercase tracking-widest text-center leading-tight ${isActive || isCompleted ? 'text-slate-800' : 'text-slate-300'}`}>
+                          <span className={`text-[9px] font-bold uppercase tracking-widest text-center leading-tight ${isActive || isCompleted ? 'text-slate-800' : 'text-slate-300'}`}>
                              {step.label}
                           </span>
                        </div>
@@ -744,7 +744,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
          {isOwner && (
           <div className="mb-8 space-y-4">
             {/* Main Logistics Card */}
-            <div className="bg-white/80 backdrop-blur-xl border border-white p-6 rounded-3xl shadow-sm">
+            <div className="bg-white/80 backdrop-blur-xl border border-white p-6 rounded-2xl shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                    <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${box.location === HUBBYBOX_WAREHOUSE_LOCATION ? 'bg-indigo-50 text-indigo-500' : 'bg-emerald-50 text-emerald-500'}`}>
@@ -1111,7 +1111,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-sm bg-white rounded-[2.5rem] p-10 text-center shadow-2xl overflow-hidden border border-white/20"
+              className="relative w-full max-w-sm bg-white rounded-3xl p-10 text-center shadow-2xl overflow-hidden border border-white/20"
             >
                <div className="absolute -top-10 -right-10 w-40 h-40 bg-sky-500/5 rounded-full blur-3xl"></div>
                
@@ -1119,14 +1119,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   <i className="fa-solid fa-key text-3xl" aria-hidden="true"></i>
                </div>
                
-               <h3 className="text-2xl font-black text-slate-800 tracking-tight mb-2">รหัสผ่านสำหรับเจ้าหน้าที่</h3>
+               <h3 className="text-xl font-bold text-slate-800 tracking-tight mb-2">รหัสผ่านสำหรับเจ้าหน้าที่</h3>
                <p className="text-xs text-slate-400 font-medium leading-relaxed mb-10 px-4">
                   แจ้งรหัสนี้ให้เจ้าหน้าที่เพื่ออนุญาตให้เปิดกล่องและจัดการของด้านในได้ชั่วคราว
                </p>
                
-               <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] p-8 mb-8 relative group overflow-hidden">
+               <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-8 mb-8 relative group overflow-hidden">
                   <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/5 transition-colors"></div>
-                  <span className="text-6xl font-black text-primary tracking-[0.1em] drop-shadow-sm tabular-nums">
+                  <span className="text-5xl font-bold text-primary tracking-[0.1em] drop-shadow-sm tabular-nums">
                      {generatedAccessCode}
                   </span>
                </div>
@@ -1139,7 +1139,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   
                   <button 
                     onClick={() => setIsAccessCodeModalOpen(false)}
-                    className="w-full mt-4 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all"
+                    className="w-full mt-4 py-4 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-all"
                   >
                     เข้าใจแล้ว
                   </button>

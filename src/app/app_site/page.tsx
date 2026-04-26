@@ -150,12 +150,12 @@ export default function Home() {
         </header>
 
         {/* 1. ค้นหาของ (Massive Multi-modal Search) */}
-        <section className="mb-10 relative z-10 mt-2">
-          <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-5 text-center px-4 leading-tight">
+        <section className="mb-8 relative z-10 mt-2">
+          <h2 className="text-xl font-bold text-slate-800 tracking-tight mb-4 text-center px-4 leading-tight">
             ต้องการค้นหาของในกล่องของคุณ<br/>
-            <span className="text-primary">ให้ Hubby AI ช่วยหาได้เลย</span>
+            <span className="text-primary/80">ให้ Hubby AI ช่วยหาได้เลย</span>
           </h2>
-          <div className="relative shadow-[0_20px_50px_-12px_rgba(52,137,255,0.25)] rounded-2xl md:rounded-3xl bg-white/70 backdrop-blur-2xl p-2.5 border border-white">
+          <div className="relative shadow-sm rounded-2xl bg-white/70 backdrop-blur-2xl p-2 border border-white">
             <form 
               onSubmit={(e) => {
                 e.preventDefault();
@@ -170,7 +170,7 @@ export default function Home() {
                 name="q"
                 type="text" 
                 placeholder="พิมพ์เพื่อค้นหาของ..."
-                className="w-full bg-white border-2 border-transparent focus:border-primary/30 focus:bg-white rounded-xl py-6 pl-[4.5rem] pr-6 text-xl font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                className="w-full bg-white border border-slate-100 focus:border-primary/20 focus:bg-white rounded-xl py-5 pl-[4.5rem] pr-6 text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
               />
             </form>
             
@@ -198,20 +198,20 @@ export default function Home() {
         </section>
 
         {/* 2. จัดกล่องใหม่ (Prominent Action Button) */}
-        <section className="mb-10 z-0">
+        <section className="mb-8 z-0">
           <button 
             onClick={() => setIsDrawerOpen(true)}
-            className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-3 rounded-2xl md:rounded-3xl bg-gradient-to-br from-primary to-[#2a7aeb] py-10 px-6 text-white hover:opacity-90 transition-all shadow-[0_20px_40px_-10px_rgba(52,137,255,0.4)] active:scale-[0.98] border border-white/40 group"
+            className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-[#2a7aeb] py-8 px-6 text-white hover:opacity-90 transition-all shadow-lg active:scale-[0.98] border border-white/20 group"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-12 transition-transform duration-700 group-hover:rotate-45">
-               <i className="fa-solid fa-box text-[140px]" aria-hidden="true"></i>
+               <i className="fa-solid fa-box text-[120px]" aria-hidden="true"></i>
             </div>
             
-            <div className="relative z-10 bg-white/20 w-20 h-20 flex items-center justify-center rounded-full backdrop-blur-md shadow-inner border border-white/30 mb-2">
-               <i className="fa-solid fa-plus text-white text-[32px] drop-shadow-sm" aria-hidden="true"></i>
+            <div className="relative z-10 bg-white/20 w-16 h-16 flex items-center justify-center rounded-full backdrop-blur-md shadow-inner border border-white/30 mb-2">
+               <i className="fa-solid fa-plus text-white text-[28px] drop-shadow-sm" aria-hidden="true"></i>
             </div>
-            <span className="relative z-10 text-3xl font-bold tracking-wide text-white drop-shadow-sm">จัดกล่องใหม่</span>
-            <p className="relative z-10 text-sm font-medium text-sky-50">แพ็คและบันทึกข้อมูลอย่างง่ายดาย</p>
+            <span className="relative z-10 text-2xl font-bold tracking-wide text-white drop-shadow-sm">จัดกล่องใหม่</span>
+            <p className="relative z-10 text-xs font-medium text-sky-50 opacity-90">แพ็คและบันทึกข้อมูลอย่างง่ายดาย</p>
           </button>
         </section>
 
@@ -279,7 +279,7 @@ export default function Home() {
                         </div>
                       )}
                       <div>
-                        <h4 className="font-bold text-slate-700 text-lg leading-tight mb-1.5">{box.name}</h4>
+                        <h4 className="font-bold text-slate-700 text-base leading-tight mb-1">{box.name}</h4>
                         <div className="flex flex-wrap gap-2">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1 ${
                             box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION)
