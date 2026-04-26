@@ -82,9 +82,9 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
           >
             <div className="bg-white border-t border-slate-100 rounded-t-3xl p-6 pb-20 shadow-[0_-15px_30px_rgba(0,0,0,0.06)] overflow-y-auto max-h-[90vh]">
               {/* Drag Handle indicator */}
-              <div className="w-16 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+              <div className="w-16 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
               
-              <div className="flex justify-between items-center mb-8">
+              <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                   <div className="w-14 h-14 overflow-hidden shrink-0">
                     <Image 
@@ -107,20 +107,19 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-500 mb-2">ชื่อกล่อง / ป้ายกำกับ</label>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1.5">ชื่อกล่อง / ป้ายกำกับ</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="เช่น เสื้อกันหนาว, อุปกรณ์ช่าง..."
                     className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl py-3.5 px-5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-300 focus:bg-white transition-colors text-base font-bold shadow-inner"
-                    autoFocus
                   />
                 </div>
 
                 {/* Location Selection */}
                 <div className="space-y-4">
-                  <label className="block text-sm font-semibold text-slate-500">สถานที่เก็บกล่อง</label>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1.5">สถานที่เก็บกล่อง</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
