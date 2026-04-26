@@ -45,6 +45,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
+  const [generatedAccessCode, setGeneratedAccessCode] = useState<string | null>(null);
+  const [accessCodeExpiry, setAccessCodeExpiry] = useState<string | null>(null);
+  const [isAccessCodeModalOpen, setIsAccessCodeModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -421,6 +424,35 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     }
   };
 
+  const handleGenerateAccessCode = async () => {
+    if (!isOwner || isSubmittingRequest) return;
+    
+    setIsSubmittingRequest(true);
+    try {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiry = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 mins
+
+      const { error } = await supabase
+        .from('boxes')
+        .update({ 
+          access_code: code,
+          access_code_expires_at: expiry
+        })
+        .eq('id', boxId);
+
+      if (error) throw error;
+      
+      setGeneratedAccessCode(code);
+      setAccessCodeExpiry(expiry);
+      setIsAccessCodeModalOpen(true);
+    } catch (err: any) {
+      console.error('Generate code error:', err);
+      alert('ไม่สามารถสร้างรหัสได้: ' + err.message);
+    } finally {
+      setIsSubmittingRequest(false);
+    }
+  };
+
   if (isLoading) {
      return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-b from-[#e0f2fe] to-white flex-col gap-5 font-sans">
@@ -472,7 +504,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         <div className="flex items-center gap-3 flex-1 px-4 justify-center">
             <div className="w-10 h-10 overflow-hidden shrink-0">
                <Image 
-                 src="/logo-hubbybox.png" 
+                 src="/logo.png" 
                  alt="HubbyBox" 
                  width={40} 
                  height={40} 
@@ -1060,6 +1092,58 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </button>
                    </div>
                 </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* Access Code Modal */}
+      <AnimatePresence>
+        {isAccessCodeModalOpen && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-slate-900/80 backdrop-blur-md"
+              onClick={() => setIsAccessCodeModalOpen(false)}
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-sm bg-white rounded-[2.5rem] p-10 text-center shadow-2xl overflow-hidden border border-white/20"
+            >
+               <div className="absolute -top-10 -right-10 w-40 h-40 bg-sky-500/5 rounded-full blur-3xl"></div>
+               
+               <div className="bg-sky-50 w-20 h-20 rounded-[1.5rem] flex items-center justify-center text-sky-500 mx-auto mb-8 shadow-inner">
+                  <i className="fa-solid fa-key text-3xl" aria-hidden="true"></i>
+               </div>
+               
+               <h3 className="text-2xl font-black text-slate-800 tracking-tight mb-2">รหัสผ่านสำหรับเจ้าหน้าที่</h3>
+               <p className="text-xs text-slate-400 font-medium leading-relaxed mb-10 px-4">
+                  แจ้งรหัสนี้ให้เจ้าหน้าที่เพื่ออนุญาตให้เปิดกล่องและจัดการของด้านในได้ชั่วคราว
+               </p>
+               
+               <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] p-8 mb-8 relative group overflow-hidden">
+                  <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/5 transition-colors"></div>
+                  <span className="text-6xl font-black text-primary tracking-[0.1em] drop-shadow-sm tabular-nums">
+                     {generatedAccessCode}
+                  </span>
+               </div>
+               
+               <div className="flex flex-col items-center gap-4">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-rose-100">
+                     <i className="fa-solid fa-clock-rotate-left fa-spin-reverse" aria-hidden="true"></i>
+                     Valid for 15 minutes
+                  </div>
+                  
+                  <button 
+                    onClick={() => setIsAccessCodeModalOpen(false)}
+                    className="w-full mt-4 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all"
+                  >
+                    เข้าใจแล้ว
+                  </button>
+               </div>
             </motion.div>
           </div>
         )}

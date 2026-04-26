@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constants';
 import type { BoxListRow } from '@/lib/box-types';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 type SupplyOrderListRow = {
   id: string;
@@ -213,14 +214,23 @@ export default function AdminWarehousePage() {
                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{box.shipping_carrier || 'Manual Drop-off'}</span>
                       </td>
                       <td className="px-8 py-4 text-right">
-                         <button
-                           type="button"
-                           onClick={() => openEditModal(box)}
-                           className="text-[9px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-primary text-white shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2 ml-auto"
-                         >
-                           <i className="fa-solid fa-sliders text-[10px]"></i>
-                           Manage Box
-                         </button>
+                         <div className="flex items-center justify-end gap-2">
+                            <Link
+                              href={`/admin_site/box/${box.id}`}
+                              className="text-[9px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg bg-slate-900 text-vora-accent shadow-lg shadow-black/10 hover:bg-black transition-all active:scale-95 flex items-center gap-2"
+                            >
+                               <i className="fa-solid fa-eye text-[10px]"></i>
+                               View Items
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(box)}
+                              className="text-[9px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg bg-primary text-white shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2"
+                            >
+                              <i className="fa-solid fa-sliders text-[10px]"></i>
+                              Manage Box
+                            </button>
+                         </div>
                       </td>
                     </tr>
                   ))}
