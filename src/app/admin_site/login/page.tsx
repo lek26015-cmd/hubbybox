@@ -6,15 +6,21 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function AdminLoginPage() {
-  const { signInWithGoogle } = useAdminAuth();
+  const { signInWithPasscode } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
+    const passcode = (document.getElementById('passcode-input') as HTMLInputElement)?.value;
+    if (!passcode) {
+      setError('กรุณาใส่รหัสผ่าน');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
-      await signInWithGoogle();
+      await signInWithPasscode(passcode);
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
       setIsLoading(false);
@@ -51,7 +57,7 @@ export default function AdminLoginPage() {
           <div className="text-center">
             <p className="text-slate-400 text-sm font-medium leading-relaxed">
               ยินดีต้อนรับเข้าสู่ระบบจัดการ HubbyBox คลังสินค้าอัจฉริยะ<br/>
-              กรุณาเข้าสู่ระบบด้วยบัญชีแอดมินเพื่อดำเนินการต่อครับ
+              กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ
             </p>
           </div>
 
@@ -62,20 +68,31 @@ export default function AdminLoginPage() {
             </div>
           )}
 
-          <button
-            onClick={handleLogin}
-            disabled={isLoading}
-            className="w-full bg-white text-slate-950 font-black py-4 rounded-xl flex items-center justify-center gap-4 transition-all active:scale-95 group shadow-xl shadow-slate-900"
-          >
-            {isLoading ? (
-              <i className="fa-solid fa-spinner fa-spin" />
-            ) : (
-              <>
-                <Image src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width={20} height={20} />
-                <span>Sign in with Google</span>
-              </>
-            )}
-          </button>
+          <div className="space-y-4">
+             <input 
+               type="password" 
+               placeholder="รหัสผ่าน (Passcode)" 
+               id="passcode-input"
+               className="w-full bg-slate-950 border border-slate-800 rounded-xl py-4 px-4 font-bold text-white placeholder-slate-600 focus:border-vora-accent focus:outline-none transition-all text-center tracking-[0.2em]"
+               onKeyDown={(e) => {
+                 if (e.key === 'Enter') handleLogin();
+               }}
+             />
+            <button
+              onClick={handleLogin}
+              disabled={isLoading}
+              className="w-full bg-vora-accent text-white font-black py-4 rounded-xl flex items-center justify-center gap-4 transition-all active:scale-95 group shadow-xl shadow-vora-accent/20"
+            >
+              {isLoading ? (
+                <i className="fa-solid fa-spinner fa-spin text-xl" />
+              ) : (
+                <>
+                  <i className="fa-solid fa-unlock text-xl" />
+                  <span>เข้าสู่ระบบ</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center gap-4">
