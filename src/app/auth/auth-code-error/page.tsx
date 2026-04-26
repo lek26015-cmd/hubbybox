@@ -23,7 +23,7 @@ export default function AuthCodeError() {
 
         <div className="space-y-4">
           <Link 
-            href="/login" 
+            href="/admin_site/login" 
             className="block w-full bg-white text-slate-950 font-black py-4 rounded-xl hover:bg-slate-100 transition-all active:scale-95"
           >
             ลองใหม่อีกครั้ง

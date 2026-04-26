@@ -5,6 +5,15 @@ import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 import { useRouter, usePathname } from 'next/navigation';
 
+/**
+ * อีเมลที่อนุญาตให้เข้า Admin Dashboard
+ * เพิ่ม/ลบอีเมลที่ต้องการได้ตรงนี้ หรือย้ายไปเป็น env var ในอนาคต
+ */
+const ADMIN_EMAILS: string[] = [
+  // TODO: เพิ่มอีเมลแอดมินจริงที่นี่
+  // 'admin@hubbybox.app',
+];
+
 interface AdminAuthContextType {
   user: User | null;
   session: Session | null;
@@ -31,7 +40,19 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     // 2. Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // Whitelist check: ถ้ามี whitelist และอีเมลไม่อยู่ในลิสต์ → sign out ทันที
+      if (_event === 'SIGNED_IN' && session?.user) {
+        const email = session.user.email || '';
+        if (ADMIN_EMAILS.length > 0 && !ADMIN_EMAILS.includes(email)) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -40,7 +61,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         router.refresh();
       }
       if (_event === 'SIGNED_OUT') {
-        router.push('/login');
+        router.push('/admin_site/login');
       }
     });
 
@@ -59,7 +80,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push('/admin_site/login');
   };
 
   return (

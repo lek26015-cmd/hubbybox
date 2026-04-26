@@ -35,27 +35,17 @@ export default function AdminWarehousePage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const load = useCallback(async () => {
-    console.log('HB-DEBUG: load() START');
     setLoading(true);
     setError(null);
     try {
-      console.log('HB-DEBUG: Supabase instance:', !!supabase);
-      console.log('HB-DEBUG: Fetching boxes...');
-      
       const { data, error: bErr } = await supabase
         .from('boxes')
         .select('id, name, user_id, status, shipping_carrier, tracking_number, created_at, location')
         .limit(200);
-
-      console.log('HB-DEBUG: Fetch DONE. Data length:', data?.length, 'Error:', bErr);
       
-      if (bErr) {
-        console.error('HB-DEBUG: Supabase fetch error:', bErr);
-        throw bErr;
-      }
+      if (bErr) throw bErr;
 
       const rows = (data || []) as BoxListRow[];
-      console.log('HB-DEBUG: Filtering rows. Total:', rows.length);
       
       const inboundRows = rows.filter((b) => b.status === BOX_STATUS.SHIPPING_TO_WAREHOUSE);
       
@@ -74,19 +64,23 @@ export default function AdminWarehousePage() {
       setInbound(inboundRows);
       setStored(storedRows);
       setAtHomeCount(homeRows.length);
-      setSupplyOrders([]);
-      console.log('HB-DEBUG: State updated. Inbound:', inboundRows.length, 'Stored:', storedRows.length, 'At Home:', homeRows.length);
+
+      // Fetch supply orders
+      const { data: orders } = await supabase
+        .from('supplies_orders')
+        .select('id, product_name, price, status, created_at, user_id')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      setSupplyOrders((orders as SupplyOrderListRow[]) || []);
     } catch (e: any) {
-      console.error('HB-DEBUG: Catch block caught error:', e);
       setError(e?.message || 'Error loading warehouse data');
     } finally {
-      console.log('HB-DEBUG: Finally block reached. Setting loading false');
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    console.log('HB-DEBUG: useEffect MOUNTED');
     load();
   }, [load]);
 

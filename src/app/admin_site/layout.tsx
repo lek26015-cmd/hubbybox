@@ -29,7 +29,7 @@ export default function AdminLayout({
 }
 
 function AdminInnerLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoading: isAuthLoading } = useAdminAuth();
+  const { user, isLoading: isAuthLoading, signOut } = useAdminAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -49,7 +49,6 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
 
   // Click outside to close menus
   useEffect(() => {
-     console.log('AdminLayout: Click-out effect active');
      function handleClickOutside(event: MouseEvent) {
         // If clicking inside a ref, don't close its corresponding menu
         const isInsideNotification = notificationRef.current?.contains(event.target as Node);
@@ -165,11 +164,6 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col relative z-0">
-               {/* Click Test Overlay (Diagnostic) */}
-               <div 
-                  onClick={() => console.log('GLOBAL CLICK CAPTURED')}
-                  className="fixed inset-0 pointer-events-none z-[-1]"
-               />
                {/* Global Header */}
                <header className="h-20 lg:h-24 px-6 lg:px-12 flex items-center justify-between border-b border-admin-border bg-admin-card/80 backdrop-blur-md z-[100] relative pointer-events-auto">
                   <div className="flex items-center gap-4 flex-1">
@@ -197,7 +191,6 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                              <button 
                                 type="button"
                                 onClick={(e) => {
-                                   console.log('Notification clicked');
                                    e.stopPropagation();
                                    setIsNotificationsOpen(prev => !prev);
                                 }}
@@ -257,7 +250,6 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                      <div className="relative z-[60]" ref={profileRef}>
                         <div 
                            onClick={(e) => {
-                              console.log('Profile clicked');
                               e.stopPropagation();
                               setIsProfileOpen(prev => !prev);
                            }}
@@ -279,7 +271,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                            <div className="absolute right-0 mt-4 w-64 bg-admin-card/95 backdrop-blur-xl border border-admin-border rounded-2xl shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-200 origin-top-right overflow-hidden p-2">
                               <div className="p-4 border-b border-admin-border mb-2">
                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Signed in as</p>
-                                 <p className="text-sm font-black text-admin-text-primary break-all">admin@hubbybox.com</p>
+                                 <p className="text-sm font-black text-admin-text-primary break-all">{user?.email || 'admin'}</p>
                               </div>
                               <Link href="/admin_site/settings" className="flex items-center gap-3 p-3 rounded-xl hover:bg-admin-bg transition-colors group">
                                  <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-vora-accent transition-colors">
@@ -287,12 +279,12 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
                                  </div>
                                  <span className="text-xs font-bold text-slate-600 group-hover:text-admin-text-primary transition-colors">Settings</span>
                               </Link>
-                              <Link href="/logout" className="flex items-center gap-3 p-3 rounded-xl hover:bg-rose-50 transition-colors group">
+                              <button onClick={() => signOut()} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-rose-50 transition-colors group">
                                  <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-400">
                                     <i className="fa-solid fa-right-from-bracket text-xs"></i>
                                  </div>
                                  <span className="text-xs font-bold text-rose-600">Sign Out</span>
-                              </Link>
+                              </button>
                            </div>
                         )}
                      </div>
