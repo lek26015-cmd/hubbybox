@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type SupportTicket = {
@@ -15,8 +15,6 @@ type SupportTicket = {
 };
 
 export default function TicketsPage() {
-  const [tickets, setTickets] = useState<SupportTicket[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [replyingTicket, setReplyingTicket] = useState<SupportTicket | null>(null);
