@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 export function AppAuthGuard({ children }: { children: React.ReactNode }) {
-  const { isLoading, dbUser } = useLiff();
+  const { isLoading, dbUser, error } = useLiff();
 
   return (
     <>
