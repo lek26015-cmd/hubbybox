@@ -78,11 +78,9 @@ export default function HubbyStoragePage() {
                 <h3 className="text-2xl font-black mb-2 tracking-tight">เริ่มฝากกล่องแรกของคุณ</h3>
                 <p className="text-sm text-slate-400 mb-8 font-medium leading-relaxed max-w-[240px]">แจ้งความประสงค์นำฝาก และรับรหัสอ้างอิง<br/>เพื่อเริ่มส่งกล่องเข้าคลังได้ทันที</p>
                 
-                <Link href="/storage/deposit" className="block w-full">
-                  <button className="w-full bg-primary hover:bg-primary/90 text-white font-black py-5 rounded-2xl shadow-xl shadow-primary/30 active:scale-95 transition-all text-base uppercase tracking-widest border border-white/20">
-                     เริ่มแจ้งฝากกล่อง 📦
-                  </button>
-                </Link>
+                <button onClick={() => alert('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)')} className="w-full bg-slate-800 text-slate-500 font-black py-5 rounded-2xl border border-white/5 text-base uppercase tracking-widest cursor-not-allowed">
+                   เริ่มแจ้งฝากกล่อง (เร็วๆ นี้) 📦
+                </button>
              </div>
              
              <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center gap-2 relative z-10">

@@ -529,13 +529,13 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             {box.location !== HUBBYBOX_WAREHOUSE_LOCATION && (
               <button 
                 onClick={() => {
-                  router.push('/storage/deposit');
+                  alert('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)');
                 }}
-                className="w-11 h-11 bg-indigo-500 text-white shadow-lg shadow-indigo-200 rounded-full flex items-center justify-center active:scale-90 transition-all relative group"
-                title="ส่งเข้าคลังกลาง"
+                className="w-11 h-11 bg-slate-100 text-slate-300 shadow-sm rounded-full flex items-center justify-center relative group cursor-not-allowed"
+                title="ส่งเข้าคลังกลาง (เร็วๆ นี้)"
               >
                  <i className="fa-solid fa-parachute-box text-[20px]" aria-hidden="true"></i>
-                 <div className="absolute top-12 -right-2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">ส่งเข้าคลัง</div>
+                 <div className="absolute top-12 -right-2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">เร็วๆ นี้</div>
               </button>
             )}
             <button 
