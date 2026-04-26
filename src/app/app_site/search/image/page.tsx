@@ -57,7 +57,6 @@ export default function SearchByImage() {
 
       if (itemsFound.length > 0) {
         // 3. Search database for these items
-        // We'll search for the first 3 items identified to avoid too many queries
         const searchTerms = itemsFound.slice(0, 3);
         
         let allMatches: any[] = [];
@@ -75,9 +74,6 @@ export default function SearchByImage() {
         const uniqueMatches = Array.from(new Map(allMatches.map(m => [m.id, m])).values());
         setSearchResults(uniqueMatches);
       }
-
-      // Cleanup temp file (optional, but good practice)
-      // await supabase.storage.from('box-images').remove([filePath]);
 
     } catch (err: any) {
       console.error('Image Search Error:', err);
@@ -185,21 +181,6 @@ export default function SearchByImage() {
                   className="text-slate-500 font-bold hover:text-white transition-colors"
                 >
                    {previewUrl && !isAnalyzing ? 'ลองค้นหาภาพอื่น' : 'ยกเลิก'}
-                </button>
-             </div>
-          )}
-       </main>
-       
-       <footer className="py-8 text-center">
-          <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">ขับเคลื่อนด้วย Hubby AI Vision</p>
-       </footer>
-    </div>
-  );
-}
-wUrl(null)}
-                  className="text-slate-500 font-bold hover:text-white transition-colors"
-                >
-                   ลองภาพอื่น
                 </button>
              </div>
           )}
