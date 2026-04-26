@@ -1,13 +1,58 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useLiff } from '@/components/providers/liff-provider';
+import { supabase } from '@/lib/supabase';
 
 export default function SupportPage() {
+  const { dbUser } = useLiff();
+  const [subject, setSubject] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState('medium');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   const faqs = [
     { q: 'เพิ่มกล่องได้สูงสุดกี่ใบ?', a: 'สำหรับผู้ใช้ทั่วไป สามารถเพิ่มได้ 3 ใบ หากต้องการเพิ่มมากกว่านั้นสามารถอัปเกรดเป็น Premium ได้ครับ' },
     { q: 'Hubby AI ค้นหาของจากอะไร?', a: 'Hubby AI ใช้ทั้งข้อความ รูปภาพ และเสียง ในการวิเคราะห์และจดจำตำแหน่งของของแต่ละชิ้นครับ' },
     { q: 'ข้อมูลเลือนหายถ้าลบไลน์ไหม?', a: 'ข้อมูลผูกกับ LINE ID ครับ หากล็อกอินด้วยบัญชีเดิมข้อมูลจะยังอยู่ครบถ้วน' },
   ];
+
+  const handleSubmitTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dbUser) {
+      alert('กรุณารอระบบโหลดข้อมูลสักครู่...');
+      return;
+    }
+    if (!subject || !description) {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('support_tickets')
+        .insert({
+          user_id: dbUser.id,
+          subject,
+          description,
+          priority,
+          status: 'open'
+        });
+
+      if (error) throw error;
+      setSuccess(true);
+      setSubject('');
+      setDescription('');
+    } catch (err) {
+      console.error('Failed to send ticket:', err);
+      alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#cae9fd] via-[#e6f4fc] to-white text-slate-800 font-sans pb-12">
@@ -20,20 +65,75 @@ export default function SupportPage() {
        </header>
 
        <main className="px-6 space-y-8">
-          {/* Support Hero Section */}
+          {/* Support Ticket Form */}
           <section>
-             <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] p-8 border border-white text-center mb-10 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5 rotate-12 scale-150 text-sky-400">
-                    <i className="fa-solid fa-headset text-[120px]" aria-hidden="true"></i>
+             <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] p-8 border border-white mb-10 shadow-sm relative overflow-hidden group">
+                <div className="flex items-center gap-4 mb-6">
+                   <div className="bg-sky-50 w-12 h-12 rounded-2xl flex items-center justify-center text-sky-500 group-hover:rotate-12 transition-transform">
+                      <i className="fa-solid fa-headset text-xl" aria-hidden="true"></i>
+                   </div>
+                   <h2 className="text-lg font-black">แจ้งปัญหาการใช้งาน</h2>
                 </div>
-                <div className="relative z-10 bg-sky-50 w-16 h-16 rounded-2xl flex items-center justify-center text-sky-500 mx-auto mb-4 group-hover:scale-110 transition-transform">
-                   <i className="fa-solid fa-headset text-2xl" aria-hidden="true"></i>
-                </div>
-                <h2 className="relative z-10 text-xl font-black mb-2">เจ้าหน้าที่ Hubby Support</h2>
-                <p className="relative z-10 text-sm text-slate-500 font-medium mb-6">พบปัญหาการใช้งานหรือมีข้อเสนอแนะ?<br/>ทักแชทหาพวกเราผ่าน LINE ได้เลยครับ</p>
-                <button className="relative z-10 w-full bg-slate-800 text-white font-black py-4 rounded-2xl shadow-lg shadow-slate-200 hover:bg-slate-900 active:scale-95 transition-all">
-                   แชทกับเจ้าหน้าที่
-                </button>
+
+                {success ? (
+                   <div className="text-center py-6 animate-in fade-in zoom-in duration-300">
+                      <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                         <i className="fa-solid fa-check text-2xl"></i>
+                      </div>
+                      <p className="font-bold text-slate-800">ส่งข้อความเรียบร้อย!</p>
+                      <p className="text-xs text-slate-500 mt-1">เจ้าหน้าที่จะเร่งดำเนินการตรวจสอบให้ครับ</p>
+                      <button 
+                        onClick={() => setSuccess(false)}
+                        className="mt-6 text-sky-500 font-black text-xs uppercase tracking-widest"
+                      >
+                        ส่งเรื่องเพิ่ม
+                      </button>
+                   </div>
+                ) : (
+                   <form onSubmit={handleSubmitTicket} className="space-y-4">
+                      <div>
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">หัวข้อเรื่อง</label>
+                         <input 
+                            type="text" 
+                            placeholder="เช่น แจ้งของพัง, สอบถามคลัง"
+                            value={subject}
+                            onChange={(e) => setSubject(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold focus:outline-none focus:border-sky-200 transition-all"
+                         />
+                      </div>
+                      <div>
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">รายละเอียด</label>
+                         <textarea 
+                            rows={3}
+                            placeholder="ระบุปัญหาที่พบ..."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold focus:outline-none focus:border-sky-200 transition-all resize-none"
+                         />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['low', 'medium', 'high'].map((p) => (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setPriority(p)}
+                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
+                              priority === p ? 'bg-slate-800 text-white border-slate-800 shadow-lg' : 'bg-white text-slate-400 border-slate-100'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                      <button 
+                        disabled={isSubmitting}
+                        className="w-full bg-slate-800 text-white font-black py-4 rounded-2xl shadow-lg shadow-slate-200 hover:bg-slate-900 active:scale-95 transition-all disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
+                      >
+                         {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                         ส่งข้อความหา Support
+                      </button>
+                   </form>
+                )}
              </div>
           </section>
 
@@ -60,13 +160,14 @@ export default function SupportPage() {
           </section>
 
           {/* Footer Info */}
-          <section className="pt-4">
+          <section className="pt-4 pb-12">
              <div className="bg-white/40 p-6 rounded-3xl border border-dashed border-slate-300 text-center">
                 <p className="text-xs text-slate-400 font-bold mb-1">Hubbybox Service Center</p>
-                <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">Version 1.0.0 (Building 2026.04.05)</p>
+                <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">Version 2.0.4 (Active Sync)</p>
              </div>
           </section>
        </main>
     </div>
   );
 }
+
