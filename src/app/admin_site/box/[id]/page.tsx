@@ -88,7 +88,7 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
   if (isLocked) {
     return (
       <div className="min-h-full bg-admin-bg flex flex-col items-center justify-center p-8">
-        <div className="w-full max-w-md bg-white rounded-[3rem] p-12 shadow-2xl border border-admin-border text-center">
+        <div className="w-full max-w-md bg-white rounded-3xl p-12 shadow-2xl border border-admin-border text-center">
            <div className="w-24 h-24 bg-slate-900 rounded-[2rem] flex items-center justify-center text-vora-accent mx-auto mb-8 shadow-2xl shadow-black/10">
               <i className="fa-solid fa-lock text-4xl"></i>
            </div>
@@ -164,7 +164,7 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Box Summary */}
             <div className="lg:col-span-1 space-y-6">
-               <div className="bg-white rounded-[2.5rem] p-8 border border-admin-border shadow-sm">
+               <div className="bg-white rounded-3xl p-8 border border-admin-border shadow-sm">
                   {box.cover_image_url ? (
                     <div className="w-full aspect-square rounded-[1.5rem] overflow-hidden mb-6 border border-admin-border">
                        <img src={box.cover_image_url} alt={box.name} className="w-full h-full object-cover" />
@@ -190,7 +190,7 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
 
             {/* Items List */}
             <div className="lg:col-span-2 space-y-6">
-               <div className="bg-white rounded-[2.5rem] border border-admin-border shadow-sm overflow-hidden">
+               <div className="bg-white rounded-3xl border border-admin-border shadow-sm overflow-hidden">
                   <div className="p-8 border-b border-admin-border flex items-center justify-between bg-slate-50/50">
                      <h3 className="font-black text-lg text-admin-text-primary">รายการของภายใน ({items.length})</h3>
                      <div className="w-10 h-10 bg-white rounded-xl border border-admin-border flex items-center justify-center text-slate-400">

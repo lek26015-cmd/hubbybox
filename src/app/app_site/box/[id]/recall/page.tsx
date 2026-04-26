@@ -122,7 +122,7 @@ export default function RecallBoxPage({ params }: { params: Promise<{ id: string
               className="space-y-8"
             >
               {/* Box Preview */}
-              <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group">
+              <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group">
                  <div className="absolute top-0 right-0 p-8 opacity-[0.03] rotate-12 scale-150 transition-transform duration-1000 group-hover:rotate-45">
                     <i className="fa-solid fa-parachute-box text-[100px]" aria-hidden="true"></i>
                  </div>
@@ -145,7 +145,7 @@ export default function RecallBoxPage({ params }: { params: Promise<{ id: string
               </div>
 
               {/* Fee & Delivery Info */}
-              <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl space-y-6 relative overflow-hidden">
+              <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl space-y-6 relative overflow-hidden">
                  <div className="absolute -bottom-6 -right-6 p-4 opacity-10 rotate-[-15deg] scale-125">
                     <i className="fa-solid fa-truck-fast text-[120px]" aria-hidden="true"></i>
                  </div>

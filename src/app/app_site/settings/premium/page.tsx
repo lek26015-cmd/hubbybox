@@ -76,7 +76,7 @@ export default function PremiumPage() {
         </p>
         
         {/* Pack 1 */}
-        <section className="bg-white/90 backdrop-blur-md shadow-sm border-2 border-indigo-100 rounded-[2.5rem] p-6 mb-5 relative overflow-hidden group">
+        <section className="bg-white/90 backdrop-blur-md shadow-sm border-2 border-indigo-100 rounded-3xl p-6 mb-5 relative overflow-hidden group">
            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all font-bold text-indigo-500 text-6xl">
                <i className="fa-solid fa-boxes-stacked"></i>
            </div>
@@ -108,7 +108,7 @@ export default function PremiumPage() {
         </section>
 
         {/* Pack 2 */}
-        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_15px_30px_-10px_rgba(99,102,241,0.5)] border border-indigo-400 rounded-[2.5rem] p-6 mb-8 relative overflow-hidden group">
+        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_15px_30px_-10px_rgba(99,102,241,0.5)] border border-indigo-400 rounded-3xl p-6 mb-8 relative overflow-hidden group">
            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all font-bold text-white text-[80px] -rotate-6">
                <i className="fa-solid fa-house-chimney"></i>
            </div>

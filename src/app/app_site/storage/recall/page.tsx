@@ -239,7 +239,7 @@ function RecallFlowPage() {
         <section className="min-h-[400px]">
           {step === 1 && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-              <div className="bg-white p-8 rounded-[2.5rem] border border-white shadow-xl shadow-slate-200/50 relative overflow-hidden">
+              <div className="bg-white p-8 rounded-3xl border border-white shadow-xl shadow-slate-200/50 relative overflow-hidden">
                  <div className="absolute top-0 right-0 p-6 opacity-5 rotate-12">
                     <i className="fa-solid fa-parachute-box text-[80px]" />
                  </div>
@@ -331,7 +331,7 @@ function RecallFlowPage() {
               )}
 
               {isAddingNew && (
-                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-5 mt-4">
+                <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-5 mt-4">
                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">ชื่อผู้รับ</label>
                       <input type="text" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="ชื่อ-นามสกุล" className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 font-bold text-slate-700 focus:border-primary/30 focus:outline-none transition-all placeholder:text-slate-300" />
@@ -387,7 +387,7 @@ function RecallFlowPage() {
 
           {step === 3 && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
-               <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8">
+               <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-8">
                   <h2 className="text-2xl font-black text-slate-800 mb-8 border-b border-slate-50 pb-4">สรุปคำขอส่งคืน</h2>
                   
                   <div className="space-y-6 mb-10">
@@ -433,11 +433,11 @@ function RecallFlowPage() {
 
           {step === 4 && (
             <motion.div initial={{ opacity: 0, scale: 1.2 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center text-center py-10 space-y-8">
-               <div className="w-32 h-32 bg-emerald-50 rounded-[3rem] flex items-center justify-center text-emerald-500 shadow-xl shadow-emerald-500/10 relative">
+               <div className="w-32 h-32 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-500 shadow-xl shadow-emerald-500/10 relative">
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }} className="relative z-10">
                      <i className="fa-solid fa-parachute-box text-[64px]" />
                   </motion.div>
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0, 0.3] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-0 bg-emerald-200 rounded-[3rem]" />
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0, 0.3] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-0 bg-emerald-200 rounded-3xl" />
                </div>
                
                <div>

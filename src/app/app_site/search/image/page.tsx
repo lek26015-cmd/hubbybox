@@ -94,7 +94,7 @@ export default function SearchByImage() {
 
        <main className="flex-1 flex flex-col items-center justify-center gap-8">
           {!previewUrl ? (
-             <div className="w-full max-w-sm aspect-square bg-slate-800 rounded-[3rem] border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden group">
+             <div className="w-full max-w-sm aspect-square bg-slate-800 rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="bg-primary/20 w-24 h-24 rounded-full flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                    <i className="fa-solid fa-camera text-4xl"></i>
@@ -109,7 +109,7 @@ export default function SearchByImage() {
              </div>
           ) : (
              <div className="w-full max-w-sm flex flex-col items-center gap-6">
-                <div className="relative w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 shadow-2xl">
+                <div className="relative w-full aspect-square rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
                    <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                    {isAnalyzing && (
                       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">

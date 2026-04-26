@@ -514,7 +514,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             <div className="flex flex-col items-center">
               {isEditingBoxName && isOwner ? (
                 <input
-                  autoFocus
                   type="text"
                   value={editedBoxName}
                   onChange={(e) => setEditedBoxName(e.target.value)}
@@ -896,7 +895,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
            {items.length === 0 ? (
                <div className="text-center py-16 px-6 border-2 border-dashed border-primary/20 rounded-3xl mt-2 bg-white/40 backdrop-blur-sm">
                   <div className="w-20 h-20 bg-white border border-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm text-primary">
-                    <i className="fa-solid fa-box-open text-[32px]" aria-hidden="true"></i>
+                     <i className="fa-solid fa-box-open text-[32px]" aria-hidden="true"></i>
                   </div>
                   <p className="font-bold text-xl text-slate-700 mb-2">กล่องว่างเปล่า</p>
                   <p className="text-sm font-medium text-slate-500 max-w-[200px] mx-auto leading-relaxed">ใส่ของลงกล่องเลย!</p>
@@ -1046,9 +1045,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                    <button onClick={() => setIsTrackingModalOpen(false)} className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 border border-slate-100"><i className="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <form onSubmit={handleUpdateTracking} className="space-y-6">
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ผู้ให้บริการขนส่ง</label>
+                <form onSubmit={handleUpdateTracking} className="space-y-4">
+                    <div className="space-y-1.5">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ผู้ให้บริการขนส่ง</label>
                       <select 
                         value={tempCarrier} 
                         onChange={(e) => setTempCarrier(e.target.value)}
@@ -1063,10 +1062,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </select>
                    </div>
 
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">เลขพัสดุ (Tracking Number)</label>
+                    <div className="space-y-1.5">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">เลขพัสดุ (Tracking Number)</label>
                       <input 
-                        autoFocus
                         type="text" 
                         value={tempTrackingNumber}
                         onChange={(e) => setTempTrackingNumber(e.target.value)}

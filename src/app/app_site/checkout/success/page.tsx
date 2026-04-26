@@ -14,7 +14,7 @@ function CheckoutSuccessContent() {
     <motion.div 
       initial={{ opacity: 0, scale: 0.9, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      className="bg-white w-full max-w-sm rounded-[2.5rem] p-10 text-center shadow-2xl relative overflow-hidden"
+      className="bg-white w-full max-w-sm rounded-3xl p-10 text-center shadow-2xl relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
       

@@ -197,7 +197,7 @@ export default function TicketsPage() {
       {/* Reply Modal */}
       {replyingTicket && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-           <div className="bg-white rounded-[2.5rem] w-full max-w-2xl p-10 shadow-2xl border border-admin-border animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
+           <div className="bg-white rounded-3xl w-full max-w-2xl p-10 shadow-2xl border border-admin-border animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-8">
                  <div>
                     <h3 className="text-2xl font-black text-admin-text-primary tracking-tighter">Respond to Inquiry</h3>

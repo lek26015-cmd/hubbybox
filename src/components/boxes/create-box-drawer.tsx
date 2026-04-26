@@ -105,7 +105,7 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-1.5">ชื่อกล่อง / ป้ายกำกับ</label>
                   <input

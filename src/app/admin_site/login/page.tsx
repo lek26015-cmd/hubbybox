@@ -37,16 +37,16 @@ export default function AdminLoginPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md bg-slate-900/50 backdrop-blur-3xl border border-slate-800 p-10 rounded-[2.5rem] shadow-2xl relative z-10"
+        className="w-full max-w-md bg-slate-900/50 backdrop-blur-3xl border border-slate-800 p-10 rounded-3xl shadow-2xl relative z-10"
       >
         <div className="flex flex-col items-center mb-10">
-          <div className="w-16 h-16 bg-vora-accent rounded-2xl flex items-center justify-center shadow-2xl shadow-vora-accent/30 mb-6">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl shadow-white/5 mb-6">
             <Image 
-              src="/logo-hubbybox.png" 
+              src="/tsconfig-01.png" 
               alt="HubbyBox" 
               width={40} 
               height={40} 
-              className="object-contain brightness-0 invert" 
+              className="object-contain" 
             />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tighter mb-2">HubbyBox. Admin</h1>

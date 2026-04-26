@@ -67,7 +67,7 @@ export default function SupportPage() {
        <main className="px-6 space-y-8">
           {/* Support Ticket Form */}
           <section>
-             <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] p-8 border border-white mb-10 shadow-sm relative overflow-hidden group">
+             <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 border border-white mb-10 shadow-sm relative overflow-hidden group">
                 <div className="flex items-center gap-4 mb-6">
                    <div className="bg-sky-50 w-12 h-12 rounded-2xl flex items-center justify-center text-sky-500 group-hover:rotate-12 transition-transform">
                       <i className="fa-solid fa-headset text-xl" aria-hidden="true"></i>
