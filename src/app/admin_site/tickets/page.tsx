@@ -223,7 +223,7 @@ export default function TicketsPage() {
                  <div className="space-y-3">
                     <div className="flex items-center justify-between px-1">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Support Response Message</label>
-                       {!replyingTicket.users?.line_user_id && (
+                       {!(Array.isArray(replyingTicket.users) ? replyingTicket.users[0]?.line_user_id : null) && (
                           <span className="text-[9px] font-bold text-rose-400 uppercase tracking-widest italic">
                              <i className="fa-solid fa-triangle-exclamation mr-1"></i>
                              No LINE ID (Save only)
