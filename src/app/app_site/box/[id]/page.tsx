@@ -3,9 +3,12 @@
 import { useEffect, useState, use, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constants';
+import type { BoxRow, ItemRow } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
+import { useConfirm } from '@/components/ui/confirm-modal';
 import { QRCodeSVG } from 'qrcode.react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,9 +17,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   const router = useRouter();
   const unwrappedParams = use(params);
   const boxId = unwrappedParams.id;
+  const { toast } = useToast();
+  const { confirm, prompt } = useConfirm();
   
-  const [box, setBox] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [box, setBox] = useState<BoxRow | null>(null);
+  const [items, setItems] = useState<ItemRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   const [newItemName, setNewItemName] = useState('');
@@ -28,8 +33,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   
   // Move Item State
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
-  const [itemToMove, setItemToMove] = useState<any>(null);
-  const [otherBoxes, setOtherBoxes] = useState<any[]>([]);
+  const [itemToMove, setItemToMove] = useState<ItemRow | null>(null);
+  const [otherBoxes, setOtherBoxes] = useState<BoxRow[]>([]);
   const [isLoadingOtherBoxes, setIsLoadingOtherBoxes] = useState(false);
 
   // Selection State
@@ -96,8 +101,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           .order('created_at', { ascending: false });
           
         if (itemsData) setItems(itemsData);
-      } catch (err) {
-        console.error('Fetch error:', err);
+      } catch {
+        // Fetch error handled by showing empty/not-found state
       } finally {
         setIsLoading(false);
       }
@@ -111,7 +116,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     if (!newItemName.trim() || isSubmitting || !isOwner || isLocked) return;
     
     if (items.length >= 50) {
-      alert('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ');
+      toast('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ', 'warning');
       return;
     }
 
@@ -131,9 +136,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       
       setItems([data, ...items]);
       setNewItemName('');
-    } catch (err) {
-      console.error('Error adding item:', err);
-      alert('เพิ่มของไม่สำเร็จ: ' + (err as Error).message);
+    } catch (err: unknown) {
+      toast('เพิ่มของไม่สำเร็จ: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -144,7 +148,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     if (!file || !isOwner) return;
 
     if (items.length >= 50) {
-      alert('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ');
+      toast('ไม่สามารถเพิ่มของได้แล้ว: กล่องนี้มีของครบ 50 ชิ้นตามที่กำหนดแล้วครับ', 'warning');
       e.target.value = '';
       return;
     }
@@ -189,7 +193,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       
       const availableSpace = 50 - items.length;
       if (newItems.length > availableSpace) {
-        alert(`พื้นที่ในกล่องเหลือเพียง ${availableSpace} ชิ้น (แสกนเจอ ${newItems.length} ชิ้น) ระบบจะบันทึกเท่าที่พื้นที่เหลือครับ`);
+        toast(`พื้นที่ในกล่องเหลือเพียง ${availableSpace} ชิ้น (แสกนเจอ ${newItems.length} ชิ้น) ระบบจะบันทึกเท่าที่พื้นที่เหลือครับ`, 'warning');
       }
       const itemsToAdd = newItems.slice(0, availableSpace);
       
@@ -204,14 +208,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           .select()
           .single();
         
-        if (newItem) setItems(prev => [newItem, ...prev]);
-        if (insertError) console.error('Insert error:', insertError);
+        if (newItem) setItems(prev => [newItem as ItemRow, ...prev]);
       }
 
-      alert(`Hubby AI แสกนสำเร็จ! เพิ่มของใหม่: ${newItems.length} รายการ`);
-    } catch (err: any) {
-      console.error('Scan Error:', err);
-      alert('การแสกนล้มเหลว: ' + err.message);
+      toast(`Hubby AI แสกนสำเร็จ! เพิ่มของใหม่: ${newItems.length} รายการ`, 'success');
+    } catch (err: unknown) {
+      toast('การแสกนล้มเหลว: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmitting(false);
       e.target.value = '';
@@ -246,9 +248,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       if (updateError) throw updateError;
 
       setBox({ ...box, cover_image_url: publicUrl });
-    } catch (err: any) {
-      console.error('Upload Error:', err);
-      alert('เปลี่ยนรูปหน้าตากล่องไม่สำเร็จ: ' + err.message);
+    } catch (err: unknown) {
+      toast('เปลี่ยนรูปหน้าตากล่องไม่สำเร็จ: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmitting(false);
       e.target.value = '';
@@ -256,7 +257,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   };
 
   const handleUpdateBoxName = async () => {
-    if (!editedBoxName.trim() || editedBoxName === box.name || !isOwner || isLocked) {
+    if (!box || !editedBoxName.trim() || editedBoxName === box.name || !isOwner || isLocked) {
       setIsEditingBoxName(false);
       return;
     }
@@ -269,9 +270,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       if (error) throw error;
       setBox({ ...box, name: editedBoxName.trim() });
-    } catch (err) {
-      console.error('Error updating box name:', err);
-      alert('ไม่สามารถเปลี่ยนชื่อกล่องได้');
+    } catch {
+      toast('ไม่สามารถเปลี่ยนชื่อกล่องได้', 'error');
     } finally {
       setIsEditingBoxName(false);
     }
@@ -279,10 +279,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   const handleDeleteItem = async (itemId: string) => {
     if (isLocked) {
-      alert('ไม่สามารถลบของได้เมื่อกล่องอยู่ในคลัง');
+      toast('ไม่สามารถลบของได้เมื่อกล่องอยู่ในคลัง', 'warning');
       return;
     }
-    if (!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบของชิ้นนี้?') || !isOwner) return;
+    if (!isOwner) return;
+    const confirmed = await confirm({ title: 'ลบของชิ้นนี้?', message: 'คุณแน่ใจหรือไม่ว่าต้องการลบของชิ้นนี้?', variant: 'danger', confirmLabel: 'ลบเลย' });
+    if (!confirmed) return;
 
     try {
       const { error } = await supabase
@@ -292,9 +294,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       if (error) throw error;
       setItems(items.filter(item => item.id !== itemId));
-    } catch (err) {
-      console.error('Error deleting item:', err);
-      alert('ลบไม่สำเร็จ กรุณาลองใหม่');
+    } catch {
+      toast('ลบไม่สำเร็จ กรุณาลองใหม่', 'error');
     }
   };
 
@@ -311,8 +312,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       if (error) throw error;
       setOtherBoxes(data || []);
-    } catch (err) {
-      console.error('Error fetching other boxes:', err);
+    } catch {
+      // Silently handle – user can retry
     } finally {
       setIsLoadingOtherBoxes(false);
     }
@@ -320,7 +321,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   const handleMoveItem = async (targetBoxId: string) => {
     if (isLocked) {
-      alert('ไม่สามารถย้ายของได้เมื่อกล่องอยู่ในคลัง');
+      toast('ไม่สามารถย้ายของได้เมื่อกล่องอยู่ในคลัง', 'warning');
       return;
     }
     if (!itemToMove || !isOwner) return;
@@ -336,10 +337,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       setItems(items.filter(item => item.id !== itemToMove.id));
       setIsMoveModalOpen(false);
       setItemToMove(null);
-      alert(`ย้ายของเรียบร้อย!`);
-    } catch (err) {
-      console.error('Error moving item:', err);
-      alert('ย้ายไม่สำเร็จ กรุณาลองใหม่');
+      toast('ย้ายของเรียบร้อย!', 'success');
+    } catch {
+      toast('ย้ายไม่สำเร็จ กรุณาลองใหม่', 'error');
     }
   };
 
@@ -359,10 +359,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       setIsMoveModalOpen(false);
       setIsSelectionMode(false);
       setSelectedItemIds(new Set());
-      alert(`ย้ายของ ${idsToMove.length} รายการเรียบร้อย!`);
-    } catch (err) {
-      console.error('Error moving items:', err);
-      alert('ย้ายไม่สำเร็จ กรุณาลองใหม่');
+      toast(`ย้ายของ ${idsToMove.length} รายการเรียบร้อย!`, 'success');
+    } catch {
+      toast('ย้ายไม่สำเร็จ กรุณาลองใหม่', 'error');
     }
   };
 
@@ -384,9 +383,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       if (error) throw error;
       setBox({ ...box, allow_staff_open: newValue });
-    } catch (err: any) {
-      console.error('Toggle error:', err);
-      alert('เปลี่ยนค่าไม่ได้: ' + err.message);
+    } catch (err: unknown) {
+      toast('เปลี่ยนค่าไม่ได้: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmittingRequest(false);
     }
@@ -415,10 +413,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       if (error) throw error;
       setBox({ ...box, shipping_carrier: tempCarrier.trim(), tracking_number: tempTrackingNumber.trim() });
       setIsTrackingModalOpen(false);
-      alert('อัปเดตข้อมูลพัสดุเรียบร้อย!');
-    } catch (err: any) {
-      console.error('Update tracking error:', err);
-      alert('อัปเดตไม่สำเร็จ: ' + err.message);
+      toast('อัปเดตข้อมูลพัสดุเรียบร้อย!', 'success');
+    } catch (err: unknown) {
+      toast('อัปเดตไม่สำเร็จ: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmittingRequest(false);
     }
@@ -429,7 +426,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     
     setIsSubmittingRequest(true);
     try {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      // Use crypto for secure random code generation
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      const code = (100000 + (array[0] % 900000)).toString();
       const expiry = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 mins
 
       const { error } = await supabase
@@ -445,9 +445,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       setGeneratedAccessCode(code);
       setAccessCodeExpiry(expiry);
       setIsAccessCodeModalOpen(true);
-    } catch (err: any) {
-      console.error('Generate code error:', err);
-      alert('ไม่สามารถสร้างรหัสได้: ' + err.message);
+    } catch (err: unknown) {
+      toast('ไม่สามารถสร้างรหัสได้: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmittingRequest(false);
     }
@@ -553,7 +552,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       if (!error) setBox({ ...box, location: newLoc || 'ที่บ้าน' });
                     }
                   } else {
-                    const newLoc = window.prompt('เปลี่ยนพิกัดที่เก็บในบ้าน:', box.location);
+                    const newLoc = window.prompt('เปลี่ยนพิกัดที่เก็บในบ้าน:', box.location ?? '');
                     if (newLoc !== null) {
                       const { error } = await supabase.from('boxes').update({ location: newLoc || 'ที่บ้าน' }).eq('id', boxId);
                       if (!error) setBox({ ...box, location: newLoc || 'ที่บ้าน' });
@@ -577,7 +576,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             {box.location !== HUBBYBOX_WAREHOUSE_LOCATION && (
               <button 
                 onClick={() => {
-                  alert('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)');
+                  toast('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)', 'info');
                 }}
                 className="w-11 h-11 bg-slate-100 text-slate-300 shadow-sm rounded-full flex items-center justify-center relative group cursor-not-allowed"
                 title="ส่งเข้าคลังกลาง (เร็วๆ นี้)"
@@ -869,8 +868,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     <i className="fa-solid fa-xmark" aria-hidden="true"></i>
                  </button>
                  <div className="flex bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white shadow-xl overflow-hidden group focus-within:ring-4 ring-primary/10 transition-all opacity-95">
-                    <input id="manual-name-input" type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={isLocked ? "ไม่รองรับการจดชื่อขณะอยู่ในคลัง" : "จดชื่อของเพิ่มเติม..."} disabled={isLocked} className="w-full bg-transparent py-5 pl-6 pr-4 text-slate-800 text-lg font-bold focus:outline-none disabled:opacity-50" />
-                    <button type="submit" disabled={!newItemName.trim() || isSubmitting || isLocked} className="w-[88px] bg-primary hover:bg-primary/90 disabled:bg-slate-100 text-white flex items-center justify-center transition-all">
+                    <input id="manual-name-input" type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder={isLocked ? "ไม่รองรับการจดชื่อขณะอยู่ในคลัง" : "จดชื่อของเพิ่มเติม..."} disabled={!!isLocked} className="w-full bg-transparent py-5 pl-6 pr-4 text-slate-800 text-lg font-bold focus:outline-none disabled:opacity-50" />
+                    <button type="submit" disabled={!newItemName.trim() || isSubmitting || !!isLocked} className="w-[88px] bg-primary hover:bg-primary/90 disabled:bg-slate-100 text-white flex items-center justify-center transition-all">
                        <i className="fa-solid fa-plus text-[28px]" aria-hidden="true"></i>
                     </button>
                  </div>

@@ -17,9 +17,9 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
-    return NextResponse.json({ error: `Webhook match error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Signature verification failed';
+    return NextResponse.json({ error: `Webhook match error: ${message}` }, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {

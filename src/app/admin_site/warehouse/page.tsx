@@ -6,6 +6,7 @@ import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constant
 import type { BoxListRow } from '@/lib/box-types';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useToast } from '@/components/ui/toast';
 
 type SupplyOrderListRow = {
   id: string;
@@ -17,6 +18,7 @@ type SupplyOrderListRow = {
 };
 
 export default function AdminWarehousePage() {
+  const { toast } = useToast();
   const [inbound, setInbound] = useState<BoxListRow[]>([]);
   const [stored, setStored] = useState<BoxListRow[]>([]);
   const [atHomeCount, setAtHomeCount] = useState(0);
@@ -74,8 +76,8 @@ export default function AdminWarehousePage() {
         .limit(20);
       
       setSupplyOrders((orders as SupplyOrderListRow[]) || []);
-    } catch (e: any) {
-      setError(e?.message || 'Error loading warehouse data');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error loading warehouse data');
     } finally {
       setLoading(false);
     }
@@ -93,7 +95,7 @@ export default function AdminWarehousePage() {
         ? `${HUBBYBOX_WAREHOUSE_LOCATION} (Zone ${zone} - Shelf ${shelf})`
         : HUBBYBOX_WAREHOUSE_LOCATION;
 
-      const updateData: any = { 
+      const updateData: Record<string, string | null> = { 
         name: editName,
         status: editStatus,
         shipping_carrier: editCarrier,
@@ -110,9 +112,9 @@ export default function AdminWarehousePage() {
       
       setEditingBox(null);
       await load();
-      alert('บันทึกข้อมูลเรียบร้อย!');
+      toast('บันทึกข้อมูลเรียบร้อย!', 'success');
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'บันทึกไม่สำเร็จ');
+      toast(e instanceof Error ? e.message : 'บันทึกไม่สำเร็จ', 'error');
     } finally {
       setBusyId(null);
     }

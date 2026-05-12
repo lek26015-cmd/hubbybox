@@ -6,6 +6,8 @@ import { HUBBYBOX_WAREHOUSE_LOCATION } from '@/lib/hubbybox-constants';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
+import type { BoxRow } from '@/lib/types';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,12 +16,13 @@ export default function RecallBoxPage({ params }: { params: Promise<{ id: string
   const unwrappedParams = use(params);
   const boxId = unwrappedParams.id;
   
-  const [box, setBox] = useState<any>(null);
+  const [box, setBox] = useState<BoxRow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   
   const { dbUser, isLoading: isLiffLoading } = useLiff();
+  const { toast } = useToast();
 
   useEffect(() => {
     async function fetchBox() {
@@ -48,8 +51,8 @@ export default function RecallBoxPage({ params }: { params: Promise<{ id: string
         }
 
         setBox(data);
-      } catch (err) {
-        console.error('Fetch error:', err);
+      } catch {
+        // Silently handle - redirects will have occurred
       } finally {
         setIsLoading(false);
       }
@@ -73,9 +76,8 @@ export default function RecallBoxPage({ params }: { params: Promise<{ id: string
 
       if (error) throw error;
       setStep(2);
-    } catch (err: any) {
-      console.error('Recall error:', err);
-      alert('เรียกคืนไม่สำเร็จ: ' + err.message);
+    } catch (err: unknown) {
+      toast('เรียกคืนไม่สำเร็จ: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmitting(false);
     }

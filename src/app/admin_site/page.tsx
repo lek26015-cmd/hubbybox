@@ -161,36 +161,3 @@ function StatCard({ label, value, icon, color }: { label: string, value: string 
       </div>
    );
 }
-
-function PeriodTab({ label, active = false }: { label: string, active?: boolean }) {
-   return (
-      <button type="button" className={`px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-white text-admin-text-primary shadow-sm border border-admin-border' : 'text-slate-400 hover:text-slate-600'}`}>
-         {label}
-      </button>
-   );
-}
-
-function TaskItem({ category, title, progress, color, avatars }: { category: string, title: string, progress: number, color: string, avatars: string[] }) {
-   return (
-      <div className="space-y-4 group">
-         <div className={`px-3 py-1 rounded-md ${color} text-white font-black text-[9px] uppercase tracking-widest w-fit shadow-lg shadow-current/20`}>{category}</div>
-         <h5 className="text-admin-text-primary font-bold leading-relaxed group-hover:text-vora-accent transition-colors">{title}</h5>
-         <div className="flex items-center gap-4">
-            <div className="flex -space-x-2 overflow-hidden">
-               {avatars.map((a, i) => (
-                  <div key={i} className="inline-block h-8 w-8 rounded-full ring-2 ring-admin-card bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-600 border border-admin-border">{a}</div>
-               ))}
-            </div>
-            <div className="flex-1 space-y-1.5">
-               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                  <span className="text-slate-400">Status</span>
-                  <span className="text-slate-900">{progress}%</span>
-               </div>
-               <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden border border-admin-border">
-                  <div className={`h-full ${color}`} style={{ width: `${progress}%` }}></div>
-               </div>
-            </div>
-         </div>
-      </div>
-   );
-}

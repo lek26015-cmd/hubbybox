@@ -28,7 +28,7 @@ function AuthCallbackHandler() {
         const next = searchParams.get('next') || '/admin_site';
 
         if (code) {
-          console.log('[Auth] Exchanging code for session...');
+
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) throw exchangeError;
         }
@@ -43,15 +43,13 @@ function AuthCallbackHandler() {
           router.replace(next);
         } else {
           // If no session and no code, it might still be processing or failed
-          console.warn('[Auth] No session found after callback');
           const timeout = setTimeout(() => {
              setError('ไม่พบข้อมูลการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง');
           }, 3000);
           return () => clearTimeout(timeout);
         }
-      } catch (err: any) {
-        console.error('[Auth Error]', err);
-        setError(err.message || 'เกิดข้อผิดพลาดในการยืนยันตัวตน');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการยืนยันตัวตน');
       }
     };
 

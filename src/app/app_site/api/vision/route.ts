@@ -41,8 +41,8 @@ export async function POST(req: Request) {
     const text = response.text();
 
     return NextResponse.json({ result: text });
-  } catch (error: any) {
-    console.error('Vision API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Vision API error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

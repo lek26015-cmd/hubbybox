@@ -9,18 +9,21 @@ export default function VoiceSearch() {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     // Check for browser support
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    const SpeechRecognitionCtor = w.SpeechRecognition || w.webkitSpeechRecognition;
     
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionCtor) {
       setError('เบราว์เซอร์ของคุณไม่รองรับการสั่งงานด้วยเสียงครับ');
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = 'th-TH'; // ตั้งค่าเป็นภาษาไทย
@@ -30,14 +33,15 @@ export default function VoiceSearch() {
       setError(null);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       const current = event.resultIndex;
       const transcriptText = event.results[current][0].transcript;
       setTranscript(transcriptText);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onerror = (event: any) => {
-      console.error('Speech recognition error', event.error);
       setIsRecording(false);
       if (event.error === 'not-allowed') {
         setError('กรุณาอนุญาตให้แอปเข้าถึงไมโครโฟนเพื่อใช้งานครับ');

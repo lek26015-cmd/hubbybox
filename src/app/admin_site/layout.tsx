@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { AdminAuthProvider, useAdminAuth } from '@/components/auth/admin-auth-provider';
 import { supabase } from '@/lib/supabase';
 import { BOX_STATUS } from '@/lib/hubbybox-constants';
+import type { NotificationItem } from '@/lib/types';
 
 const kodchasan = Kodchasan({ 
   weight: ['300', '400', '500', '600', '700'],
@@ -40,7 +41,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => {
     async function fetchNotifications() {
@@ -58,7 +59,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
           .order('created_at', { ascending: false })
           .limit(2);
 
-        const combined: any[] = [];
+        const combined: NotificationItem[] = [];
 
         boxes?.forEach(b => {
           combined.push({
@@ -88,7 +89,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
 
         setNotifications(combined);
       } catch (e) {
-        console.error('Err fetching notifications:', e);
+        // Silently handle notification fetch errors
       }
     }
 
@@ -111,7 +112,7 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
      return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleMarkAsRead = (id: number) => {
+  const handleMarkAsRead = (id: string) => {
      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isNew: false } : n));
   };
 

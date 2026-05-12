@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { HUBBYBOX_WAREHOUSE_LOCATION } from '@/lib/hubbybox-constants';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 import Image from 'next/image';
 
 interface CreateBoxDrawerProps {
@@ -19,13 +20,14 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
   const [homeLocation, setHomeLocation] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { dbUser } = useLiff();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     if (!dbUser?.id || dbUser.id === 'fallback-id') {
-      alert('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว ขัดข้องที่การซิงค์ User ID (กรุณาไปรันคำสั่ง SQL เพื่อปลดล็อก RLS ใน Supabase ก่อนครับ)');
+      toast('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง', 'error');
       return;
     }
 
@@ -48,12 +50,9 @@ export function CreateBoxDrawer({ isOpen, onClose, onBoxCreated }: CreateBoxDraw
       setLocationType('home');
       onBoxCreated();
       onClose();
-    } catch (err: any) {
-      console.error('Failed to create box (Full Object):', err);
-      console.log('Error Code:', err?.code);
-      console.log('Error Details:', err?.details);
-      console.log('Error Hint:', err?.hint);
-      alert(`เกิดข้อผิดพลาดในการสร้างกล่อง: ${err?.message || 'โปรดตรวจสอบสิทธิ์ (RLS) ในฐานข้อมูล'}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'โปรดตรวจสอบสิทธิ์ (RLS) ในฐานข้อมูล';
+      toast(`เกิดข้อผิดพลาดในการสร้างกล่อง: ${message}`, 'error');
     } finally {
       setIsSubmitting(false);
     }

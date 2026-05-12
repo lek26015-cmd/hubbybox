@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
+import type { BoxRow, ItemRow } from '@/lib/types';
 import Link from 'next/link';
 
 interface UserAddress {
@@ -21,6 +23,7 @@ function RecallFlowPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { dbUser, userProfile, isLoading: isLiffLoading } = useLiff();
+  const { toast } = useToast();
   
   const boxId = searchParams.get('box_id');
   const itemIdsParam = searchParams.get('item_ids');
@@ -29,8 +32,8 @@ function RecallFlowPage() {
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [targetBox, setTargetBox] = useState<any>(null);
-  const [targetItems, setTargetItems] = useState<any[]>([]);
+  const [targetBox, setTargetBox] = useState<BoxRow | null>(null);
+  const [targetItems, setTargetItems] = useState<ItemRow[]>([]);
   
   // Multi-Address State
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
@@ -98,8 +101,8 @@ function RecallFlowPage() {
           setRecipientName(userProfile?.displayName || '');
         }
       }
-    } catch (err: any) {
-      console.error('Fetch data error:', err);
+    } catch {
+      // Silently handle fetch errors
     } finally {
       setIsLoading(false);
     }
@@ -191,9 +194,8 @@ function RecallFlowPage() {
 
         setStep(4);
       }
-    } catch (err: any) {
-      console.error('Confirm error:', err);
-      alert('ดำเนินการไม่สำเร็จ: ' + err.message);
+    } catch (err: unknown) {
+      toast('ดำเนินการไม่สำเร็จ: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsSubmitting(false);
     }

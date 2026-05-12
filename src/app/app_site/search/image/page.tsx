@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useLiff } from '@/components/providers/liff-provider';
 import { useRouter } from 'next/navigation';
+import type { SearchItemResult } from '@/lib/types';
 
 export default function SearchByImage() {
   const router = useRouter();
   const { dbUser } = useLiff();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchItemResult[]>([]);
   const [identifiedItems, setIdentifiedItems] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,7 +60,7 @@ export default function SearchByImage() {
         // 3. Search database for these items
         const searchTerms = itemsFound.slice(0, 3);
         
-        let allMatches: any[] = [];
+        let allMatches: SearchItemResult[] = [];
         for (const term of searchTerms) {
           const { data } = await supabase
             .from('items')
@@ -75,9 +76,8 @@ export default function SearchByImage() {
         setSearchResults(uniqueMatches);
       }
 
-    } catch (err: any) {
-      console.error('Image Search Error:', err);
-      setError(err.message || 'เกิดข้อผิดพลาดในการสแกนภาพ');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการสแกนภาพ');
     } finally {
       setIsAnalyzing(false);
     }

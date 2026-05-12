@@ -1,18 +1,20 @@
 'use client';
 
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function SettingsPage() {
   const { userProfile, dbUser, liff, isLoading } = useLiff();
+  const { toast } = useToast();
 
   const handleLogout = () => {
     if (liff && liff.isLoggedIn()) {
       liff.logout();
       window.location.reload();
     } else {
-      alert('คุณไม่ได้ล็อกอินผ่าน LINE ในขณะนี้ (หรืออยู่ในโหมดนักพัฒนา)');
+      toast('คุณไม่ได้ล็อกอินผ่าน LINE ในขณะนี้ (หรืออยู่ในโหมดนักพัฒนา)', 'warning');
     }
   };
 

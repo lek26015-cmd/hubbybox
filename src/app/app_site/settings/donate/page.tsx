@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useToast } from '@/components/ui/toast';
 
 export default function DonatePage() {
+  const { toast } = useToast();
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-16 relative overflow-hidden">
        {/* Background decorative elements */}
@@ -66,7 +69,7 @@ export default function DonatePage() {
                     const formData = new FormData(e.currentTarget);
                     const amount = Number(formData.get('amount'));
                     if (!amount || amount < 20) {
-                      alert('ยอดขั้นต่ำ 20 บาทครับ 🙏');
+                      toast('ยอดขั้นต่ำ 20 บาทครับ 🙏', 'warning');
                       return;
                     }
                     
@@ -85,8 +88,8 @@ export default function DonatePage() {
                         // Use window.location.href to navigate to the embedded checkout page
                         window.location.href = `/checkout?session=${clientSecret}`;
                       }
-                    } catch (err) {
-                      alert('เกิดข้อผิดพลาด กรุณาลองใหม่ครับ');
+                    } catch {
+                      toast('เกิดข้อผิดพลาด กรุณาลองใหม่ครับ', 'error');
                     }
                   }}
                   className="flex flex-col items-center"

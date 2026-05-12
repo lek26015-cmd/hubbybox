@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import type { BoxRow } from '@/lib/types';
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<BoxRow[]>([]);
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -59,7 +60,7 @@ export default function LogsPage() {
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{log.status || 'Verified'}</span>
                                  </td>
                                  <td className="px-8 py-4">
-                                    <span className="text-[10px] font-bold text-slate-400">{new Date(log.created_at).toLocaleTimeString()}</span>
+                                    <span className="text-[10px] font-bold text-slate-400">{log.created_at ? new Date(log.created_at).toLocaleTimeString() : '-'}</span>
                                  </td>
                                  <td className="px-8 py-4 text-right">
                                     <span className={`text-[9px] font-black py-1 px-3 rounded-full border ${

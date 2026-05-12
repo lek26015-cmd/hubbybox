@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import { supabase } from '@/lib/supabase';
+import type { BoxRow, ItemRow } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -11,8 +12,8 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
   const unwrappedParams = use(params);
   const boxId = unwrappedParams.id;
 
-  const [box, setBox] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [box, setBox] = useState<BoxRow | null>(null);
+  const [items, setItems] = useState<ItemRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLocked, setIsLocked] = useState(true);
   const [accessCode, setAccessCode] = useState('');
@@ -70,7 +71,7 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
       } else {
         setError('รหัสผ่านไม่ถูกต้อง');
       }
-    } catch (err: any) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการตรวจสอบรหัส');
     } finally {
       setIsVerifying(false);
@@ -138,6 +139,8 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
     );
   }
 
+  if (!box) return null;
+
   return (
     <main className="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-12 bg-admin-bg">
       <div className="max-w-6xl mx-auto space-y-12 pb-20">
@@ -182,7 +185,7 @@ export default function AdminBoxDetail({ params }: { params: Promise<{ id: strin
                      </span>
                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <i className="fa-solid fa-user text-vora-accent"></i>
-                        Owner ID: {box.user_id.slice(0, 15)}...
+                        Owner ID: {box.user_id?.slice(0, 15) ?? 'N/A'}...
                      </span>
                   </div>
                </div>

@@ -21,8 +21,8 @@ export default function AdminLoginPage() {
     setError(null);
     try {
       await signInWithPasscode(passcode);
-    } catch (err: any) {
-      setError(err.message || 'Login failed. Please try again.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
       setIsLoading(false);
     }
   };

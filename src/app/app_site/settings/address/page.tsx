@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
+import { useConfirm } from '@/components/ui/confirm-modal';
 
 interface UserAddress {
   id: string;
@@ -19,6 +21,8 @@ interface UserAddress {
 export default function MultiAddressSettingsPage() {
   const router = useRouter();
   const { dbUser, userProfile, isLoading: isLiffLoading } = useLiff();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,8 +50,8 @@ export default function MultiAddressSettingsPage() {
 
       if (error) throw error;
       setAddresses(data || []);
-    } catch (err) {
-      console.error('Fetch addresses error:', err);
+    } catch {
+      // Silently handle
     } finally {
       setIsLoading(false);
     }
@@ -117,16 +121,16 @@ export default function MultiAddressSettingsPage() {
       
       await fetchAddresses();
       setIsEditing(false);
-    } catch (err) {
-      console.error('Save address error:', err);
-      alert('บันทึกไม่สำเร็จ กรุณาลองใหม่');
+    } catch {
+      toast('บันทึกไม่สำเร็จ กรุณาลองใหม่', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('ยืนยันบันทึกที่อยู่นี้?')) return;
+    const confirmed = await confirm({ title: 'ยืนยันการลบ', message: 'ยืนยันลบที่อยู่นี้?', variant: 'danger' });
+    if (!confirmed) return;
     try {
       const { error } = await supabase
         .from('user_addresses')
@@ -134,8 +138,8 @@ export default function MultiAddressSettingsPage() {
         .eq('id', id);
       if (error) throw error;
       await fetchAddresses();
-    } catch (err) {
-      alert('ลบไม่สำเร็จ');
+    } catch {
+      toast('ลบไม่สำเร็จ', 'error');
     }
   };
 

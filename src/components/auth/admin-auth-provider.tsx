@@ -12,8 +12,6 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-const ADMIN_PASSCODE = process.env.NEXT_PUBLIC_ADMIN_PASSCODE || 'hubbyadmin'; // ดึงจาก env หรือใช้ค่าเริ่มต้นถ้ายังไม่ได้ตั้ง
-
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,33 +19,57 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check local storage for auth state
-    const isAuth = localStorage.getItem('hubby_admin_auth') === 'true';
-    setIsAuthenticated(isAuth);
-    setIsLoading(false);
+    // Validate session with server on mount
+    async function validateSession() {
+      try {
+        const res = await fetch('/admin_site/api/auth', { method: 'GET' });
+        setIsAuthenticated(res.ok);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-    if (!isAuth && pathname !== '/admin_site/login') {
+    validateSession();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && pathname !== '/admin_site/login' && pathname !== '/login') {
       router.push('/admin_site/login');
     }
-  }, [pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   const signInWithPasscode = async (passcode: string) => {
     setIsLoading(true);
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    if (passcode === ADMIN_PASSCODE) {
-      localStorage.setItem('hubby_admin_auth', 'true');
+    try {
+      const res = await fetch('/admin_site/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setIsLoading(false);
+        throw new Error(data.error || 'Login failed');
+      }
+
       setIsAuthenticated(true);
       router.push('/admin_site');
-    } else {
+    } catch (err) {
       setIsLoading(false);
-      throw new Error('รหัสผ่านไม่ถูกต้อง');
+      throw err;
     }
   };
 
   const signOut = async () => {
-    localStorage.removeItem('hubby_admin_auth');
+    try {
+      await fetch('/admin_site/api/auth', { method: 'DELETE' });
+    } catch {
+      // Proceed with client-side logout even if server call fails
+    }
     setIsAuthenticated(false);
     router.push('/admin_site/login');
   };

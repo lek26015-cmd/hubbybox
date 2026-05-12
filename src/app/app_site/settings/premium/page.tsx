@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 
 const PACKS = [
   { amount: 5, price: 49, name: 'เซ็ตมินิมอล', desc: 'ซื้อเพิ่ม 5 กล่องดิจิทัล' },
@@ -11,10 +12,14 @@ const PACKS = [
 
 export default function PremiumPage() {
   const { dbUser } = useLiff();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<number | null>(null);
 
   const handleBuy = async (pack: typeof PACKS[number]) => {
-    if (!dbUser) return alert('กรุณาล็อกอินก่อนทำรายการ');
+    if (!dbUser) {
+      toast('กรุณาล็อกอินก่อนทำรายการ', 'warning');
+      return;
+    }
 
     setIsLoading(pack.amount);
     try {
@@ -40,9 +45,8 @@ export default function PremiumPage() {
       if (clientSecret) {
         window.location.href = `/checkout?session=${clientSecret}`;
       }
-    } catch (err: any) {
-      console.error(err);
-      alert('เกิดข้อผิดพลาด: ' + err.message);
+    } catch (err: unknown) {
+      toast('เกิดข้อผิดพลาด: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');
     } finally {
       setIsLoading(null);
     }

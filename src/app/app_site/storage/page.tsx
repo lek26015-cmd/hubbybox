@@ -7,9 +7,11 @@ import { supabase } from '@/lib/supabase';
 import { HUBBYBOX_WAREHOUSE_LOCATION, BOX_STATUS } from '@/lib/hubbybox-constants';
 import type { BoxListRow } from '@/lib/box-types';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 
 export default function HubbyStoragePage() {
   const { dbUser, isLoading: isLiffLoading } = useLiff();
+  const { toast } = useToast();
   const [storedBoxes, setStoredBoxes] = useState<BoxListRow[]>([]);
   const [isLoadingStored, setIsLoadingStored] = useState(true);
   const [storedError, setStoredError] = useState<string | null>(null);
@@ -78,7 +80,7 @@ export default function HubbyStoragePage() {
                 <h3 className="text-xl font-bold mb-2 tracking-tight">เริ่มฝากกล่องแรกของคุณ</h3>
                 <p className="text-xs text-slate-400 mb-6 font-medium leading-relaxed max-w-[240px]">แจ้งความประสงค์นำฝาก และรับรหัสอ้างอิง<br/>เพื่อเริ่มส่งกล่องเข้าคลังได้ทันที</p>
                 
-                <button onClick={() => alert('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)')} className="w-full bg-slate-800 text-slate-500 font-black py-5 rounded-2xl border border-white/5 text-base uppercase tracking-widest cursor-not-allowed">
+                <button onClick={() => toast('คลังสินค้าของเรากำลังก่อสร้างและเตรียมระบบ ขออภัยในความไม่สะดวกครับ (Coming Soon)', 'info')} className="w-full bg-slate-800 text-slate-500 font-black py-5 rounded-2xl border border-white/5 text-base uppercase tracking-widest cursor-not-allowed">
                    เริ่มแจ้งฝากกล่อง (เร็วๆ นี้) 📦
                 </button>
              </div>

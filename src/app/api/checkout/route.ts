@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     }
 
     const session = await stripe.checkout.sessions.create({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ui_mode: 'embedded' as any,
       payment_method_types: paymentMethodTypes,
       line_items,
@@ -67,8 +68,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ clientSecret: session.client_secret });
-  } catch (err: any) {
-    console.error('Stripe Checkout Error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Checkout error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

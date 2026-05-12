@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CreateBoxDrawer } from '@/components/boxes/create-box-drawer';
@@ -19,6 +20,7 @@ const WAREHOUSE_ADDRESS = {
 export default function DepositFlowPage() {
   const router = useRouter();
   const { dbUser, isLoading: isLiffLoading } = useLiff();
+  const { toast } = useToast();
   
   const [step, setStep] = useState(1);
   const [boxes, setBoxes] = useState<BoxListRow[]>([]);
@@ -83,7 +85,7 @@ export default function DepositFlowPage() {
     if (selectedIds.size === 0 || isSubmitting || !dbUser?.id) return;
     if (!dbUser?.id || dbUser.id === 'fallback-id') {
       setIsSubmitting(false);
-      alert('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว ขัดข้องที่การซิงค์ User ID');
+      toast('ฐานข้อมูลยังไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง', 'error');
       return;
     }
     setSubmitHint(null);
@@ -114,10 +116,9 @@ export default function DepositFlowPage() {
       if (clientSecret) {
         window.location.href = `/checkout?session=${clientSecret}`;
       }
-    } catch (err: any) {
-      console.error('Final confirm error:', err);
-      const message = err?.message || 'โปรดตรวจสอบการเชื่อมต่อ';
-      alert(`เกิดข้อผิดพลาด: ${message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'โปรดตรวจสอบการเชื่อมต่อ';
+      toast(`เกิดข้อผิดพลาด: ${message}`, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -130,7 +131,7 @@ export default function DepositFlowPage() {
       setCopyDone(true);
       window.setTimeout(() => setCopyDone(false), 2000);
     } catch {
-      alert('คัดลอกไม่สำเร็จ กรุณาลองคัดลอกด้วยตนเอง');
+      toast('คัดลอกไม่สำเร็จ กรุณาลองคัดลอกด้วยตนเอง', 'error');
     }
   };
 

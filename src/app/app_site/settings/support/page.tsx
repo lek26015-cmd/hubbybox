@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useLiff } from '@/components/providers/liff-provider';
+import { useToast } from '@/components/ui/toast';
 import { supabase } from '@/lib/supabase';
 
 export default function SupportPage() {
   const { dbUser } = useLiff();
+  const { toast } = useToast();
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('medium');
@@ -22,11 +24,11 @@ export default function SupportPage() {
   const handleSubmitTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!dbUser) {
-      alert('กรุณารอระบบโหลดข้อมูลสักครู่...');
+      toast('กรุณารอระบบโหลดข้อมูลสักครู่...', 'warning');
       return;
     }
     if (!subject || !description) {
-      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      toast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
       return;
     }
 
@@ -46,9 +48,8 @@ export default function SupportPage() {
       setSuccess(true);
       setSubject('');
       setDescription('');
-    } catch (err) {
-      console.error('Failed to send ticket:', err);
-      alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+    } catch {
+      toast('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง', 'error');
     } finally {
       setIsSubmitting(false);
     }

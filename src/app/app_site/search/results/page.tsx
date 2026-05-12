@@ -6,13 +6,14 @@ import { useLiff } from '@/components/providers/liff-provider';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { SearchResults } from '@/lib/types';
 
 export default function SearchResultsPage({ searchParams }: { searchParams: Promise<{ q: string }> }) {
   const params = use(searchParams);
   const query = params.q || '';
   const { dbUser, isLoading: isLiffLoading } = useLiff();
   
-  const [results, setResults] = useState<{ boxes: any[], items: any[] }>({ boxes: [], items: [] });
+  const [results, setResults] = useState<SearchResults>({ boxes: [], items: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

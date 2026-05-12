@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Kodchasan } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
+import { ToastProvider } from '@/components/ui/toast';
+import { ConfirmProvider } from '@/components/ui/confirm-modal';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 const kodchasan = Kodchasan({ 
   subsets: ['latin', 'thai'],
@@ -29,7 +32,13 @@ export default function RootLayout({
         <Script src="https://kit.fontawesome.com/276094607e.js" crossOrigin="anonymous" strategy="beforeInteractive" />
       </head>
       <body className={`${kodchasan.className} min-h-full bg-slate-50 text-slate-900`}>
-        {children}
+        <ErrorBoundary>
+          <ToastProvider>
+            <ConfirmProvider>
+              {children}
+            </ConfirmProvider>
+          </ToastProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

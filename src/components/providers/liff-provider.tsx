@@ -45,7 +45,6 @@ export const LiffProvider = ({
   const [dbUser, setDbUser] = useState<LiffContextType['dbUser']>(null);
 
   const fetchOrSyncDbUser = async (lineUserId: string) => {
-    console.log(`[DB] Syncing user: ${lineUserId}`);
     try {
       // 2-second timeout for DB sync to prevent hanging the UI
       const dbPromise = (async () => {
@@ -77,13 +76,11 @@ export const LiffProvider = ({
         setTimeout(() => reject(new Error('Database timeout (cold start)')), 10000)
       );
 
-      const data = await Promise.race([dbPromise, timeoutPromise]) as any;
-      console.log('[DB] Sync complete', data);
+      const data = await Promise.race([dbPromise, timeoutPromise]) as { id: string; box_quota: number } | null;
       setDbUser(data);
-    } catch (e: any) {
-      console.error('[DB] Sync failed or timed out:', e.message);
-      if (e?.code) console.log(`[DB] Error Code: ${e.code}`);
-      setError(e);
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e : new Error('Unknown error');
+      setError(err);
       // DO NOT use invalid 'fallback-id' as it breaks PostgreSQL UUID columns
     }
   };
@@ -100,7 +97,7 @@ export const LiffProvider = ({
                        (typeof window !== 'undefined' && localStorage.getItem('hubby_skip_liff') === 'true');
 
       if (isBypass && process.env.NODE_ENV === 'development') {
-        console.log('[LIFF] Bypass detected (Dev only)');
+
         const mockProfile = { userId: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', displayName: 'Dev User' };
         setUserProfile(mockProfile);
         setDbUser({ id: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', box_quota: 15 });
@@ -110,7 +107,6 @@ export const LiffProvider = ({
 
       // Safety timeout: ensure loading stops after 3.5s regardless of SDK status
       timeoutId = setTimeout(() => {
-        console.log('[LIFF] Safety timeout triggered');
         setIsLoading(false);
       }, 3500);
 
@@ -122,7 +118,7 @@ export const LiffProvider = ({
         
         // Use Mock data for local testing if LIFF is not configured
         if (!liffId || liffId.includes('YOUR_LIFF_ID_HERE')) {
-          console.log('[LIFF] Running in Mock Mode');
+
           profile = {
             userId: 'mock_line_user_123',
             displayName: 'Dev User',
@@ -158,9 +154,9 @@ export const LiffProvider = ({
             document.cookie = `hubby_liff_logged_in=1; path=/; max-age=2592000; samesite=lax`;
           }
         }
-      } catch (err: any) {
-        console.error('LIFF init failed', err);
-        setError(err);
+      } catch (err: unknown) {
+        const error = err instanceof Error ? err : new Error('LIFF init failed');
+        setError(error);
       } finally {
         clearTimeout(timeoutId);
         if (!redirectingToLineLogin) {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/components/ui/toast';
 
 type SupportTicket = {
   id: string;
@@ -21,6 +22,7 @@ export default function TicketsPage() {
   const [replyingTicket, setReplyingTicket] = useState<SupportTicket | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
 
   const fetchTickets = useCallback(async () => {
     setIsLoading(true);
@@ -43,8 +45,8 @@ export default function TicketsPage() {
       
       if (error) throw error;
       setTickets(data as SupportTicket[] || []);
-    } catch (err) {
-      console.error('Failed to fetch tickets:', err);
+    } catch {
+      // Silently handle
     } finally {
       setIsLoading(false);
     }
@@ -82,13 +84,12 @@ export default function TicketsPage() {
         });
       }
 
-      alert(lineUserId ? 'ตอบกลับและส่งข้อความเข้า LINE เรียบร้อยแล้ว!' : 'บันทึกคำตอบเรียบร้อยแล้ว (ลูกค้าไม่ได้รับข้อความ LINE เนื่องจากไม่มีข้อมูล ID)');
+      toast(lineUserId ? 'ตอบกลับและส่งข้อความเข้า LINE เรียบร้อยแล้ว!' : 'บันทึกคำตอบเรียบร้อยแล้ว (ลูกค้าไม่ได้รับข้อความ LINE)', 'success');
       setReplyingTicket(null);
       setReplyMessage('');
       fetchTickets();
-    } catch (err) {
-      alert('เกิดข้อผิดพลาดในการบันทึกคำตอบ');
-      console.error(err);
+    } catch {
+      toast('เกิดข้อผิดพลาดในการบันทึกคำตอบ', 'error');
     } finally {
       setIsSending(false);
     }
