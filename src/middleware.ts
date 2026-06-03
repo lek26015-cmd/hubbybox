@@ -8,7 +8,7 @@ export const config = {
      * 2. Static assets (static)
      * 3. Static files in public (e.g. .png, .jpg, .svg, .ico, etc.)
      */
-    '/((?!_next/|static/|api/|_static/|[\\w-]+\\.\\w+).*)',
+    '/((?!_next/|static/|_static/|[\\w-]+\\.\\w+).*)',
   ],
 };
 
@@ -23,20 +23,23 @@ export default function middleware(req: NextRequest) {
   const res = (() => {
     // 1. App Subdomain (app.*)
     if (hostname.startsWith('app.')) {
-      // If the path starts with /api or /auth, we should leave it alone
-      if (url.pathname.startsWith('/api') || url.pathname.startsWith('/auth')) return NextResponse.next();
-      
       if (url.pathname.startsWith('/app_site')) return NextResponse.next();
+      // Rewrite /api/* to /app_site/api/* so routes resolve correctly
+      if (url.pathname.startsWith('/api')) {
+        return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
+      }
+      if (url.pathname.startsWith('/auth')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
     }
   
     // 2. Admin Subdomain (admin.*)
     if (hostname.startsWith('admin.')) {
-      // If the path starts with /api or /auth, let it fall through to the handler
-      if (url.pathname.startsWith('/api') || url.pathname.startsWith('/auth')) return NextResponse.next();
-
-      // Re-writing to internal admin path
       if (url.pathname.startsWith('/admin_site')) return NextResponse.next();
+      // Rewrite /api/* to /admin_site/api/* so routes resolve correctly
+      if (url.pathname.startsWith('/api')) {
+        return NextResponse.rewrite(new URL(`/admin_site${path}`, req.url));
+      }
+      if (url.pathname.startsWith('/auth')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/admin_site${path}`, req.url));
     }
   
