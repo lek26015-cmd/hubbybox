@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
         <div className="flex flex-col items-center mb-10">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl shadow-white/5 mb-6">
             <Image 
-              src="/tsconfig-01.png" 
+              src="/hubbybox-icon.png" 
               alt="HubbyBox" 
               width={40} 
               height={40} 

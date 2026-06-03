@@ -46,42 +46,43 @@ export const LiffProvider = ({
 
   const fetchOrSyncDbUser = async (lineUserId: string) => {
     try {
-      // 2-second timeout for DB sync to prevent hanging the UI
+      // Call server API to create/find user AND set signed session cookie
       const dbPromise = (async () => {
-        // 1. Check if user exists
-        let { data, error: fetchError } = await supabase
+        const res = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lineUserId }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `Session creation failed (${res.status})`);
+        }
+
+        const { userId } = await res.json();
+
+        // Fetch full user data (box_quota etc.) — read-only, safe with anon key
+        const { data, error: fetchError } = await supabase
           .from('users')
           .select('id, box_quota')
-          .eq('line_user_id', lineUserId)
+          .eq('id', userId)
           .single();
 
-        if (fetchError && fetchError.code === 'PGRST116') {
-          console.log('[DB] User not found, creating new...');
-          // 2. User not found, create new user
-          const { data: newData, error: insertError } = await supabase
-            .from('users')
-            .insert({ line_user_id: lineUserId })
-            .select('id, box_quota')
-            .single();
-            
-          if (insertError) throw insertError;
-          data = newData;
-        } else if (fetchError) {
-          throw fetchError;
-        }
+        if (fetchError) throw fetchError;
         return data;
       })();
 
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database timeout (cold start)')), 10000)
+        setTimeout(() => reject(new Error('เชื่อมต่อฐานข้อมูลไม่ได้ (ระบบเริ่มต้นช้า) กรุณาลองใหม่อีกครั้ง')), 15000)
       );
 
       const data = await Promise.race([dbPromise, timeoutPromise]) as { id: string; box_quota: number } | null;
       setDbUser(data);
     } catch (e: unknown) {
-      const err = e instanceof Error ? e : new Error('Unknown error');
+      // Preserve real error message for display in auth guard
+      const err = e instanceof Error ? e : new Error(String(e) || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+      console.error('[LIFF] fetchOrSyncDbUser error:', err.message);
       setError(err);
-      // DO NOT use invalid 'fallback-id' as it breaks PostgreSQL UUID columns
     }
   };
 
@@ -105,10 +106,11 @@ export const LiffProvider = ({
         return;
       }
 
-      // Safety timeout: ensure loading stops after 3.5s regardless of SDK status
+      // Safety timeout: ensure loading stops eventually.
+      // 12s to accommodate Supabase cold starts + slow networks on mobile.
       timeoutId = setTimeout(() => {
         setIsLoading(false);
-      }, 3500);
+      }, 12000);
 
       let redirectingToLineLogin = false;
       try {

@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CreateBoxDrawer } from '@/components/boxes/create-box-drawer';
+import { LandingStats } from '@/components/boxes/landing-stats';
 import { HUBBYBOX_WAREHOUSE_LOCATION } from '@/lib/hubbybox-constants';
 import type { BoxListRow } from '@/lib/box-types';
 
@@ -115,7 +116,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <div className="relative flex items-center justify-center w-16 h-16 transition-all">
                <Image 
-                 src="/tsconfig-01.png" 
+                 src="/hubbybox-icon.png" 
                  alt="HubbyBox" 
                  width={64} 
                  height={64} 
@@ -175,6 +176,9 @@ export default function Home() {
             </form>
           </div>
         </section>
+
+        {/* Stats Cards */}
+        {boxes.length > 0 && <LandingStats boxes={boxes} dbUserId={dbUser?.id} />}
 
         {/* 2. จัดกล่องใหม่ (Prominent Action Button) */}
         <section className="mb-8 z-0">

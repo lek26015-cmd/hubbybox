@@ -1,16 +1,53 @@
 'use client';
 
+import { useEffect, useState, useRef } from 'react';
 import { useLiff } from '@/components/providers/liff-provider';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 export function AppAuthGuard({ children }: { children: React.ReactNode }) {
-  const { isLoading, dbUser, error } = useLiff();
+  const { isLoading, dbUser, error, refreshDbUser } = useLiff();
+  const [isRetrying, setIsRetrying] = useState(false);
+  const autoRetried = useRef(false);
+
+  // Auto-retry once when dbUser is null after loading finishes (cold start recovery)
+  useEffect(() => {
+    if (!isLoading && !dbUser && !autoRetried.current) {
+      autoRetried.current = true;
+      setIsRetrying(true);
+      const timer = setTimeout(async () => {
+        try {
+          await refreshDbUser();
+        } catch {
+          // Will show error screen after retry
+        } finally {
+          setIsRetrying(false);
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, dbUser, refreshDbUser]);
+
+  const handleManualRetry = async () => {
+    setIsRetrying(true);
+    try {
+      await refreshDbUser();
+    } catch {
+      // Error state is managed by LiffProvider
+    }
+    // If still no dbUser, try full reload
+    if (!dbUser) {
+      window.location.reload();
+    }
+    setIsRetrying(false);
+  };
+
+  const showLoading = isLoading || isRetrying;
 
   return (
     <>
       <AnimatePresence mode="wait">
-        {isLoading ? (
+        {showLoading ? (
           <motion.div
             key="loading"
             initial={{ opacity: 1 }}
@@ -29,13 +66,15 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
             </div>
             <div className="mt-8 text-center">
                <h2 className="text-xl font-black text-slate-800 tracking-tight">HubbyBox.</h2>
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Connecting to HUB...</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">
+                 {isRetrying ? 'กำลังลองเชื่อมต่ออีกครั้ง...' : 'Connecting to HUB...'}
+               </p>
             </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
 
-      <div className={isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}>
+      <div className={showLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}>
         {dbUser ? children : (
           <div className="flex flex-col items-center justify-center min-h-[60vh] px-8 text-center font-sans">
             <div className="w-20 h-20 bg-rose-50 rounded-[2rem] flex items-center justify-center text-rose-400 mb-6 shadow-sm border border-rose-100">
@@ -48,16 +87,20 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
             {error && (
               <div className="bg-rose-50 border border-rose-100 rounded-xl p-3 mb-8 w-full max-w-xs text-left">
                 <p className="text-[10px] font-bold text-rose-500 font-mono break-words mb-1">Error: {error.message || JSON.stringify(error)}</p>
-                <p className="text-[10px] font-bold text-slate-500 font-mono break-words">LIFF ID: "{process.env.NEXT_PUBLIC_LIFF_ID}"</p>
+                <p className="text-[10px] font-bold text-slate-500 font-mono break-words">LIFF ID: &quot;{process.env.NEXT_PUBLIC_LIFF_ID}&quot;</p>
               </div>
             )}
             <div className="flex flex-col gap-3 w-full max-w-xs">
               <button
-                onClick={() => window.location.reload()}
-                className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                onClick={handleManualRetry}
+                disabled={isRetrying}
+                className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                <i className="fa-solid fa-rotate-right" aria-hidden="true"></i>
-                ลองใหม่อีกครั้ง
+                {isRetrying ? (
+                  <><i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> กำลังลอง...</>
+                ) : (
+                  <><i className="fa-solid fa-rotate-right" aria-hidden="true"></i> ลองใหม่อีกครั้ง</>
+                )}
               </button>
               <button
                 onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}

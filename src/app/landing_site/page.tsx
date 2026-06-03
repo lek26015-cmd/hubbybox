@@ -39,11 +39,13 @@ export default function LandingPage() {
   } as const;
 
   const [activeTab, setActiveTab] = useState(0);
-  
-  // Debug tabs
+
+  // Dynamic stats from API
+  const [stats, setStats] = useState({ users: 0, items: 0, boxes: 0 });
   useEffect(() => {
-    console.log('Active Tab Changed:', activeTab);
-  }, [activeTab]);
+    fetch('/api/stats').then(r => r.json()).then(setStats).catch(() => {});
+  }, []);
+  const fmt = (n: number) => n > 0 ? n.toLocaleString() : '—';
 
   const steps = [
     {
@@ -155,7 +157,7 @@ export default function LandingPage() {
                        ))}
                     </div>
                     <div className="text-left">
-                       <p className="text-xs font-black text-slate-900 leading-none mb-1">1,200+ Smart Users</p>
+                       <p className="text-xs font-black text-slate-900 leading-none mb-1">{stats.users > 0 ? `${fmt(stats.users)}+` : '...'} Smart Users</p>
                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Growing daily community</p>
                     </div>
                  </div>
@@ -247,16 +249,16 @@ export default function LandingPage() {
       <section className="bg-white py-20 px-8 border-b border-slate-100">
          <div className="max-w-7xl mx-auto flex flex-wrap justify-between gap-12">
             <div className="flex-1 min-w-[200px] text-center">
-               <p className="text-4xl md:text-6xl font-black text-slate-900 mb-2">50,000+</p>
+               <p className="text-4xl md:text-6xl font-black text-slate-900 mb-2">{stats.items > 0 ? `${fmt(stats.items)}+` : '—'}</p>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">รายการของที่บันทึก</p>
             </div>
             <div className="flex-1 min-w-[200px] text-center">
-               <p className="text-4xl md:text-6xl font-black text-primary mb-2">1,200+</p>
+               <p className="text-4xl md:text-6xl font-black text-primary mb-2">{stats.users > 0 ? `${fmt(stats.users)}+` : '—'}</p>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">ผู้ใช้งานที่ไว้วางใจ</p>
             </div>
             <div className="flex-1 min-w-[200px] text-center">
-               <p className="text-4xl md:text-6xl font-black text-slate-900 mb-2">99%</p>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">หาของเจอทันที</p>
+               <p className="text-4xl md:text-6xl font-black text-slate-900 mb-2">{stats.boxes > 0 ? `${fmt(stats.boxes)}+` : '—'}</p>
+               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">กล่องที่ถูกจัดระเบียบ</p>
             </div>
          </div>
       </section>
@@ -449,7 +451,7 @@ export default function LandingPage() {
                   <div className="flex -space-x-2">
                      {[1, 2, 3, 4].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800"></div>)}
                   </div>
-                  <p className="text-slate-500 text-xs font-black uppercase tracking-widest">Join 1k+ happy families</p>
+                  <p className="text-slate-500 text-xs font-black uppercase tracking-widest">Join {stats.users > 0 ? `${fmt(stats.users)}+` : '...'} happy families</p>
                </div>
             </div>
          </div>
