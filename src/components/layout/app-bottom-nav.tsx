@@ -54,9 +54,9 @@ export function AppBottomNav() {
         aria-current={isHomeActive ? 'page' : undefined}
         className="relative flex flex-col items-center gap-1 -mt-8 active:scale-90 transition-transform"
       >
-        <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ring-4 ring-white ${
           isHomeActive
-            ? 'bg-primary shadow-primary/30 ring-4 ring-primary/10'
+            ? 'bg-primary shadow-primary/30'
             : 'bg-gradient-to-br from-sky-400 to-blue-500 shadow-sky-300/30 hover:shadow-sky-400/40'
         }`}>
           <Image src="/logo-hubbybox.png" alt="HubbyBox" width={30} height={30} className="object-contain brightness-0 invert" />

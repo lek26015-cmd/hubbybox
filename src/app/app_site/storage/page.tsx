@@ -307,8 +307,8 @@ export default function HubbyStoragePage() {
           <p className="mt-12 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 HubbyBox Smart Logistics</p>
        </main>
 
-       {/* Coming Soon Overlay Mask */}
-       <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/40 backdrop-blur-md">
+       {/* Coming Soon Overlay Mask — stops above bottom nav */}
+       <div className="fixed inset-0 bottom-28 z-40 flex items-center justify-center p-6 bg-white/40 backdrop-blur-md">
           <div className="bg-slate-900/90 text-white rounded-3xl p-10 text-center shadow-2xl border border-white/20 animate-in zoom-in duration-500 max-w-sm w-full">
              <div className="w-16 h-16 bg-vora-accent rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-vora-accent/20 rotate-12">
                 <i className="fa-solid fa-clock-rotate-left text-2xl" aria-hidden="true"></i>
