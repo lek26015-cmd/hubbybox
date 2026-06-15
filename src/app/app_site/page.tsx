@@ -172,10 +172,10 @@ export default function Home() {
                    name="q"
                    type="text" 
                    placeholder="พิมพ์เพื่อค้นหาของ..."
-                   className="beam-input w-full pl-11 py-[14px] text-sm shadow-sm"
+                   className="beam-input w-full pl-10 py-2.5 text-sm shadow-sm"
                  />
               </div>
-              <button type="submit" className="beam-button-primary !py-[14px] !px-5 !text-sm whitespace-nowrap !rounded-[12px] !font-bold">
+              <button type="submit" className="beam-button-primary !py-2.5 !px-4 !text-sm whitespace-nowrap !rounded-xl !font-bold">
                  ค้นหา
               </button>
             </form>
