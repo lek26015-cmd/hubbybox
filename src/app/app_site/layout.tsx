@@ -1,18 +1,9 @@
 import type { Metadata } from 'next';
-import { Kodchasan } from 'next/font/google';
-import Script from 'next/script';
 import { cookies } from 'next/headers';
 import '../globals.css';
 import { LiffProvider } from '@/components/providers/liff-provider';
 import { AppBottomNav } from '@/components/layout/app-bottom-nav';
 import { AppAuthGuard } from '@/components/layout/app-auth-guard';
-
-const kodchasan = Kodchasan({ 
-  subsets: ['latin', 'thai'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-kodchasan',
-});
 
 export const metadata: Metadata = {
   title: 'HubbyBox',

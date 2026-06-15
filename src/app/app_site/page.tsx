@@ -109,7 +109,7 @@ export default function Home() {
   const quotaTotal = dbUser?.box_quota || 3;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#cae9fd] via-[#e6f4fc] to-white text-slate-800 font-sans pb-24">
+    <div className="min-h-screen text-slate-800 font-sans pb-24">
       <main className="flex w-full flex-col px-6 py-8 max-w-md mx-auto">
         {/* Header Profile Area */}
         <header className="flex items-center justify-between mb-8 pt-4">
@@ -156,7 +156,7 @@ export default function Home() {
             ต้องการค้นหาของในกล่องของคุณ<br/>
             <span className="text-primary/80">ให้ Hubby AI ช่วยหาได้เลย</span>
           </h2>
-          <div className="relative shadow-sm rounded-2xl bg-white/70 backdrop-blur-2xl p-2 border border-white">
+          <div className="relative">
             <form 
               onSubmit={(e) => {
                 e.preventDefault();
@@ -171,7 +171,7 @@ export default function Home() {
                 name="q"
                 type="text" 
                 placeholder="พิมพ์เพื่อค้นหาของ..."
-                className="w-full bg-white border border-slate-100 focus:border-primary/20 focus:bg-white rounded-xl py-5 pl-[4.5rem] pr-6 text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                className="beam-input pl-[4.5rem] py-5 text-lg shadow-sm"
               />
             </form>
           </div>
@@ -184,7 +184,7 @@ export default function Home() {
         <section className="mb-8 z-0">
           <button 
             onClick={() => setIsDrawerOpen(true)}
-            className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-[#2a7aeb] py-8 px-6 text-white hover:opacity-90 transition-all shadow-lg active:scale-[0.98] border border-white/20 group"
+            className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-2 bg-primary hover:brightness-110 py-8 px-6 text-white transition-all shadow-[0_10px_30px_rgba(52,137,255,0.3)] active:scale-[0.98] rounded-[24px] group"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-12 transition-transform duration-700 group-hover:rotate-45">
                <i className="fa-solid fa-box text-[120px]" aria-hidden="true"></i>
@@ -250,7 +250,7 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-4">
               {boxes.map((box) => (
                 <Link key={box.id} href={`/box/${box.id}`}>
-                  <div className="group bg-white/80 backdrop-blur-md hover:bg-white border border-white/50 rounded-xl md:rounded-2xl p-5 transition-all flex items-center justify-between cursor-pointer active:scale-95 shadow-sm hover:shadow-lg">
+                  <div className="beam-card group p-5 transition-all flex items-center justify-between cursor-pointer active:scale-[0.98] hover:border-primary/20">
                     <div className="flex items-center gap-4">
                       {box.cover_image_url ? (
                         <div className="w-14 h-14 rounded-lg md:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner border border-slate-100 overflow-hidden shrink-0">
@@ -284,7 +284,7 @@ export default function Home() {
             </div>
           )}
           
-          <Link href="/settings/premium" className="mt-5 w-full relative overflow-hidden flex items-center justify-between gap-3 rounded-xl md:rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 py-5 px-6 border border-indigo-100 shadow-sm transition-all group active:scale-[0.98]">
+          <Link href="/settings/premium" className="mt-5 w-full relative overflow-hidden flex items-center justify-between gap-3 beam-card py-5 px-6 hover:border-indigo-200 transition-all group active:scale-[0.98]">
              <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-indigo-500 shadow-sm border border-indigo-50 group-hover:scale-110 transition-transform">
                    <i className="fa-solid fa-gem text-[22px]" aria-hidden="true"></i>

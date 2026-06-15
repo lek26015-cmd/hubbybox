@@ -48,9 +48,9 @@ export default function SettingsPage() {
   const quotaTotal = dbUser?.box_quota || 3;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#cae9fd] via-[#e6f4fc] to-white text-slate-800 font-sans pb-24">
+    <div className="min-h-screen text-slate-800 font-sans pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-2xl border-b border-white/50 px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between shadow-sm">
         <Link href="/" className="w-11 h-11 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center text-slate-600 active:scale-90 transition-all hover:bg-slate-50 hover:text-primary">
            <i className="fa-solid fa-arrow-left text-[20px]" aria-hidden="true"></i>
         </Link>
@@ -63,7 +63,7 @@ export default function SettingsPage() {
       <main className="flex-1 w-full max-w-md mx-auto px-6 py-8 flex flex-col pt-8">
         
         {/* Profile Card */}
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl p-4 mb-8 flex items-center justify-between relative overflow-hidden">
+        <section className="beam-card p-4 mb-8 flex items-center justify-between relative overflow-hidden">
            <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 scale-150 text-sky-400">
                <i className="fa-solid fa-user text-[100px]" aria-hidden="true"></i>
            </div>
@@ -106,7 +106,7 @@ export default function SettingsPage() {
 
         {/* Account Settings */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">บัญชีของฉัน</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-6 overflow-hidden">
+        <section className="beam-card mb-6 overflow-hidden">
            <div className="p-5 flex items-center justify-between border-b border-slate-100">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
@@ -138,7 +138,7 @@ export default function SettingsPage() {
 
         {/* General Settings */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">ช่วยเหลือ</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-6 overflow-hidden">
+        <section className="beam-card mb-6 overflow-hidden">
            <Link href="/settings/support" className="w-full p-5 flex items-center justify-between border-b border-slate-100 hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500 group-hover:bg-sky-100 transition-colors">
@@ -160,7 +160,7 @@ export default function SettingsPage() {
 
         {/* Support Us */}
         <h3 className="font-bold text-sm text-slate-500 px-2 mb-3">สนับสนุนเรา</h3>
-        <section className="bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl mb-8 overflow-hidden">
+        <section className="beam-card mb-8 overflow-hidden">
            <Link href="/settings/donate" className="w-full p-5 flex items-center justify-between hover:bg-white active:bg-slate-50 transition-colors group">
               <div className="flex items-center gap-4 text-slate-700">
                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 group-hover:bg-rose-100 transition-colors">

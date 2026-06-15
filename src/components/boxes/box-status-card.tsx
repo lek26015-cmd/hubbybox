@@ -32,8 +32,8 @@ export function BoxStatusCard({
   onImageUpload, onCoverUpload,
 }: BoxStatusCardProps) {
   return (
-    <div className={`z-10 backdrop-blur-xl border border-white/80 shadow-sm rounded-2xl p-6 mb-8 flex items-center justify-between relative group ${box?.cover_image_url ? 'bg-slate-900 border-slate-700' : 'bg-gradient-to-br from-white to-sky-50/50'}`}>
-        <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl pointer-events-none">
+    <div className={`beam-card z-10 p-6 mb-8 flex items-center justify-between relative group overflow-hidden ${box?.cover_image_url ? '!bg-slate-900 !border-slate-700' : ''}`}>
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           {box?.cover_image_url && (
             <div className="absolute inset-0">
               <img src={box?.cover_image_url} alt="Box Cover" className="w-full h-full object-cover opacity-60 mix-blend-overlay" />
@@ -47,7 +47,7 @@ export function BoxStatusCard({
         <div className="relative z-10 flex items-center gap-6">
            <div className="flex flex-col justify-center">
               <p className={`${box?.cover_image_url ? 'text-white/80' : 'text-slate-500'} font-bold text-xs tracking-wide mb-1`}>จำนวนของในกล่อง</p>
-              <h2 className={`text-6xl font-bold drop-shadow-sm leading-tight ${box?.cover_image_url ? 'text-white drop-shadow-md' : 'bg-gradient-to-br from-primary to-blue-600 bg-clip-text text-transparent'}`}>{items.length}</h2>
+              <h2 className={`text-6xl font-black drop-shadow-sm leading-tight ${box?.cover_image_url ? 'text-white drop-shadow-md' : 'text-slate-800'}`}>{items.length}</h2>
            </div>
         </div>
         

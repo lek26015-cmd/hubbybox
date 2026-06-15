@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
+  --background: #fafafa;
   --foreground: #0f172a;
   --primary: #3489ff;
   --card: #ffffff;
@@ -68,5 +68,22 @@ body {
   @keyframes slow-fade {
     from { opacity: 0.4; }
     to { opacity: 0.8; }
+  }
+
+  /* Beam Design System Utilities */
+  .beam-card {
+    @apply bg-white rounded-[24px] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] border border-black/5;
+  }
+
+  .beam-button {
+    @apply w-full bg-[#171A1C] hover:bg-black text-white font-bold py-[18px] rounded-[16px] shadow-[0_4px_12px_rgba(0,0,0,0.15)] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100;
+  }
+
+  .beam-button-primary {
+    @apply w-full bg-primary hover:brightness-110 text-white font-bold py-[18px] rounded-[16px] shadow-[0_4px_12px_rgba(52,137,255,0.25)] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100;
+  }
+
+  .beam-input {
+    @apply w-full bg-[#F5F5F5] border border-transparent rounded-[16px] py-[16px] px-4 focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all text-slate-800 font-medium text-base placeholder:text-slate-400 outline-none;
   }
 }

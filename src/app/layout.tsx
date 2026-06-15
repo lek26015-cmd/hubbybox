@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { Kodchasan } from 'next/font/google';
+import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { ToastProvider } from '@/components/ui/toast';
 import { ConfirmProvider } from '@/components/ui/confirm-modal';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 
-const kodchasan = Kodchasan({ 
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({ 
   subsets: ['latin', 'thai'],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
-  variable: '--font-kodchasan',
+  variable: '--font-ibm-plex-thai',
 });
 
 export const metadata: Metadata = {
@@ -27,11 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${kodchasan.variable} h-full antialiased`}>
+    <html lang="th" className={`${ibmPlexSansThai.variable} h-full antialiased`}>
       <head>
         <Script src="https://kit.fontawesome.com/276094607e.js" crossOrigin="anonymous" strategy="beforeInteractive" />
       </head>
-      <body className={`${kodchasan.className} min-h-full bg-slate-50 text-slate-900`}>
+      <body className={`${ibmPlexSansThai.className} min-h-full bg-slate-50 text-slate-900`}>
         <ErrorBoundary>
           <ToastProvider>
             <ConfirmProvider>

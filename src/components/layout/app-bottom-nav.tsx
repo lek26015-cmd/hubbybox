@@ -20,7 +20,7 @@ export function AppBottomNav() {
   const isHomeActive = getIsActive('/');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-2xl border-t border-slate-200/50 px-6 pt-3 pb-8 flex items-center justify-around z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md px-6 pt-3 pb-8 flex items-center justify-around z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.04)] border-t border-black/[0.02]">
       {/* Left: รับฝากของ */}
       {(() => {
         const item = sideItems[0];
@@ -54,10 +54,10 @@ export function AppBottomNav() {
         aria-current={isHomeActive ? 'page' : undefined}
         className="relative flex flex-col items-center gap-1 -mt-8 active:scale-90 transition-transform"
       >
-        <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ring-4 ring-white ${
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ring-4 ring-white ${
           isHomeActive
-            ? 'bg-primary shadow-primary/30'
-            : 'bg-gradient-to-br from-sky-400 to-blue-500 shadow-sky-300/30 hover:shadow-sky-400/40'
+            ? 'bg-primary shadow-[0_8px_20px_rgba(52,137,255,0.3)]'
+            : 'bg-[#171A1C] shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:bg-black'
         }`}>
           <Image src="/logo-hubbybox.png" alt="HubbyBox" width={30} height={30} className="object-contain brightness-0 invert" />
         </div>

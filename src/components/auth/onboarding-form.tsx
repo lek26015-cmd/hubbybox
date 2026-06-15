@@ -39,11 +39,11 @@ export function OnboardingForm() {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-50 flex flex-col justify-center items-center p-6 sm:p-8 font-sans">
+    <div className="fixed inset-0 z-[9999] bg-[#FAFAFA] flex flex-col justify-center items-center p-6 sm:p-8 font-sans">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 w-full max-w-md border border-slate-100"
+        className="beam-card p-8 w-full max-w-md"
       >
         <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-inner">
           <i className="fa-solid fa-mobile-screen-button text-2xl"></i>
@@ -73,7 +73,7 @@ export function OnboardingForm() {
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
-                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-slate-800 font-medium text-sm placeholder:text-slate-400"
+                className="beam-input pl-11"
                 placeholder="08X-XXX-XXXX"
                 required
               />
@@ -101,7 +101,7 @@ export function OnboardingForm() {
           <button
             type="submit"
             disabled={isLoading || !phoneNumber || !agreed || phoneNumber.length < 9}
-            className="w-full bg-primary hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+            className="beam-button-primary"
           >
             {isLoading ? (
               <><i className="fa-solid fa-spinner fa-spin"></i> กำลังบันทึก...</>

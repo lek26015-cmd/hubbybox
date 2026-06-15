@@ -27,7 +27,7 @@ export function LogisticsStatusCard({
   return (
     <div className="mb-8 space-y-4">
       {/* Current Status */}
-      <div className="bg-white/80 backdrop-blur-xl border border-white p-6 rounded-2xl shadow-sm">
+      <div className="beam-card p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div
@@ -107,7 +107,7 @@ export function LogisticsStatusCard({
       {box.location?.includes(HUBBYBOX_WAREHOUSE_LOCATION) &&
         box.status !== 'returning' &&
         box.status !== BOX_STATUS.SHIPPING_TO_WAREHOUSE && (
-          <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl space-y-5 relative overflow-hidden">
+          <div className="bg-[#171A1C] text-white p-6 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] space-y-5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12">
               <i className="fa-solid fa-parachute-box text-[60px]" aria-hidden="true" />
             </div>

@@ -45,11 +45,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-6 sm:p-8 font-sans">
+    <div className="min-h-screen flex flex-col justify-center items-center p-6 sm:p-8 font-sans">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 w-full max-w-sm border border-slate-100 flex flex-col items-center text-center"
+        className="beam-card p-8 w-full max-w-sm flex flex-col items-center text-center"
       >
         <div className="w-24 h-24 bg-primary/5 rounded-[2.5rem] flex items-center justify-center mb-6">
           <Image src="/logo-hubbybox.png" alt="HubbyBox" width={48} height={48} className="object-contain" />
@@ -63,7 +63,7 @@ export default function LoginPage() {
         <button
           onClick={handleLogin}
           disabled={isLoggingIn || !isInit || !liff}
-          className="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#06C755]/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-3"
+          className="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-[18px] rounded-[16px] shadow-[0_4px_12px_rgba(6,199,85,0.3)] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
         >
           {isLoggingIn || !isInit ? (
             <><i className="fa-solid fa-spinner fa-spin text-lg"></i> รอสักครู่...</>

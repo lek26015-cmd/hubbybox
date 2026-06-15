@@ -1,6 +1,6 @@
 'use client';
 
-import { Kodchasan } from 'next/font/google';
+import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import Script from 'next/script';
 import '../globals.css';
 import { useState, useRef, useEffect } from 'react';
@@ -12,11 +12,11 @@ import { supabase } from '@/lib/supabase';
 import { BOX_STATUS } from '@/lib/hubbybox-constants';
 import type { NotificationItem } from '@/lib/types';
 
-const kodchasan = Kodchasan({ 
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({ 
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['thai', 'latin'],
   display: 'swap',
-  variable: '--font-kodchasan',
+  variable: '--font-ibm-plex-thai',
 });
 
 export default function AdminLayout({
@@ -138,14 +138,14 @@ function AdminInnerLayout({ children }: { children: React.ReactNode }) {
   // If login page, don't show the dashboard layout
   if (isLoginPage) {
      return (
-        <div className={`${kodchasan.className} min-h-full bg-admin-bg`}>
+        <div className={`${ibmPlexSansThai.className} min-h-full bg-admin-bg`}>
            {children}
         </div>
      );
   }
 
   return (
-    <div className={`${kodchasan.className} min-h-full flex flex-col bg-admin-bg text-admin-text-secondary relative selection:bg-vora-accent/30`}>
+    <div className={`${ibmPlexSansThai.className} min-h-full flex flex-col bg-admin-bg text-admin-text-secondary relative selection:bg-vora-accent/30`}>
          {/* Sidebar Overlay (Mobile) */}
          {isSidebarOpen && (
             <div 
