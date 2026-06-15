@@ -164,15 +164,20 @@ export default function Home() {
                 const trimmed = q.trim();
                 if (trimmed) router.push(`/search/results?q=${encodeURIComponent(trimmed)}`);
               }}
-              className="relative"
+              className="flex gap-2"
             >
-               <i className="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-primary text-[26px]" aria-hidden="true"></i>
-              <input 
-                name="q"
-                type="text" 
-                placeholder="พิมพ์เพื่อค้นหาของ..."
-                className="beam-input pl-[4.5rem] py-5 text-lg shadow-sm"
-              />
+              <div className="relative flex-1">
+                 <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-primary/60 text-[16px]" aria-hidden="true"></i>
+                 <input 
+                   name="q"
+                   type="text" 
+                   placeholder="พิมพ์เพื่อค้นหาของ..."
+                   className="beam-input w-full pl-11 py-[14px] text-sm shadow-sm"
+                 />
+              </div>
+              <button type="submit" className="beam-button-primary !py-[14px] !px-5 !text-sm whitespace-nowrap !rounded-[12px] !font-bold">
+                 ค้นหา
+              </button>
             </form>
           </div>
         </section>

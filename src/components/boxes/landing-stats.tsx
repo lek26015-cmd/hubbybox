@@ -62,19 +62,21 @@ export function LandingStats({ boxes, dbUserId }: LandingStatsProps) {
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`${stat.bg} border ${stat.border} rounded-xl p-3 flex flex-col items-center justify-center gap-1 shadow-sm`}
+          className={`${stat.bg} border ${stat.border} rounded-[16px] py-2 px-3 flex flex-row items-center gap-2.5 shadow-sm opacity-90`}
         >
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.color} bg-white shadow-sm border ${stat.border}`}>
-            <i className={`fa-solid ${stat.icon} text-[14px]`} aria-hidden="true" />
+          <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${stat.color} bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border ${stat.border}`}>
+            <i className={`fa-solid ${stat.icon} text-[11px]`} aria-hidden="true" />
           </div>
-          <span className={`text-2xl font-black tabular-nums ${stat.color}`}>
-            {stat.value !== null ? stat.value : (
-              <i className="fa-solid fa-spinner fa-spin text-[16px] opacity-40" />
-            )}
-          </span>
-          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center leading-tight">
-            {stat.label}
-          </span>
+          <div className="flex flex-col min-w-0">
+             <span className={`text-base font-black tabular-nums leading-none mb-0.5 ${stat.color}`}>
+               {stat.value !== null ? stat.value : (
+                 <i className="fa-solid fa-spinner fa-spin text-[12px] opacity-40" />
+               )}
+             </span>
+             <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none truncate">
+               {stat.label}
+             </span>
+          </div>
         </div>
       ))}
     </section>
