@@ -369,14 +369,14 @@ export default function LandingPage() {
             <div className="text-center mb-24 space-y-6">
                <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Simple & Transparent</p>
                <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tight">เลือกแผนที่ใช่สำหรับบ้านคุณ</h2>
-               <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">เริ่มต้นใช้งานฟรีได้ทันที ไม่มีข้อผูกมัด</p>
+               <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">เริ่มต้นใช้งานฟรี จ่ายเพิ่มเฉพาะตอนกล่องเต็ม จ่ายครั้งเดียวจบ ไม่มีรายเดือน</p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-10">
                {[
-                  { name: "Free Trial", price: "0", feat: ["บันทึกได้ 3 กล่องแรก", "AI Vision พื้นฐาน", "เข้าถึงผ่านมือถือได้ 24 ชม."], cta: "Start Free", popular: false, icon: "fa-paper-plane" },
-                  { name: "Family Pack", price: "199", feat: ["บันทึกได้ 50 กล่อง", "Hubby AI Search (Voice/Text)", "แชร์ได้ทั้งครอบครัว (5 คน)", "สิทธิพิเศษส่งของเข้าคลัง"], cta: "Go Family", popular: true, icon: "fa-house-user" },
-                  { name: "Unlimited Pro", price: "499", feat: ["บันทึกได้ไม่จำกัดจำนวน", "Hubby AI Personal Assistant", "ระบบคลังพรีเมียมส่วนตัว", "ฟรีค่าบริการส่งคืน 5 ครั้ง/ปี"], cta: "Get Pro Access", popular: false, icon: "fa-gem" }
+                  { name: "เริ่มต้นฟรี", price: "0", period: "ฟรีตลอดชีพ", feat: ["บันทึกได้ 3 กล่องแรก", "AI สแกนของเข้ากล่องไม่จำกัด", "AI Search หาของฟรีตลอดชีพ"], cta: "เริ่มใช้งานฟรี", popular: false, icon: "fa-paper-plane" },
+                  { name: "เซ็ตมินิมอล", price: "49", period: "ครั้งเดียวจบ", feat: ["เพิ่มอีก 5 กล่องดิจิทัล", "AI สแกนของเข้ากล่องไม่จำกัด", "AI Search หาของฟรีตลอดชีพ"], cta: "ซื้อเซ็ตมินิมอล", popular: false, icon: "fa-boxes-stacked" },
+                  { name: "เซ็ตจัดบ้านใหม่", price: "99", period: "ครั้งเดียวจบ", feat: ["เพิ่มอีก 15 กล่องดิจิทัล", "AI สแกนของเข้ากล่องไม่จำกัด", "AI Search หาของฟรีตลอดชีพ"], cta: "ซื้อเซ็ตจัดบ้านใหม่", popular: true, icon: "fa-house-chimney" }
                ].map((plan, i) => (
                   <div 
                     key={i} 
@@ -400,7 +400,7 @@ export default function LandingPage() {
                      <h3 className={`text-2xl font-black mb-3 ${plan.popular ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
                      <div className="flex items-baseline gap-1 mb-10">
                         <span className={`text-5xl font-black ${plan.popular ? 'text-white' : 'text-slate-900'}`}>฿{plan.price}</span>
-                        <span className={`${plan.popular ? 'text-slate-400' : 'text-slate-400'} font-bold text-base`}>/เดือน</span>
+                        <span className={`${plan.popular ? 'text-slate-400' : 'text-slate-400'} font-bold text-sm`}>/{plan.period}</span>
                      </div>
                      <ul className="space-y-5 mb-12 flex-1">
                         {plan.feat.map((f, j) => (
