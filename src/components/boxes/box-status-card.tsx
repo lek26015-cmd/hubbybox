@@ -32,8 +32,8 @@ export function BoxStatusCard({
   onImageUpload, onCoverUpload,
 }: BoxStatusCardProps) {
   return (
-    <div className={`beam-card z-10 p-6 mb-8 flex items-center justify-between relative group overflow-hidden ${box?.cover_image_url ? '!bg-slate-900 !border-slate-700' : ''}`}>
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+    <div className={`beam-card z-10 p-6 mb-8 flex items-center justify-between relative group ${box?.cover_image_url ? '!bg-slate-900 !border-slate-700' : ''}`}>
+        <div className="absolute inset-0 z-0 overflow-hidden rounded-[24px] pointer-events-none">
           {box?.cover_image_url && (
             <div className="absolute inset-0">
               <img src={box?.cover_image_url} alt="Box Cover" className="w-full h-full object-cover opacity-60 mix-blend-overlay" />
