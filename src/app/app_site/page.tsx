@@ -175,7 +175,7 @@ export default function Home() {
                    className="beam-input w-full pl-10 py-2.5 text-sm shadow-sm"
                  />
               </div>
-              <button type="submit" className="beam-button-primary !py-2.5 !px-4 !text-sm whitespace-nowrap !rounded-xl !font-bold">
+              <button type="submit" className="beam-button-primary !py-2.5 !px-5 !text-sm whitespace-nowrap !rounded-xl !font-bold shrink-0 !w-auto">
                  ค้นหา
               </button>
             </form>
