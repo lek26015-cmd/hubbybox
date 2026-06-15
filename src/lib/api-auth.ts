@@ -46,6 +46,12 @@ export async function setUserSession(userId: string): Promise<void> {
   });
 }
 
+/** Clear the session cookie. Call from a server API route during logout. */
+export async function clearUserSession(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE_NAME);
+}
+
 /** Read and verify the signed session cookie. Returns the userId or null. */
 export async function getUserSession(): Promise<string | null> {
   const cookieStore = await cookies();

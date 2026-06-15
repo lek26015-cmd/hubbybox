@@ -9,6 +9,8 @@ export type UserRow = {
   id: string;
   line_user_id?: string | null;
   box_quota: number;
+  phone_number?: string | null;
+  tos_accepted_at?: string | null;
   created_at?: string;
 };
 

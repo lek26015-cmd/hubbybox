@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useLiff } from '@/components/providers/liff-provider';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { OnboardingForm } from '@/components/auth/onboarding-form';
 
 export function AppAuthGuard({ children }: { children: React.ReactNode }) {
   const { isLoading, dbUser, error, refreshDbUser } = useLiff();
@@ -75,7 +76,13 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       <div className={showLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}>
-        {dbUser ? children : (
+        {dbUser ? (
+          (!dbUser.phone_number || !dbUser.tos_accepted_at) ? (
+            <OnboardingForm />
+          ) : (
+            children
+          )
+        ) : (
           <div className="flex flex-col items-center justify-center min-h-[60vh] px-8 text-center font-sans">
             <div className="w-20 h-20 bg-rose-50 rounded-[2rem] flex items-center justify-center text-rose-400 mb-6 shadow-sm border border-rose-100">
               <i className="fa-solid fa-plug-circle-xmark text-[32px]" aria-hidden="true"></i>

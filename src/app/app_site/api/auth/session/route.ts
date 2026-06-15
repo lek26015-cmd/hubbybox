@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { setUserSession, errorResponse } from '@/lib/api-auth';
+import { setUserSession, clearUserSession, errorResponse } from '@/lib/api-auth';
 import { getServiceSupabase } from '@/lib/supabase-service';
 
 export const runtime = 'nodejs';
@@ -59,6 +59,21 @@ export async function POST(req: NextRequest) {
     return Response.json({ userId: user.id });
   } catch (err) {
     console.error('[session] CATCH error:', err);
+    return errorResponse(err);
+  }
+}
+
+/**
+ * DELETE /api/auth/session
+ * 
+ * Clears the user's session cookie.
+ */
+export async function DELETE() {
+  try {
+    await clearUserSession();
+    return Response.json({ success: true });
+  } catch (err) {
+    console.error('[session] DELETE error:', err);
     return errorResponse(err);
   }
 }

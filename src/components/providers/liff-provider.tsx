@@ -15,6 +15,8 @@ interface LiffContextType {
   dbUser: {
     id: string;
     box_quota: number;
+    phone_number?: string | null;
+    tos_accepted_at?: string | null;
   } | null;
   isLoading: boolean;
   refreshDbUser: () => Promise<void>;
@@ -64,7 +66,7 @@ export const LiffProvider = ({
         // Fetch full user data (box_quota etc.) — read-only, safe with anon key
         const { data, error: fetchError } = await supabase
           .from('users')
-          .select('id, box_quota')
+          .select('id, box_quota, phone_number, tos_accepted_at')
           .eq('id', userId)
           .single();
 
@@ -76,7 +78,7 @@ export const LiffProvider = ({
         setTimeout(() => reject(new Error('เชื่อมต่อฐานข้อมูลไม่ได้ (ระบบเริ่มต้นช้า) กรุณาลองใหม่อีกครั้ง')), 15000)
       );
 
-      const data = await Promise.race([dbPromise, timeoutPromise]) as { id: string; box_quota: number } | null;
+      const data = await Promise.race([dbPromise, timeoutPromise]) as { id: string; box_quota: number; phone_number?: string | null; tos_accepted_at?: string | null } | null;
       setDbUser(data);
     } catch (e: unknown) {
       // Preserve real error message for display in auth guard
@@ -101,7 +103,7 @@ export const LiffProvider = ({
 
         const mockProfile = { userId: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', displayName: 'Dev User' };
         setUserProfile(mockProfile);
-        setDbUser({ id: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', box_quota: 15 });
+        setDbUser({ id: '2f2d2ea0-8013-45e9-8ad6-4418108444e4', box_quota: 15, phone_number: '0812345678', tos_accepted_at: new Date().toISOString() });
         setIsLoading(false);
         return;
       }

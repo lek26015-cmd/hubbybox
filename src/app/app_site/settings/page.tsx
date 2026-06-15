@@ -9,13 +9,27 @@ export default function SettingsPage() {
   const { userProfile, dbUser, liff, isLoading } = useLiff();
   const { toast } = useToast();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (liff && liff.isLoggedIn()) {
       liff.logout();
-      window.location.reload();
-    } else {
-      toast('คุณไม่ได้ล็อกอินผ่าน LINE ในขณะนี้ (หรืออยู่ในโหมดนักพัฒนา)', 'warning');
     }
+    
+    // Clear server session
+    try {
+      await fetch('/api/auth/session', { method: 'DELETE' });
+    } catch (e) {
+      console.error('Failed to clear server session:', e);
+    }
+    
+    // Clear client cookies
+    if (typeof document !== 'undefined') {
+      document.cookie = 'hubby_liff_logged_in=; path=/; max-age=0;';
+      document.cookie = 'hubby_bypass=; path=/; max-age=0;';
+      localStorage.removeItem('hubby_skip_liff');
+    }
+    
+    // Redirect to landing page
+    window.location.href = '/';
   };
 
   if (isLoading) {
