@@ -28,8 +28,12 @@ export default function SettingsPage() {
       localStorage.removeItem('hubby_skip_liff');
     }
     
-    // Redirect to landing page
-    window.location.href = '/';
+    // Close window if in LINE app, else redirect to login page
+    if (liff?.isInClient()) {
+      liff.closeWindow();
+    } else {
+      window.location.href = '/auth/login';
+    }
   };
 
   if (isLoading) {

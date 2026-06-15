@@ -110,7 +110,11 @@ export function AppAuthGuard({ children }: { children: React.ReactNode }) {
                 )}
               </button>
               <button
-                onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}
+                onClick={() => { 
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/auth/login';
+                  }
+                }}
                 className="w-full bg-slate-100 text-slate-500 font-bold py-3 rounded-2xl active:scale-95 transition-all text-sm"
               >
                 กลับหน้าหลัก
