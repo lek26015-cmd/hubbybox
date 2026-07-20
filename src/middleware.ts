@@ -24,8 +24,16 @@ export default function middleware(req: NextRequest) {
     // 1. App Subdomain (app.*)
     if (hostname.startsWith('app.')) {
       if (url.pathname.startsWith('/app_site')) return NextResponse.next();
-      // Let /api/* pass through to root API routes (src/app/api/*)
-      if (url.pathname.startsWith('/api')) return NextResponse.next();
+      // Routes in root /api/ (src/app/api/*) — pass through directly
+      if (url.pathname.startsWith('/api/checkout') ||
+          url.pathname.startsWith('/api/stats') ||
+          url.pathname.startsWith('/api/webhook')) {
+        return NextResponse.next();
+      }
+      // All other /api/* routes live in /app_site/api/*
+      if (url.pathname.startsWith('/api')) {
+        return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
+      }
       if (url.pathname.startsWith('/auth')) return NextResponse.next();
       return NextResponse.rewrite(new URL(`/app_site${path}`, req.url));
     }
