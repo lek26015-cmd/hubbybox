@@ -87,6 +87,9 @@ export async function POST(req: Request) {
         payment_method_types: ['promptpay'],
         payment_method_data: {
           type: 'promptpay',
+          billing_details: {
+            email: `${body.userId || body.metadata?.userId || 'user'}@hubbybox.app`,
+          },
         },
         confirm: true,
         description: productDescription,
