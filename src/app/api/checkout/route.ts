@@ -63,6 +63,8 @@ export async function POST(req: Request) {
       payment_method_types: paymentMethodTypes,
       line_items,
       mode: 'payment',
+      // Pre-fill email so users don't have to type it (LINE doesn't provide email)
+      customer_email: `${body.userId || body.metadata?.userId || 'user'}@hubbybox.app`,
       return_url: `${req.headers.get('origin')}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${body.orderId}`,
       metadata,
     });
