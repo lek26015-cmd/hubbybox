@@ -109,12 +109,12 @@ export default function DepositFlowPage() {
         }),
       });
 
-      const { clientSecret, error: checkoutError } = await res.json();
+      const data = await res.json();
       
-      if (checkoutError) throw new Error(checkoutError);
+      if (data.error) throw new Error(data.error);
       
-      if (clientSecret) {
-        window.location.href = `/checkout?session=${clientSecret}`;
+      if (data.clientSecret) {
+        window.location.href = `/checkout?session=${data.clientSecret}`;
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'โปรดตรวจสอบการเชื่อมต่อ';

@@ -38,12 +38,22 @@ export default function PremiumPage() {
         }),
       });
 
-      const { clientSecret, error } = await res.json();
+      const data = await res.json();
       
-      if (error) throw new Error(error);
+      if (data.error) throw new Error(data.error);
       
-      if (clientSecret) {
-        window.location.href = `/checkout?session=${clientSecret}`;
+      if (data.mode === 'promptpay') {
+        // Redirect to QR page with all payment info
+        const params = new URLSearchParams({
+          qr: data.qrCodeUrl,
+          amount: String(data.amount),
+          name: `เซ็ต${pack.name} (+${pack.amount} กล่องดิจิทัล)`,
+          pi: data.paymentIntentId,
+          order_id: data.orderId || '',
+        });
+        window.location.href = `/checkout?${params.toString()}`;
+      } else if (data.clientSecret) {
+        window.location.href = `/checkout?session=${data.clientSecret}`;
       }
     } catch (err: unknown) {
       toast('เกิดข้อผิดพลาด: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error');

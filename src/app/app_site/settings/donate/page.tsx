@@ -83,10 +83,19 @@ export default function DonatePage() {
                           metadata: { type: 'SUPPORT' }
                         }),
                       });
-                      const { clientSecret } = await res.json();
-                      if (clientSecret) {
-                        // Use window.location.href to navigate to the embedded checkout page
-                        window.location.href = `/checkout?session=${clientSecret}`;
+                      const data = await res.json();
+                      if (data.error) throw new Error(data.error);
+                      if (data.mode === 'promptpay') {
+                        const params = new URLSearchParams({
+                          qr: data.qrCodeUrl,
+                          amount: String(data.amount),
+                          name: 'เลี้ยงขนมน้อง Hubby (Support)',
+                          pi: data.paymentIntentId,
+                          order_id: '',
+                        });
+                        window.location.href = `/checkout?${params.toString()}`;
+                      } else if (data.clientSecret) {
+                        window.location.href = `/checkout?session=${data.clientSecret}`;
                       }
                     } catch {
                       toast('เกิดข้อผิดพลาด กรุณาลองใหม่ครับ', 'error');

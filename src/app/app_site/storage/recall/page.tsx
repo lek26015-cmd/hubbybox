@@ -161,9 +161,20 @@ function RecallFlowPage() {
           }),
         });
 
-        const { clientSecret } = await response.json();
-        if (clientSecret) {
-          router.push(`/checkout?session=${clientSecret}`);
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        
+        if (data.mode === 'promptpay') {
+          const params = new URLSearchParams({
+            qr: data.qrCodeUrl,
+            amount: String(data.amount),
+            name: `ค่าบริการเรียกคืนของรายชิ้น (${itemIds.length} ชิ้น)`,
+            pi: data.paymentIntentId,
+            order_id: data.orderId || '',
+          });
+          router.push(`/checkout?${params.toString()}`);
+        } else if (data.clientSecret) {
+          router.push(`/checkout?session=${data.clientSecret}`);
         } else {
           throw new Error('Failed to create checkout session');
         }
